@@ -16,7 +16,7 @@ def init_app(app):
 def load_user(user_id):
     return User.get_single(username=user_id)
 
-class User(db.Model):
+class User(db.Model, flask_login.UserMixin):
     
     __tablename__ = "User"
 
@@ -35,14 +35,8 @@ class User(db.Model):
     def get_id(self):
         return self.username
     
-    def is_authenticated(self):
-        return True
-
     def is_active(self):
         return True
-
-    def is_anonymous(self):
-        return False
 
     ### END Flask-Login required functions
 
@@ -52,6 +46,9 @@ class User(db.Model):
     def login(self):
         flask_login.login_user(self)
 
+    def logout(self):
+        flask_login.logout_user()
+        
     def match_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
 
@@ -76,6 +73,7 @@ class User(db.Model):
 
     @classmethod
     def create(cls, username, given_name, password, is_admin):
+        password = bcrypt.generate_password_hash(password).decode("utf-8")
         user = cls(username, given_name, password, is_admin)
         db.session.add(user)
         db.session.commit()
