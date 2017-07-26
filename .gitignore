@@ -99,3 +99,14 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Config files should not be put in source control
+config.py
+
+# Virtualenv files
+bin/
+lib/
+lib64
+man/
+share/
+pyvenv.cfg
