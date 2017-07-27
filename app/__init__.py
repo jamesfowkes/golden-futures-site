@@ -18,3 +18,5 @@ user.init_app(app)
 from app.views import user
 from app.views import dashboard
 from app.views import index
+from app.views import course
+from app.views import category

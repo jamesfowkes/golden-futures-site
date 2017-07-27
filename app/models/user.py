@@ -56,12 +56,10 @@ class User(db.Model, BaseModel, flask_login.UserMixin):
         return "<User %r, Name '%s', Admin: %s>" % (self.username, self.given_name, "yes" if self.is_admin() else "no")
 
     def json(self):
-        return json.dumps(
-            {
-                "username": self.username,
-                "given_name": self.given_name
-            }
-        )
+        return {
+            "username": self.username,
+            "given_name": self.given_name
+        }
 
     @classmethod
     def create(cls, username, given_name, password, is_admin):

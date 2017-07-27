@@ -1,3 +1,5 @@
+import json
+
 from flask import request, redirect, url_for, Response, abort
 import flask_login
 
@@ -15,7 +17,7 @@ def create_user():
             password = request.form["password"]
             is_admin = request.form.get("is_admin", False)
             user = User.create(username, given_name, password, is_admin)
-            return user.json()
+            return json.dumps(user.json())
         else:
             abort(403)
 
@@ -37,6 +39,7 @@ def delete_user():
 def login_user():
     if request.method == 'POST':
         pending_login_user = User.get_single(username=request.form["username"])
+        print(pending_login_user)
         if pending_login_user and pending_login_user.match_password(request.form["password"]):
             if pending_login_user.login():
                 return redirect(url_for("render_dashboard"))
