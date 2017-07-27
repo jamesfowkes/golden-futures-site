@@ -1,11 +1,11 @@
 import json
 
-import sqlalchemy
-
 import flask_login
 
 from app.database import db
 from app.encrypt import bcrypt
+
+from app.models.base_model import BaseModel
 
 login_manager = flask_login.LoginManager()
 
@@ -16,7 +16,7 @@ def init_app(app):
 def load_user(user_id):
     return User.get_single(username=user_id)
 
-class User(db.Model, flask_login.UserMixin):
+class User(db.Model, BaseModel, flask_login.UserMixin):
     
     __tablename__ = "User"
 
@@ -62,21 +62,6 @@ class User(db.Model, flask_login.UserMixin):
                 "given_name": self.given_name
             }
         )
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-        
-    @classmethod
-    def get(cls, **kwargs):
-        return User.query.filter_by(**kwargs)
-
-    @classmethod
-    def get_single(cls, **kwargs):
-        try:
-            return User.query.filter_by(**kwargs).one()
-        except sqlalchemy.orm.exc.NoResultFound:
-            return None
 
     @classmethod
     def create(cls, username, given_name, password, is_admin):
