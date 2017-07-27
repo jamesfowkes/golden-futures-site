@@ -1,6 +1,6 @@
 import json
 
-from flask import Response
+import sqlalchemy
 
 import flask_login
 
@@ -48,7 +48,7 @@ class User(db.Model, flask_login.UserMixin):
 
     def logout(self):
         flask_login.logout_user()
-        
+
     def match_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
 
@@ -69,7 +69,10 @@ class User(db.Model, flask_login.UserMixin):
 
     @classmethod
     def get_single(cls, **kwargs):
-        return User.query.filter_by(**kwargs).one()
+        try:
+            return User.query.filter_by(**kwargs).one()
+        except sqlalchemy.orm.exc.NoResultFound:
+            return None
 
     @classmethod
     def create(cls, username, given_name, password, is_admin):
