@@ -1,4 +1,4 @@
-Feature: Courses can be added and assigned to a category
+Feature: Courses can be created and added to a category
 
 Scenario: A user wants to add a course to an empty category
 Given the standard user is logged in

@@ -21,8 +21,8 @@ def split_course_list(courses):
 
     return [c.strip() for c in courses.split(",")]
 
-@aloe.step(u"the user adds the category \"([\w\d ]*)\"")
-def add_category(step, category_name):
+@aloe.step(u"the user creates the category \"([\w\d ]*)\"")
+def the_user_creates_the_category(step, category_name):
     with app.test_request_context():
         aloe.world.response = aloe.world.app.post(
             '/category/create', 
@@ -30,14 +30,14 @@ def add_category(step, category_name):
         )
 
 @aloe.step(u"the category \"([\w\d ]*)\" exists")
-def create_category(step, category):
+def the_category_exists(step, category):
     try:
         Category.create(category_name=category)
     except sqlalchemy.exc.IntegrityError:
         db.session.rollback() # Category already in the system
 
 @aloe.step(u'the following category details are returned:')
-def and_the_following_user_details(step):
+def and_the_following_user_details_are_returned(step):
     expected = [{
         "category_name" : c["category_name"],
         "courses": split_course_list(c["courses"])
@@ -45,7 +45,7 @@ def and_the_following_user_details(step):
     assert_equals(expected, [json.loads(aloe.world.response.data.decode("utf-8"))])
 
 @aloe.step(u'the category \"([\w\d ]*)\" should exist')
-def and_the_following_user_details(step, category_name):
+def the_category_should_exist(step, category_name):
     category = Category.get_single(category_name=category_name)
     assert_equals(category.category_name, category_name)
 
