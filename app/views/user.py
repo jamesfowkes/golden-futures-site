@@ -39,7 +39,6 @@ def delete_user():
 def login_user():
     if request.method == 'POST':
         pending_login_user = User.get_single(username=request.form["username"])
-        print(pending_login_user)
         if pending_login_user and pending_login_user.match_password(request.form["password"]):
             if pending_login_user.login():
                 return redirect(url_for("render_dashboard"))
