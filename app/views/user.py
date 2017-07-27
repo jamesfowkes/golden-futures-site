@@ -19,6 +19,20 @@ def create_user():
         else:
             abort(403)
 
+@app.route("/user/delete", methods=['POST'])
+@flask_login.login_required
+def delete_user():
+    if request.method == 'POST':
+        if flask_login.current_user.is_admin():
+            user = User.get_single(username=request.form["username"])
+            if user:
+                user.delete()
+                return Response(200)
+            else:
+                return Response(404)
+        else:
+            abort(403)
+
 @app.route("/user/login", methods=['POST'])
 def login_user():
     if request.method == 'POST':

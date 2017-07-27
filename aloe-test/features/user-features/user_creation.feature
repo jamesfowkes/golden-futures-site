@@ -1,7 +1,7 @@
 Feature: Admin users can create other users, standard users cannot
 
 Scenario: An admin user wants to create a standard user
-Given the admin user is in the system
+Given some users exist
 And the admin user is logged in
 When the user creates standard user:
  | username | given_name | password |
@@ -12,7 +12,7 @@ And the following user details are returned:
  | Stan | Stan Dard | False
 
 Scenario: An admin user wants to create an admin user
-Given the admin user is in the system
+Given some users exist
 And the admin user is logged in
 When the user creates admin user:
  | username | given_name | password |
@@ -23,7 +23,7 @@ And the following user details are returned:
  | Admin2 | Admin Istrator | True
 
 Scenario: A standard user tries to create a user and fails
-Given the standard user is in the system
+Given some users exist
 And the standard user is logged in
 When the user creates standard user:
  | username | given_name | password |

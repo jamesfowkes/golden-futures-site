@@ -1,9 +1,11 @@
 import os
-import json
 
 os.environ["GF_CONFIG_CLASS"] = "config.AloeConfig"
 
-import aloe 
+import json
+
+import aloe
+
 from nose.tools import assert_equals
 
 import flask_login
@@ -19,18 +21,34 @@ def before_each_feature(feature):
     db.create_all()
     aloe.world.app = app.test_client()
 
-@aloe.step(u"the (admin|standard) user is in the system")
-def create_admin_user(step, user_type):
+@aloe.step(u"some users exist")
+def create_users(step):
     try:
-        if user_type == "standard":
-            User.create('standard', 'Standard Smith', 'standard', False)
-        elif user_type == "admin":
-            User.create('admin', 'Admin Smith', 'admin', True)
+        User.create('standard', 'Standard Smith', 'standard', False)
     except sqlalchemy.exc.IntegrityError:
         db.session.rollback() # User already in the system
 
+    try:
+        User.create('admin', 'Admin Smith', 'admin', True)
+    except sqlalchemy.exc.IntegrityError:
+        db.session.rollback() # User already in the system
+
+
+@aloe.step(u"when the user creates (admin|standard) user:")
+def create_a_user(step, user_type):
+    with app.test_request_context():
+        aloe.world.response = aloe.world.app.post(
+            '/user/create',
+            data={
+                'username': step.hashes[0]["username"],
+                'given_name': step.hashes[0]["given_name"],
+                'password': step.hashes[0]["password"],
+                'is_admin' : user_type == "admin"
+            }
+        )
+
 @aloe.step(u"the (admin|standard) user is ((?:not )?logged) in")
-def login_admin_user(step, user_type, login_or_out):
+def login_user(step, user_type, login_or_out):
 
     if user_type == "standard":
         data={'username': 'standard', 'password': 'standard'}
@@ -49,20 +67,6 @@ def login_admin_user(step, user_type, login_or_out):
             follow_redirects=True
         )
 
-@aloe.step(u"when the user creates (admin|standard) user:")
-def create_a_user(step, user_type):
-    with app.test_request_context():
-        aloe.world.response = aloe.world.app.post(
-            '/user/create',
-            data={
-                'username': step.hashes[0]["username"],
-                'given_name': step.hashes[0]["given_name"],
-                'password': step.hashes[0]["password"],
-                'is_admin' : user_type == "admin"
-            }
-        )
-
-
 @aloe.step(u'Then I should get a \'(.*)\' response')
 def then_i_should_get_response(step, expected_status_code):
     assert_equals(aloe.world.response.status_code, int(expected_status_code))
@@ -78,6 +82,16 @@ def try_login_with_credentials(step):
                 '/user/login', 
                 data=step.hashes[0],
                 follow_redirects=True
+        )
+
+@aloe.step(u"the user deletes the (admin|standard) user")
+def delete_a_user(step, user_type):
+    with app.test_request_context():
+        aloe.world.response = aloe.world.app.post(
+            '/user/delete',
+            data={
+                'username': user_type
+            }
         )
 
 @aloe.after.each_feature

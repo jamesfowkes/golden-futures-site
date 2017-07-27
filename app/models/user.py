@@ -63,6 +63,10 @@ class User(db.Model, flask_login.UserMixin):
             }
         )
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        
     @classmethod
     def get(cls, **kwargs):
         return User.query.filter_by(**kwargs)
