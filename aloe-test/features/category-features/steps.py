@@ -29,6 +29,14 @@ def the_user_creates_the_category(step, category_name):
             data={'category_name':category_name}
         )
 
+@aloe.step(u"the user deletes the category \"([\w\d ]*)\"")
+def the_user_deletes_the_category(step, category_name):
+    with app.test_request_context():
+        aloe.world.response = aloe.world.app.post(
+            '/category/delete', 
+            data={'category_name':category_name}
+        )
+
 @aloe.step(u"the category \"([\w\d ]*)\" exists")
 def the_category_exists(step, category):
     try:
@@ -48,6 +56,11 @@ def and_the_following_user_details_are_returned(step):
 def the_category_should_exist(step, category_name):
     category = Category.get_single(category_name=category_name)
     assert_equals(category.category_name, category_name)
+
+@aloe.step(u'the category \"([\w\d ]*)\" should not exist')
+def the_category_should_exist(step, category_name):
+    category = Category.get_single(category_name=category_name)
+    assert_equals(None, category)
 
 @aloe.step(u'the category \"([\w\d ]*)\" should have the courses:')
 def the_category_should_have_the_courses(step, category_name):
