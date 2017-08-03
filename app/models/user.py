@@ -5,7 +5,7 @@ import flask_login
 from app.database import db
 from app.encrypt import bcrypt
 
-from app.models.base_model import BaseModel
+from app.models.base_model import BaseModel, DeclarativeBase
 
 login_manager = flask_login.LoginManager()
 
@@ -16,7 +16,7 @@ def init_app(app):
 def load_user(user_id):
     return User.get_single(username=user_id)
 
-class User(db.Model, BaseModel, flask_login.UserMixin):
+class User(BaseModel, DeclarativeBase, flask_login.UserMixin):
     
     __tablename__ = "User"
 

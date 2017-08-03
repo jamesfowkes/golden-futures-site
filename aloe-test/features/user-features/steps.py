@@ -48,10 +48,6 @@ def login_user(step, user_type, login_or_out):
                 follow_redirects=True
             )
 
-@aloe.step(u'Then I should get a \'(.*)\' response')
-def then_i_should_get_response(step, expected_status_code):
-    assert_equals(aloe.world.response.status_code, int(expected_status_code))
-
 @aloe.step(u'And the following user details are returned:')
 def and_the_following_user_details(step):
     assert_equals(step.hashes[0], json.loads(aloe.world.response.data.decode("utf-8")))

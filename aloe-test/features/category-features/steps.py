@@ -39,10 +39,11 @@ def the_user_deletes_the_category(step, category_name):
 
 @aloe.step(u"the category \"([\w\d ]*)\" exists")
 def the_category_exists(step, category):
-    try:
-        Category.create(category_name=category)
-    except sqlalchemy.exc.IntegrityError:
-        db.session.rollback() # Category already in the system
+    with app.app_context():
+        try:
+            Category.create(category_name=category)
+        except sqlalchemy.exc.IntegrityError:
+            db.session.rollback() # Category already in the system
 
 @aloe.step(u'the following category details are returned:')
 def and_the_following_user_details_are_returned(step):
@@ -59,12 +60,14 @@ def the_category_should_exist(step, category_name):
 
 @aloe.step(u'the category \"([\w\d ]*)\" should not exist')
 def the_category_should_exist(step, category_name):
-    category = Category.get_single(category_name=category_name)
-    assert_equals(None, category)
+    with app.app_context():
+        category = Category.get_single(category_name=category_name)
+        assert_equals(None, category)
 
 @aloe.step(u'the category \"([\w\d ]*)\" should have the courses:')
 def the_category_should_have_the_courses(step, category_name):
-    category = Category.get_single(category_name=category_name)
-    expected_courses = [course["course_name"] for course in step.hashes]
-    actual_courses = category.json()["courses"]
-    assert_equals(expected_courses, actual_courses)
+    with app.app_context():
+        category = Category.get_single(category_name=category_name)
+        expected_courses = [course["course_name"] for course in step.hashes]
+        actual_courses = category.json(aloe.world.language)["courses"]
+        assert_equals(expected_courses, actual_courses)

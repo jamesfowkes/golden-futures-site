@@ -1,15 +1,23 @@
 import json
 
-from flask import request, redirect, url_for, Response, abort
+from flask import request, redirect, url_for, Response, abort, g
 import flask_login
 
 from app.models.course import Course
 
 from app.application import app
 
-@app.route("/course/create", methods=['POST'])
+@app.route("/<lang>/course/create", methods=['POST'])
 @flask_login.login_required
-def create_course():
+def create_course(lang):
     if request.method == 'POST':
-        course = Course.create(request.form["course_name"], request.form["category_name"])
-        return json.dumps(course.json())
+        course = Course.create(request.form["course_name"], request.form["category_id"], lang)
+        return json.dumps(course.json(lang))
+
+@app.route("/<lang>/course/<course_id>/translate", methods=['POST'])
+@flask_login.login_required
+def add_course_translation(lang, course_id):
+    if request.method == 'POST':
+        course = Course.get_single_by_id(course_id)
+        course.add_name(request.form["course_name"], lang)
+        return json.dumps(course.json(lang))

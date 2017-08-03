@@ -12,6 +12,12 @@ encrypt.init_app(app)
 from app import database 
 database.init_app(app)
 
+from app import locale
+locale.init_app(app)
+
+from app.models import init_models
+init_models(app)
+
 from app.models import user
 user.init_app(app)
 

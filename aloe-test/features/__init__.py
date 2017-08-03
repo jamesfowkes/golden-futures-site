@@ -1,3 +1,5 @@
+from flask import current_app
+
 import os
 
 import aloe
@@ -10,19 +12,28 @@ from app.models.user import User
 from app.models.course import Course
 from app.models.category import Category
 
+from app.models.base_model import DeclarativeBase
+
 @aloe.before.each_example
 def before_each_scenario(scenario, outline, steps):
-    db.create_all()
-    aloe.world.app = app.test_client()
 
-    for user in User.get():
-        user.delete()
+    aloe.world.language = "en"
 
-    for course in Course.get():
-        course.delete()
+    with app.app_context():
+        aloe.world.app = current_app.test_client()
 
-    for category in Category.get():
-        category.delete()
+        DeclarativeBase.metadata.drop_all(bind=db.engine)
+        DeclarativeBase.metadata.create_all(bind=db.engine)
 
-    User.create('standard', 'Standard Smith', 'standard', False)
-    User.create('admin', 'Admin Smith', 'admin', True)
+        for user in User.get():
+            user.delete()
+
+        for course in Course.get():
+            course.delete()
+
+        for category in Category.get():
+            category.delete()
+
+        User.create('standard', 'Standard Smith', 'standard', False)
+        User.create('admin', 'Admin Smith', 'admin', True)
+
