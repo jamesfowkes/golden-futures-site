@@ -11,9 +11,9 @@ class Course(BaseModel, DeclarativeBase):
 
     course_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     category_id = db.Column(db.Integer, db.ForeignKey('Category.category_id'))
+    course_name =  db.Column(db.String(80), unique=True)
     language = db.Column(db.String(10))
-    course_name =  db.Column(db.String(80))
-
+    
     __table_args__ = (db.UniqueConstraint('course_id', 'category_id', 'language', 'course_name', name='_course_unique_cons'),)
 
     def __init__(self, course_name, category_id, language):

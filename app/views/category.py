@@ -7,18 +7,18 @@ from app.models.category import Category
 
 from app.application import app
 
-@app.route("/category/create", methods=['POST'])
+@app.route("/<language>/category/create", methods=['POST'])
 @flask_login.login_required
-def create_category():
+def create_category(language):
     if request.method == 'POST':
-        category = Category.create(request.form["category_name"])
+        category = Category.create(request.form["category_name"], language)
         return json.dumps(category.json())
 
-@app.route("/category/delete", methods=['POST'])
+@app.route("/<language>/category/delete", methods=['POST'])
 @flask_login.login_required
-def delete_category():
+def delete_category(language):
     if request.method == 'POST':
-        category = Category.get_single(category_name=request.form["category_name"])
+        category = Category.get_single(category_name=request.form["category_name"], language=language)
         if len(category.courses):
             abort(409)
 

@@ -13,4 +13,4 @@ And the category "Pet Care" exists
 And the course "Advanced Hamster Training" exists in category "Pet Care"
 And the user deletes the category "Pet Care"
 Then I should get a '409' response
-And the category "Pet Care" should exist
+And the category "Pet Care" should exist in language "en"
