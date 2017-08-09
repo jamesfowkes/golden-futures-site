@@ -24,7 +24,7 @@ class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
         return "<ID: '%d', Name: '%s'>" % (self.category_id, self.category_name)
 
     def json(self, lang):
-        return {"category_name": self.category_name, "courses": [c.translations[lang].course_name for c in self.courses]}
+        return {"category_name": self.category_name, "courses": [c.course_name for c in self.courses]}
 
     @classmethod
     def create(cls, category_name):

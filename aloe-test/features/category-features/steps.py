@@ -68,6 +68,12 @@ def the_category_should_exist(step, category_name):
 def the_category_should_have_the_courses(step, category_name):
     with app.app_context():
         category = Category.get_single(category_name=category_name)
+        
         expected_courses = [course["course_name"] for course in step.hashes]
-        actual_courses = category.json(aloe.world.language)["courses"]
+        expected_languages = [course["language"] for course in step.hashes]
+
+        actual_courses = [c.course_name for c in category.courses]
+        actual_languages = [c.language for c in category.courses]
+
         assert_equals(expected_courses, actual_courses)
+        assert_equals(expected_languages, actual_languages)

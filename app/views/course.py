@@ -12,7 +12,7 @@ from app.application import app
 def create_course(lang):
     if request.method == 'POST':
         course = Course.create(request.form["course_name"], request.form["category_id"], lang)
-        return json.dumps(course.json(lang))
+        return json.dumps(course.json())
 
 @app.route("/<lang>/course/<course_id>/translate", methods=['POST'])
 @flask_login.login_required

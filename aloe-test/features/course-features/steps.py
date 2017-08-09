@@ -34,27 +34,19 @@ def the_course_exists_in_category(step, course, category_name):
     with app.app_context():
         category_id = Category.get_single(category_name=category_name).category_id
         try:
-            Course.create(course_name=course, category_id=category_id, lang=aloe.world.language)
+            Course.create(course_name=course, category_id=category_id, language=aloe.world.language)
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # Category already in the system
     
 @aloe.step(u'the course \"([\w\d ]*)\" should exist')
 def the_course_should_exist(step, course_name):
     with app.app_context():
-        course = Course.get_single_by_name(course_name=course_name, lang=aloe.world.language)
-        assert_equals(course.translations[aloe.world.language].course_name, course_name)
-
-@aloe.step(u'When the user adds the translation \"([\w\d ]*)\" to course \"([\w\d ]*)\"')
-def when_the_user_adds_the_translation_to_course(step, translation, course_name):
-    with app.test_request_context():
-        course = Course.get_single_by_name(course_name=course_name, lang="en")
-        aloe.world.response = aloe.world.app.post(
-            '/' + aloe.world.language + '/course/' + str(course.course_id) + "/translate",  
-            data={'course_name':translation}
-        )
+        courses = Course.get_by_name(course_name=course_name)
+        assert_equals(len(courses), 1)
+        assert_equals(courses[0].language, aloe.world.language)
 
 @aloe.step(u'the course \"([\w\d ]*)\" should have the translations')
 def the_course_should_have_the_translations(step, course_name):
     with app.app_context():
-        course = Course.get_single_by_name(course_name=course_name, lang=aloe.world.language)
+        courses = Course.get_translations(course_name=course_name, language=aloe.world.language)
         assert_equals(course.all_translations(), step.hashes[0])
