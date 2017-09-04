@@ -5,7 +5,12 @@ from app.database import db
 
 DeclarativeBase = declarative_base()  
 
-class BaseModel():
+class __Deleteable__:
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+class BaseModel(__Deleteable__):
         
     @classmethod
     def get(cls, **kwargs):
@@ -18,6 +23,15 @@ class BaseModel():
         except sqlalchemy.orm.exc.NoResultFound:
             return None
 
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+class BaseModelTranslateable(__Deleteable__):
+        
+    @classmethod
+    def get(cls, **kwargs):
+        return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).filter_by(**kwargs)
+
+    @classmethod
+    def get_single(cls, **kwargs):
+        try:
+            return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).filter_by(**kwargs).one()
+        except sqlalchemy.orm.exc.NoResultFound:
+            return None

@@ -5,6 +5,8 @@ import flask_login
 from app.database import db
 from app.models.base_model import BaseModel, DeclarativeBase
 
+from app.models.university_course_map import university_course_map_table
+
 class Course(BaseModel, DeclarativeBase):
 
     __tablename__ = "Course"
@@ -14,6 +16,8 @@ class Course(BaseModel, DeclarativeBase):
     course_name =  db.Column(db.String(80), unique=True)
     language = db.Column(db.String(10))
     
+    universities = db.relationship('University', secondary=university_course_map_table, back_populates="courses")
+
     __table_args__ = (db.UniqueConstraint('course_id', 'category_id', 'language', 'course_name', name='_course_unique_cons'),)
 
     def __init__(self, course_name, category_id, language):
