@@ -1,4 +1,5 @@
 aloe==0.1.12
+Babel==2.4.0
 bcrypt==3.1.3
 blessings==1.6
 cffi==1.10.0
@@ -6,7 +7,9 @@ click==6.7
 extras==1.0.0
 fixtures==3.0.0
 Flask==0.12.2
+Flask-Babel==0.11.2
 Flask-Bcrypt==0.7.1
+Flask-Locale==1.0.2
 Flask-Login==0.4.0
 Flask-SQLAlchemy==2.2
 future==0.16.0
@@ -23,9 +26,13 @@ pkg-resources==0.0.0
 pycparser==2.18
 python-mimeparse==1.6.0
 python-subunit==1.2.0
+pytz==2017.2
 repoze.lru==0.6
 six==1.10.0
+speaklater==1.3
 SQLAlchemy==1.1.12
+SQLAlchemy-i18n==1.0.3
+SQLAlchemy-Utils==0.32.14
 sure==1.4.6
 testtools==2.3.0
 traceback2==1.4.0
