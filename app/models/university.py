@@ -13,6 +13,21 @@ from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 from app.models.university_course_map import university_course_map_table
 
+class UniversityInfo(Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "UniversityInfo"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    id = db.Column(db.Integer, primary_key=True)
+    university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
+    university = db.relationship("University", back_populates="info_points")
+
+class UniversityInfoTranslation(translation_base(UniversityInfo)):
+    __tablename__ = 'UniversityInfoTranslation'
+    key = sa.Column(sa.Unicode(80))
+    value = sa.Column(sa.Unicode())
+    
 class University(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "University"
@@ -21,6 +36,7 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     university_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     courses = db.relationship('Course', secondary=university_course_map_table, back_populates="universities")
+    info_points = db.relationship("UniversityInfo", back_populates="university")
 
     def __init__(self, university_name, language):
         self.translations[language].university_name = university_name
@@ -51,5 +67,6 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
         return cls.get_single(university_id=university_id)
 
 class UniversityTranslation(translation_base(University)):
-    __tablename__ = 'university_translation'
+    __tablename__ = 'UniversityTranslation'
     university_name = sa.Column(sa.Unicode(80))
+    university_intro = sa.Column(sa.Unicode())
