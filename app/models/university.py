@@ -15,6 +15,7 @@ from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
 import app.models.facility
 import app.models.contact_detail
+import app.models.admission
 
 from app.models.university_course_map import university_course_map_table
 
@@ -28,7 +29,7 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
     courses = db.relationship('Course', secondary=university_course_map_table, back_populates="universities")
     facilities = db.relationship("Facility", back_populates="university")
     contact_details = db.relationship("ContactDetail", back_populates="university")
-    #admissions = db.relationship("Admission", back_populates="university")
+    admissions = db.relationship("Admission", back_populates="university")
     #tuition_fees = db.relationship("TuitionFee", back_populates="university")
     #scholarships = db.relationship("Scholarship", back_populates="university")
 
