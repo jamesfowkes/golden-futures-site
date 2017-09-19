@@ -5,7 +5,7 @@ import flask_login
 
 from app.models.category import Category
 
-from app.application import app
+from app import app
 
 @app.route("/<language>/category/create", methods=['POST'])
 @flask_login.login_required

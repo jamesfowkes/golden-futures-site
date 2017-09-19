@@ -1,7 +1,7 @@
 from flask import request, redirect, url_for, Response
 import flask_login
 
-from app.application import app
+from app import app
 
 @app.route("/dashboard", methods=['GET'])
 @flask_login.login_required

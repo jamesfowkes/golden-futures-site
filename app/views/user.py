@@ -5,7 +5,7 @@ import flask_login
 
 from app.models.user import User
 
-from app.application import app
+from app import app
 
 @app.route("/user/create", methods=['POST'])
 @flask_login.login_required
