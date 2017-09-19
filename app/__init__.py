@@ -28,3 +28,4 @@ from app.views import facility
 from app.views import contact_detail
 from app.views import admission
 from app.views import tuition_fee
+from app.views import scholarship

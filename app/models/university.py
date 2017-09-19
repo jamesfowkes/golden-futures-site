@@ -32,7 +32,7 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
     contact_details = db.relationship("ContactDetail", back_populates="university")
     admissions = db.relationship("Admission", back_populates="university")
     tuition_fees = db.relationship("TuitionFee", back_populates="university")
-    #scholarships = db.relationship("Scholarship", back_populates="university")
+    scholarships = db.relationship("Scholarship", back_populates="university")
 
     def __init__(self, university_name, language):
         self.translations[language].university_name = university_name
