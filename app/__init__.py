@@ -24,3 +24,4 @@ from app.views import index
 from app.views import course
 from app.views import category
 from app.views import university
+from app.views import facility

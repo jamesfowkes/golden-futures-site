@@ -10,24 +10,12 @@ from sqlalchemy_i18n.utils import get_current_locale
 
 import app
 from app.database import db
+
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase
+
+import app.models.facility
 from app.models.university_course_map import university_course_map_table
 
-class UniversityInfo(Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "UniversityInfo"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    id = db.Column(db.Integer, primary_key=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
-    university = db.relationship("University", back_populates="info_points")
-
-class UniversityInfoTranslation(translation_base(UniversityInfo)):
-    __tablename__ = 'UniversityInfoTranslation'
-    key = sa.Column(sa.Unicode(80))
-    value = sa.Column(sa.Unicode())
-    
 class University(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "University"
@@ -36,7 +24,11 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     university_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     courses = db.relationship('Course', secondary=university_course_map_table, back_populates="universities")
-    info_points = db.relationship("UniversityInfo", back_populates="university")
+    facilities = db.relationship("Facility", back_populates="university")
+    #contact_details = db.relationship("ContactDetail", back_populates="university")
+    #admissions = db.relationship("Admission", back_populates="university")
+    #tuition_fees = db.relationship("TuitionFee", back_populates="university")
+    #scholarships = db.relationship("Scholarship", back_populates="university")
 
     def __init__(self, university_name, language):
         self.translations[language].university_name = university_name
