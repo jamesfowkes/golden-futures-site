@@ -48,4 +48,4 @@ def login_user():
 @app.route("/user/logout")
 def logout_user():
     flask_login.logout_user()
-    return redirect(url_for("render_index"))
+    return redirect(url_for("website.render_index"))

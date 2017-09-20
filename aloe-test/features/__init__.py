@@ -6,7 +6,7 @@ import aloe
 
 os.environ["GF_CONFIG_CLASS"] = "config.AloeConfig"
 
-from app.application import app
+from app import app
 from app.database import db
 from app.models.user import User
 from app.models.course import Course
