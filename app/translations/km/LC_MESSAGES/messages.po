@@ -1,0 +1,24 @@
+# Khmer translations for Golden Futures University Guide.
+# Copyright (C) 2017 ORGANIZATION
+# This file is distributed under the same license as the  project.
+# FIRST AUTHOR jamesfowkes@gmail.com, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version:  1.0\n"
+"Report-Msgid-Bugs-To: jamesfowkes@gmail.com\n"
+"POT-Creation-Date: 2017-09-20 11:19+0100\n"
+"PO-Revision-Date: 2017-09-20 11:22+0100\n"
+"Last-Translator: James Fowkes <jamesfowkes@gmail.com>\n"
+"Language: km\n"
+"Language-Team: km <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
+
+#: templates/layout.tpl:27
+msgid "Golden Futures University Guide 2017-2018"
+msgstr "(KH)Golden Futures University Guide 2017-2018(KH)"
+
