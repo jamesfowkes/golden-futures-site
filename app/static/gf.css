@@ -2,7 +2,8 @@ body {
     background-color: #ffb84d
 }
 
-nav.navbar
-{
-    background-color: #efa83d   
+.navbar-default {
+	margin-top: 1em;
+    background-color: #efa83d;
+    background-image: none;
 }

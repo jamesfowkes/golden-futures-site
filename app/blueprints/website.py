@@ -4,6 +4,7 @@ from flask import render_template
 
 website = Blueprint('website', __name__, template_folder='templates')
 
+@website.route("/", methods=['GET'])
 @website.route("/index", methods=['GET'])
 def render_index():
     return render_template('index.tpl')
