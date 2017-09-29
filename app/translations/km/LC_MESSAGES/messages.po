@@ -1,15 +1,15 @@
-# Khmer translations for Golden Futures University Guide.
+# Khmer translations for PROJECT.
 # Copyright (C) 2017 ORGANIZATION
-# This file is distributed under the same license as the  project.
-# FIRST AUTHOR jamesfowkes@gmail.com, 2017.
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  1.0\n"
-"Report-Msgid-Bugs-To: jamesfowkes@gmail.com\n"
-"POT-Creation-Date: 2017-09-20 11:19+0100\n"
-"PO-Revision-Date: 2017-09-20 11:22+0100\n"
-"Last-Translator: James Fowkes <jamesfowkes@gmail.com>\n"
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2017-09-29 17:07+0100\n"
+"PO-Revision-Date: 2017-09-29 17:07+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: km\n"
 "Language-Team: km <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -18,7 +18,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.4.0\n"
 
-#: templates/layout.tpl:27
+#: templates/layout.tpl:10 templates/layout.tpl:27
 msgid "Golden Futures University Guide 2017-2018"
-msgstr "(KH)Golden Futures University Guide 2017-2018(KH)"
+msgstr "!Golden Futures University Guide 2017-2018!"
+
+#: templates/layout.tpl:31
+msgid "Home"
+msgstr "!Home!"
+
+#: templates/layout.tpl:32
+msgid "Universities"
+msgstr "!Universities!"
+
+#: templates/layout.tpl:33
+msgid "Courses"
+msgstr "!Courses!"
+
+#: templates/layout.tpl:40
+msgid "kh"
+msgstr "!Khmer!"
+
+#: templates/layout.tpl:41
+msgid "en"
+msgstr "!English!"
 
