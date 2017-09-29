@@ -1,6 +1,7 @@
 import logging
 
 from flask import Blueprint, g, render_template, request, redirect
+import jinja2
 
 from app import app
 from app.locale import get_locale
@@ -8,6 +9,11 @@ from app.locale import get_locale
 logger = logging.getLogger(__name__)
 
 website = Blueprint('website', __name__, template_folder='templates', url_prefix='/<lang>')
+
+@jinja2.contextfilter
+@website.app_template_filter()
+def language_name(context, lang):
+    return app.config["SUPPORTED_LOCALES"][lang]
 
 @website.url_defaults
 def add_language_code(endpoint, values):
@@ -25,15 +31,16 @@ def pull_lang(endpoint, values):
 
 @website.route("/", methods=['GET'])
 def render_index():
-    return render_template('index.tpl')
+    target_template = "index." + g.lang + ".tpl"
+    return render_template(target_template)
 
 @website.route("/universities", methods=['GET'])
 def render_universities():
-    return render_template('index.tpl')
+    return render_template('university.index.tpl')
 
 @website.route("/courses", methods=['GET'])
 def render_courses():
-    return render_template('index.tpl')
+    return render_template('course.index.tpl')
 
 def init_app(app):
     app.register_blueprint(website)

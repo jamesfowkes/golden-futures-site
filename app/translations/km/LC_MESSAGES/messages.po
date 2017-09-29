@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-09-29 17:07+0100\n"
+"POT-Creation-Date: 2017-09-29 23:21+0100\n"
 "PO-Revision-Date: 2017-09-29 17:07+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: km\n"
@@ -18,27 +18,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.4.0\n"
 
-#: templates/layout.tpl:10 templates/layout.tpl:27
+#: app/templates/layout.tpl:11 app/templates/layout.tpl:28
 msgid "Golden Futures University Guide 2017-2018"
 msgstr "!Golden Futures University Guide 2017-2018!"
 
-#: templates/layout.tpl:31
+#: app/templates/layout.tpl:32
 msgid "Home"
 msgstr "!Home!"
 
-#: templates/layout.tpl:32
+#: app/templates/layout.tpl:33
 msgid "Universities"
 msgstr "!Universities!"
 
-#: templates/layout.tpl:33
+#: app/templates/layout.tpl:34
 msgid "Courses"
 msgstr "!Courses!"
 
-#: templates/layout.tpl:40
-msgid "kh"
+#: app/templates/layout.tpl:41
+msgid "Khmer"
 msgstr "!Khmer!"
 
-#: templates/layout.tpl:41
-msgid "en"
-msgstr "!English!"
+#: app/templates/layout.tpl:42
+msgid "English"
+msgstr "English"
 
