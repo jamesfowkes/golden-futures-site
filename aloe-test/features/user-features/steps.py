@@ -9,7 +9,7 @@ from nose.tools import assert_equals
 import flask_login
 import sqlalchemy
 
-from app.application import app
+from app import app
 from app.database import db
 
 from app.models.user import User

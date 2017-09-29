@@ -1,0 +1,9 @@
+body {
+    background-color: #ffb84d
+}
+
+.navbar-default {
+	margin-top: 1em;
+    background-color: #efa83d;
+    background-image: none;
+}

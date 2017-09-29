@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
     <link rel="stylesheet" href="{{url_for('static', filename='gf.css')}}">
-
-    <title>Golden Futures University Guide 2017-2018</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    
+    <title>{{_("Golden Futures University Guide 2017-2018")}}</title>
 
 </head>
 
@@ -28,16 +29,17 @@
                 </div>
                 <div id="nav" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="{{url_for('website.render_index')}}">Home</a></li>
-                        <li><a href="{{url_for('website.render_universities')}}">Universities</a></li>
-                        <li><a href="{{url_for('website.render_courses')}}">Courses</a></li>
+                        <li class="active"><a href="{{url_for('website.render_index')}}">{{_("Home")}}</a></li>
+                        <li><a href="{{url_for('website.render_universities')}}">{{_("Universities")}}</a></li>
+                        <li><a href="{{url_for('website.render_courses')}}">{{_("Courses")}}</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">English<span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{_(g.lang)}}
+                                <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="#" class="language">Khmer</a></li>
-                                <li><a href="#" class="language">English</a></li>
+                                <li><a href="{{url_for(request.url_rule.endpoint, lang='km')}}" class="language">{{_("km")}}</a></li>
+                                <li><a href="{{url_for(request.url_rule.endpoint, lang='en')}}" class="language">{{_("en")}}</a></li>
                             </ul>
                         </li>
                     </ul>

@@ -5,7 +5,7 @@ import flask_login
 
 from app.models.university import University
 
-from app.application import app
+from app import app
 
 from app.locale import get_locale
 

@@ -5,7 +5,7 @@ import flask_login
 
 from app.models.user import User
 
-from app.application import app
+from app import app
 
 @app.route("/user/create", methods=['POST'])
 @flask_login.login_required
@@ -48,4 +48,4 @@ def login_user():
 @app.route("/user/logout")
 def logout_user():
     flask_login.logout_user()
-    return redirect(url_for("render_index"))
+    return redirect(url_for("website.render_index"))

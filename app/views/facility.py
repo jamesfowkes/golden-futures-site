@@ -5,7 +5,7 @@ import flask_login
 
 from app.models.facility import Facility
 
-from app.application import app
+from app import app
 
 from app.locale import get_locale
 
