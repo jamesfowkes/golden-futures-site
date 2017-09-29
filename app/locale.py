@@ -1,3 +1,5 @@
+import logging
+
 import sqlalchemy_i18n
 import sqlalchemy_utils
 from flask_babel import Babel
@@ -5,6 +7,8 @@ from flask_babel import Babel
 from flask import request, g
 
 from app import app
+
+logger = logging.getLogger(__name__)
 
 babel = Babel()
 

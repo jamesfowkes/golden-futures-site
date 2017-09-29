@@ -1,8 +1,10 @@
 from flask import Blueprint
+import logging
 
 from flask import render_template
 
 website = Blueprint('website', __name__, template_folder='templates')
+logger = logging.getLogger(__name__)
 
 @website.route("/", methods=['GET'])
 @website.route("/index", methods=['GET'])
