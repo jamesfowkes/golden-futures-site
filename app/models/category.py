@@ -6,13 +6,15 @@ from app.database import db
 
 from app.models.base_model import BaseModel, DeclarativeBase
 
+from app.models.category_course_map import category_course_map_table
+
 class Category(BaseModel, DeclarativeBase):
 
     __tablename__ = "Category"
 
     category_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     category_name = db.Column(db.String(80))
-    courses = db.relationship('Course', backref="category")
+    courses = db.relationship('Course', secondary=category_course_map_table, back_populates="categories")
     language = db.Column(db.String(10))
 
     __table_args__ = (db.UniqueConstraint('category_name', 'language', name='_category_unique_cons'),)

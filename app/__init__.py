@@ -23,9 +23,9 @@ user.init_app(app)
 
 from app.views import user
 from app.views import dashboard
-from app.views import course
 from app.views import category
 from app.views import university
+from app.views import course
 from app.views import facility
 from app.views import contact_detail
 from app.views import admission
