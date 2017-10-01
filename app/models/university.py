@@ -62,6 +62,11 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
     def get_single_by_id(cls, university_id):
         return cls.get_single(university_id=university_id)
 
+    def add_course(self, course):
+        self.courses.append(course)
+        db.session.add(self)
+        db.session.commit()
+
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
     university_name = sa.Column(sa.Unicode(80))

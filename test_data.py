@@ -53,7 +53,7 @@ test_university_data = {
             "Business Statistics and Forecasting", "International Business", "Computer Science", "Information Technology",
             "Software Engineering", "Teaching English as a Foreign Language", "Geography", "History",
             "Chinese Language", "English Business Communication", "Japanese Language", "Law", "Legal Studies",
-            "Mathematics", "Politcal Science", "Public Administration", "Tourism Management"
+            "Mathematics", "Political Science", "Public Administration", "Tourism Management"
         ]
     },
     "O3D Asia Graphic School": {
@@ -66,12 +66,12 @@ test_university_data = {
             "Accounting", "Architecture and Interior Design", "Interior Design", "Product Design",
             "Banking and Finance", "Business Administration", "Business Information System", "Computer Engineering",
             "Computer Science", "Economics", "Teaching English to Speakers of Other Languages(TESOL)",
-            "Early Childhood Education","Civil Engineering", "History", "Anthropology", "Archeology",
-            "Asian Studies", "Khmer Studies", "Southeast Asian Studies", "Asian Studies", "English for Communication",
-            "Khmer Studies", "Southeast Asian Studies", "Tourism Management", "Marketing", "Communications", "Journalism",
-            "Media Management", "Ethnomusicology", "Music", "Environmental Policy and Planning", "Environmental Science",
-            "Political Science", "Public Administration", "Philosophy", "Religion", "Anthropology", "Archeology",
-            "Asian Studies", "International Relations", "Psychology", "Sociology"
+            "Early Childhood Education", "Civil Engineering", "History", "Anthropology", "Khmer Studies",
+            "Southeast Asian Studies", "Asian Studies", "English for Communication", "Tourism Management",
+            "Marketing", "Communications", "Journalism", "Media Management", "Ethnomusicology", "Music",
+            "Environmental Policy and Planning", "Environmental Science", "Political Science", "Public Administration",
+            "Philosophy", "Religion", "Anthropology", "Archaeology", "International Relations",
+            "Psychology", "Sociology"
         ]
     },
     "Prek Leap National College ofAgriculture": {
@@ -95,88 +95,88 @@ test_university_data = {
 }
 
 test_course_data = [
-    "Accounting"
-    "Agribusiness/Economics"
-    "Agricultural Economics"
-    "Agricultural Extension & Rural Development"
-    "Agricultural Management"
-    "Agronomy Science"
-    "Animal Health & Production"
-    "Animal Sciences & Veterinary Medicine"
-    "Anthropology"
-    "Aquatic Resource"
-    "Archeology"
-    "Architecture"
-    "Architecture and Interior Design"
-    "ASEAN Law"
-    "Asian Studies"
-    "Banking and Finance"
-    "Biology"
-    "Business Administration"
-    "Business Information System"
-    "Business Statistics and Forecasting"
-    "Chemistry"
-    "Chinese for Business"
-    "Chinese Language"
-    "Civil Engineering"
-    "Communications"
-    "Computer Engineering"
-    "Computer Science"
-    "Development Economics"
-    "Early Childhood Education"
-    "Economics"
-    "Education and Languages"
-    "Electrical Engineering"
-    "Electronic Engineering"
-    "Electronics and Electricity"
-    "English"
-    "English Business Communication"
-    "English for Business"
-    "English for Communication"
-    "English for Translation and Interpretation"
-    "Environmental Policy and Planning"
-    "Environmental Science"
-    "Ethnomusicology"
-    "Finance and Banking"
-    "Fisheries"
-    "Food Processing"
-    "Food Technology"
-    "Forestry"
-    "Geography"
-    "Graphic Design"
-    "History"
-    "Horticulture"
-    "Hospitality Management"
-    "Hotel and Hospitality Management"
-    "Hotel and Tourism Management"
-    "Information Technology"
-    "Interior Design"
-    "International Business"
-    "International Relations"
-    "Japanese Language"
-    "Journalism"
-    "Khmer Studies"
-    "Law"
-    "Legal Studies"
-    "Management"
-    "Management & Aquaculture"
-    "Marketing"
-    "Mathematics"
-    "Media Management"
-    "Music"
-    "Philosophy"
-    "Politcal Science"
-    "Political Science"
-    "Product Design"
-    "Psychology"
-    "Public Administration"
-    "Religion"
-    "Sociology"
-    "Software Engineering"
-    "Southeast Asian Studies"
-    "Teaching English as a Foreign Language"
-    "Teaching English to Speakers of Other Languages(TESOL)"
-    "Tourism and Guide"
+    "Accounting",
+    "Agribusiness/Economics",
+    "Agricultural Economics",
+    "Agricultural Extension & Rural Development",
+    "Agricultural Management",
+    "Agronomy Science",
+    "Animal Health & Production",
+    "Animal Sciences & Veterinary Medicine",
+    "Anthropology",
+    "Aquatic Resource",
+    "Archaeology",
+    "Architecture",
+    "Architecture and Interior Design",
+    "ASEAN Law",
+    "Asian Studies",
+    "Banking and Finance",
+    "Biology",
+    "Business Administration",
+    "Business Information System",
+    "Business Statistics and Forecasting",
+    "Chemistry",
+    "Chinese for Business",
+    "Chinese Language",
+    "Chinese",
+    "Civil Engineering",
+    "Communications",
+    "Computer Engineering",
+    "Computer Science",
+    "Development Economics",
+    "Early Childhood Education",
+    "Economics",
+    "Education and Languages",
+    "Electrical Engineering",
+    "Electronic Engineering",
+    "Electronics and Electricity",
+    "English",
+    "English Business Communication",
+    "English for Business",
+    "English for Communication",
+    "English for Translation and Interpretation",
+    "Environmental Policy and Planning",
+    "Environmental Science",
+    "Ethnomusicology",
+    "Finance and Banking",
+    "Fisheries",
+    "Food Processing",
+    "Food Technology",
+    "Forestry",
+    "Geography",
+    "Graphic Design",
+    "History",
+    "Horticulture",
+    "Hospitality Management",
+    "Hotel and Hospitality Management",
+    "Hotel and Tourism Management",
+    "Information Technology",
+    "Interior Design",
+    "International Business",
+    "International Relations",
+    "Japanese Language",
+    "Journalism",
+    "Khmer Studies",
+    "Law",
+    "Legal Studies",
+    "Management",
+    "Management & Aquaculture",
+    "Marketing",
+    "Mathematics",
+    "Media Management",
+    "Music",
+    "Philosophy",
+    "Political Science",
+    "Product Design",
+    "Psychology",
+    "Public Administration",
+    "Religion",
+    "Sociology",
+    "Software Engineering",
+    "Southeast Asian Studies",
+    "Teaching English as a Foreign Language",
+    "Teaching English to Speakers of Other Languages(TESOL)",
+    "Tourism and Guide",
     "Tourism Management"
 ]
 
@@ -219,7 +219,7 @@ test_category_data = {
     ],
 
     "Computing": [
-        "Business Information Technology",
+        "Business Information System",
         "Computer Engineering",
         "Computer Science",
         "Information Technology"
@@ -227,10 +227,9 @@ test_category_data = {
 
     "Economics": [
         "Agricultural Economics",
-        "Development Economics"
-        "Economic Information Program",
+        "Development Economics",
         "Economics",
-        "Finance and Banking",
+        "Finance and Banking"
     ],
 
     "Education": [
@@ -245,7 +244,6 @@ test_category_data = {
         "Electronic Engineering",
         "Civil Engineering",
         "Computer Engineering",
-        "Electrical and Energy Engineering",
     ],
 
     "Geography": ["Geography"],
@@ -253,7 +251,7 @@ test_category_data = {
 
     "Humanities": [
         "Anthropology",
-        "Archeology",
+        "Archaeology",
         "Asian Studies",
         "Khmer Studies",
         "Southeast Asian Studies"
@@ -332,6 +330,17 @@ if __name__ == "__main__":
         DeclarativeBase.metadata.drop_all(bind=db.engine)
         DeclarativeBase.metadata.create_all(bind=db.engine)
 
-        universities = {university: University.create(university, "en") for university in test_university_data}
+        # Create categories and courses and link them together
         categories = {category: Category.create(category, "en") for category in test_category_data}
         courses = {course: Course.create(course, "en") for course in test_course_data}
+
+        for category, cat_courses in test_category_data.items():
+            for course in cat_courses:
+                categories[category].add_course(courses[course])
+
+        # Create universities and link to courses
+        universities = {university: University.create(university, "en") for university in test_university_data}
+
+        for university, uni_data in test_university_data.items():
+            for course in uni_data["courses"]:
+                universities[university].add_course(courses[course])

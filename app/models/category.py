@@ -39,7 +39,12 @@ class Category(BaseModel, DeclarativeBase):
             return result.one()
         except:
             return None
-            
+
+    def add_course(self, course):
+        self.courses.append(course)
+        db.session.add(self)
+        db.session.commit()
+
     @classmethod
     def create(cls, category_name, language):
         category = cls(category_name, language)
