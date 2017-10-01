@@ -2,8 +2,37 @@ body {
     background-color: #ffb84d
 }
 
-.navbar-default {
+nav {
+	background-color: #efa83d;
 	margin-top: 1em;
-    background-color: #efa83d;
-    background-image: none;
+	border-radius: 5px;
+}
+
+ul.navbar-nav {
+	margin-left:1em;
+}
+
+.nav-item.active {
+	background-color: #ffb84d;
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+img.navbar-brand {
+	width:100px;
+}
+
+div#content {
+	margin-top: 1em;
+}
+
+div.card.plain {
+	margin-top: 1em;
+	padding-top: 1em;
+	padding-left: 1em;
+	background-color: #ffb84d;
+}
+
+div.card.plain>div.card-header {
+	background-color: inherit;
 }

@@ -1,0 +1,15 @@
+{% macro li_navitem(active_item, name) -%}
+	{% if active_item == name %}
+	<li class="nav-item active">
+	{% else %}
+	<li class="nav-item">
+	{% endif %}
+{%- endmacro %}
+
+{% macro a_navlink(active_item, name, link_href, link_name) -%}
+	<a class="nav-link" href="{{link_href}}">{{link_name}}
+	{% if active_item == name %}
+	<span class="sr-only">(current)</span>
+	{% endif %}
+	<a>
+{%- endmacro %}

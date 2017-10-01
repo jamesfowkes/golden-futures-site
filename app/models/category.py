@@ -28,6 +28,9 @@ class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
     def __init__(self, category_name, language):
         self.translations[language].category_name = category_name
 
+    def __hash__(self):
+        return self.category_id
+        
     def __repr__(self):
         return "<ID: '%d', Name: '%s'>" % (self.category_id, self.current_translation.category_name)
 

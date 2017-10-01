@@ -79,7 +79,21 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
     def course_names(self):
         names = [c.course_name for c in self.courses]
         return sorted(names)
-        
+    
+    def categories(self):
+        categories = []
+        for course in self.courses:
+            categories.extend(course.categories)
+
+        return set(categories)
+
+    def courses_by_category(self):
+        category_course_map = {}
+        for category in self.categories():
+            category_course_map[category] = [course for course in category.courses if course in self.courses]
+
+        return category_course_map            
+
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
     university_name = sa.Column(sa.Unicode(80))
