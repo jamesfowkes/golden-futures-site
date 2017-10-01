@@ -1,49 +1,64 @@
+from functools import total_ordering
+
 import json
 
 import flask_login
 
+import sqlalchemy as sa
+from sqlalchemy_i18n import Translatable, translation_base
+from sqlalchemy_i18n.utils import get_current_locale
+
+import app
 from app.database import db
 
-from app.models.base_model import BaseModel, DeclarativeBase
+from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
 from app.models.category_course_map import category_course_map_table
 
-class Category(BaseModel, DeclarativeBase):
+@total_ordering
+class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "Category"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
 
     category_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    category_name = db.Column(db.String(80))
     courses = db.relationship('Course', secondary=category_course_map_table, back_populates="categories")
-    language = db.Column(db.String(10))
-
-    __table_args__ = (db.UniqueConstraint('category_name', 'language', name='_category_unique_cons'),)
 
     def __init__(self, category_name, language):
-        self.category_name = category_name
-        self.language = language
+        self.translations[language].category_name = category_name
 
     def __repr__(self):
-        return "<ID: '%d', Name: '%s'>" % (self.category_id, self.category_name)
+        return "<ID: '%d', Name: '%s'>" % (self.category_id, self.current_translation.category_name)
+
+    def __eq__(self, other):
+        return self.current_translation.category_name == other.current_translation.category_name
+
+    def __ne__(self, other):
+        return self.current_translation.category_name != other.current_translation.category_name
+
+    def __lt__(self, other):
+        return self.current_translation.category_name < other.current_translation.category_name
 
     def json(self):
-        return {"category_name": self.category_name, "language": self.language}
+        return {"category_name": self.current_translation.category_name, "language": self.language}
 
-    @classmethod    
-    def get_single(cls, category_name, language=None):
-        result = db.session.query(cls).filter_by(category_name=category_name)
-        if language:
-            result = result.filter_by(language=language)
+    def set_intro(self, intro):
+        self.current_translation.category_intro = intro
+        db.session.commit()
 
-        try:
-            return result.one()
-        except:
-            return None
+    def set_careers(self, careers):
+        self.current_translation.category_careers = careers
+        db.session.commit()
 
     def add_course(self, course):
         self.courses.append(course)
         db.session.add(self)
         db.session.commit()
+
+    def course_names(self):
+        names = [c.course_name for c in self.courses]
+        return sorted(names)
 
     @classmethod
     def create(cls, category_name, language):
@@ -51,3 +66,9 @@ class Category(BaseModel, DeclarativeBase):
         db.session.add(category)
         db.session.commit()
         return category
+
+class CategoryTranslation(translation_base(Category)):
+    __tablename__ = 'CategoryTranslation'
+    category_name = sa.Column(sa.Unicode(80))
+    category_intro = sa.Column(sa.Unicode())
+    category_careers = sa.Column(sa.Unicode())    

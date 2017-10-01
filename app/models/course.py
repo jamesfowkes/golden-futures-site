@@ -1,3 +1,5 @@
+from functools import total_ordering
+
 import json
 
 import flask_login
@@ -8,6 +10,7 @@ from app.models.base_model import BaseModel, DeclarativeBase
 from app.models.university_course_map import university_course_map_table
 from app.models.category_course_map import category_course_map_table
 
+@total_ordering
 class Course(BaseModel, DeclarativeBase):
 
     __tablename__ = "Course"
@@ -28,12 +31,24 @@ class Course(BaseModel, DeclarativeBase):
     def __repr__(self):
         return "<ID: %d, Lang: %s, Name(s): '%s', Categories: '%s'>" % (self.course_id, self.language, self.course_name, ", ". join([c.category_name for c in self.categories]))
 
+    def __eq__(self, other):
+        return self.course_name == other.course_name
+
+    def __ne__(self, other):
+        return self.course_name != other.course_name
+
+    def __lt__(self, other):
+        return self.course_name < other.course_name
+
     def json(self):
         return {
             "course_name": self.course_name,
             "category_name": ", ".join([c.category_name for c in self.categories])
         }
 
+    def university_names(self):
+        return [uni.university_name for uni in self.universities]
+        
     @classmethod
     def create(cls, course_name, language):
         course = cls(course_name, language)

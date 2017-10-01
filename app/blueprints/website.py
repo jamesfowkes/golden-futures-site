@@ -6,6 +6,9 @@ import jinja2
 from app import app
 from app.locale import get_locale
 
+from app.models.university import University
+from app.models.category import Category
+
 logger = logging.getLogger(__name__)
 
 website = Blueprint('website', __name__, template_folder='templates', url_prefix='/<lang>')
@@ -31,16 +34,32 @@ def pull_lang(endpoint, values):
 
 @website.route("/", methods=['GET'])
 def render_index():
+    g.active="index"
     target_template = "index." + g.lang + ".tpl"
     return render_template(target_template)
 
 @website.route("/universities", methods=['GET'])
 def render_universities():
-    return render_template('university.index.tpl')
+    g.active="universities"
+    all_universities = University.all()
+    return render_template('universities.index.tpl', universities=all_universities)
+
+@website.route("/university/<university_id>", methods=['GET'])
+def render_university(university_id):
+    g.active="universities"
+    g.ep_data["university_id"] = university_id
+    university = University.get_single_by_id(university_id)
+    return render_template('university.index.tpl', university=university)
 
 @website.route("/courses", methods=['GET'])
 def render_courses():
-    return render_template('course.index.tpl')
+    g.active="categories"
+    all_categories = Category.all()
+    return render_template('course.index.tpl', categories=all_categories)
+
+@website.before_request
+def init_request():
+    g.ep_data = {}
 
 def init_app(app):
     app.register_blueprint(website)

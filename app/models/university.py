@@ -40,6 +40,15 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
     def __repr__(self):
         return "<ID: '%d', Name: '%s'>" % (self.university_id, self.university_name)
 
+    def __eq__(self, other):
+        return self.current_translation.university_name == other.current_translation.university_name
+
+    def __ne__(self, other):
+        return self.current_translation.university_name != other.current_translation.university_name
+
+    def __lt__(self, other):
+        return self.current_translation.university_name < other.current_translation.university_name
+
     def json(self):
         return {"university_id": self.university_id, "university_name": self.current_translation.university_name, "language": get_current_locale(self)}
     
@@ -67,6 +76,10 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
         db.session.add(self)
         db.session.commit()
 
+    def course_names(self):
+        names = [c.course_name for c in self.courses]
+        return sorted(names)
+        
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
     university_name = sa.Column(sa.Unicode(80))

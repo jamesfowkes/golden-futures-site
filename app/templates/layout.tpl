@@ -29,9 +29,15 @@
                 </div>
                 <div id="nav" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="{{url_for('website.render_index')}}">{{_("Home")}}</a></li>
-                        <li><a href="{{url_for('website.render_universities')}}">{{_("Universities")}}</a></li>
-                        <li><a href="{{url_for('website.render_courses')}}">{{_("Courses")}}</a></li>
+                        <li class={{"active" if g.active=="index" else ""}}>
+                            <a href="{{url_for('website.render_index')}}">{{_("Home")}}</a>
+                        </li>
+                        <li class={{"active" if g.active=="universities" else ""}}>
+                            <a href="{{url_for('website.render_universities')}}">{{_("Universities")}}</a>
+                        </li>
+                        <li class={{"active" if g.active=="categories" else ""}}>
+                            <a href="{{url_for('website.render_courses')}}">{{_("Courses")}}</a>
+                        </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
@@ -39,8 +45,8 @@
                                 {{ g.lang | language_name }}<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{url_for(request.url_rule.endpoint, lang='km')}}" class="language">{{_("Khmer")}}</a></li>
-                                <li><a href="{{url_for(request.url_rule.endpoint, lang='en')}}" class="language">{{_("English")}}</a></li>
+                                <li><a href="{{url_for(request.url_rule.endpoint, lang='km', **g.ep_data)}}" class="language">{{_("Khmer")}}</a></li>
+                                <li><a href="{{url_for(request.url_rule.endpoint, lang='en', **g.ep_data)}}" class="language">{{_("English")}}</a></li>
                             </ul>
                         </li>
                     </ul>

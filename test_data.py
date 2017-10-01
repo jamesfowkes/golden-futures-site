@@ -6,6 +6,7 @@ Unit and BDD tests use their own datasets.
 """
 
 import os
+import sys
 
 from flask import current_app
 
@@ -29,6 +30,7 @@ test_university_data = {
         "courses": [
             "Architecture", "Information Technology", "Civil Engineering", "Electrical Engineering", "Electronic Engineering"
         ],
+
         "admission": [
             "Bachelor Degree:BAC II Certificate, or High Diploma of Technical or Specialty, or Associate Degree."
         ],
@@ -299,7 +301,7 @@ test_university_data = {
         ],
         "facilities": []
     },
-    "Prek Leap National College ofAgriculture": {
+    "Prek Leap National College of Agriculture": {
         "courses": [
             "Agribusiness/Economics",
             "Agricultural Economics",
@@ -308,8 +310,7 @@ test_university_data = {
             "Agronomy Science",
             "Animal Health & Production",
             "Animal Sciences & Veterinary Medicine",
-            "Aquatic Resource",
-            "Management & Aquaculture",
+            "Aquatic Resource Management & Aquaculture",
             "Fisheries",
             "Food Processing",
             "Food Technology",
@@ -350,254 +351,279 @@ test_university_data = {
     }
 }
 
-test_course_data = [
-    "Accounting",
-    "Agribusiness/Economics",
-    "Agricultural Economics",
-    "Agricultural Extension & Rural Development",
-    "Agricultural Management",
-    "Agronomy Science",
-    "Animal Health & Production",
-    "Animal Sciences & Veterinary Medicine",
-    "Anthropology",
-    "Aquatic Resource",
-    "Archaeology",
-    "Architecture",
-    "Architecture and Interior Design",
-    "ASEAN Law",
-    "Asian Studies",
-    "Banking and Finance",
-    "Biology",
-    "Business Administration",
-    "Business Information System",
-    "Business Statistics and Forecasting",
-    "Chemistry",
-    "Chinese for Business",
-    "Chinese Language",
-    "Chinese",
-    "Civil Engineering",
-    "Communications",
-    "Computer Engineering",
-    "Computer Science",
-    "Development Economics",
-    "Early Childhood Education",
-    "Economics",
-    "Education and Languages",
-    "Electrical Engineering",
-    "Electronic Engineering",
-    "Electronics and Electricity",
-    "English",
-    "English Business Communication",
-    "English for Business",
-    "English for Communication",
-    "English for Translation and Interpretation",
-    "Environmental Policy and Planning",
-    "Environmental Science",
-    "Ethnomusicology",
-    "Finance and Banking",
-    "Fisheries",
-    "Food Processing",
-    "Food Technology",
-    "Forestry",
-    "Geography",
-    "Graphic Design",
-    "History",
-    "Horticulture",
-    "Hospitality Management",
-    "Hotel and Hospitality Management",
-    "Hotel and Tourism Management",
-    "Information Technology",
-    "Interior Design",
-    "International Business",
-    "International Relations",
-    "Japanese Language",
-    "Journalism",
-    "Khmer Studies",
-    "Law",
-    "Legal Studies",
-    "Management",
-    "Management & Aquaculture",
-    "Marketing",
-    "Mathematics",
-    "Media Management",
-    "Music",
-    "Philosophy",
-    "Political Science",
-    "Product Design",
-    "Psychology",
-    "Public Administration",
-    "Religion",
-    "Sociology",
-    "Software Engineering",
-    "Southeast Asian Studies",
-    "Teaching English as a Foreign Language",
-    "Teaching English to Speakers of Other Languages(TESOL)",
-    "Tourism and Guide",
-    "Tourism Management"
-]
-
 test_category_data = {
-    "Accounting": ["Accounting", "Banking and Finance", "Finance and Banking"],
+    "Accounting": {
+        "courses": [
+            "Accounting", "Banking and Finance", "Finance and Banking"
+        ],
+        "intro": "Accountants usually interpret and report the financial information about a business. With experience they can provide financial advice to management teams.",
+        "careers": "accounting technician, accountant, company secretary, actuary, economist, conveyance, consultant, purchasing manager, retail banker, tax adviser"
+    },
 
-    "Agriculture": [
-        "Agribusiness/Economics",
-        "Agricultural Economics",
-        "Agricultural Extension & Rural Development",
-        "Agricultural Management",
-        "Agronomy Science",
-        "Animal Health & Production",
-        "Animal Sciences & Veterinary Medicine",
-        "Fisheries",
-        "Food Processing",
-        "Food Technology",
-        "Forestry",
-        "Horticulture"
-    ],
+    "Agriculture": {
+        "courses": [ "Agribusiness/Economics", "Agricultural Economics", "Agricultural Extension & Rural Development",
+            "Agricultural Management", "Agronomy Science", "Animal Health & Production", "Animal Sciences & Veterinary Medicine",
+            "Aquatic Resource Management & Aquaculture", "Fisheries", "Food Processing", "Food Technology", "Forestry",
+            "Horticulture"
+        ],
+        "intro": "Agriculture is a science focusing on producing goods through forestry as well as farming. It involves Biology, Chemistry and Environmental Studies, alongside aspects of Food Science, Technology, Economics and Management.",
+        "careers":"Farm Management, Research or Advisory, Selling or Marketing agricultural goods or Technology."
+    },
 
-    "Architecture": [
-        "Architecture",
-        "Architecture and Interior Design"
-    ],
-    
-    "Art and Design": [
-        "Architecture and Interior Design",
-        "Interior Design"
-    ],
+    "Architecture": {
+        "courses": [
+            "Architecture", "Architecture and Interior Design"
+        ],
+        "intro": "Architecture is the art and science of designing buildings and other physical structures.",
+        "careers": "architect, architectural technologist, interior and spatial designer, building surveyor, higher education lecturer, structural engineer, town planner, production designer (theatre/television/film), historic buildings inspector"
+    },
 
-    "Biology": ["Biology"],
+    "Art and Design": {
+        "courses": [
+            "Architecture and Interior Design", "Interior Design", "Graphic Design", "Product Design"
+        ],
+        "intro": "A degree in design prepares students to apply artistic principles and techniques in their area of specialization.",
+        "careers": "animator, ceramics designer, creative copywriter, fashion designer, fine artist, furniture designer / restorer, glass blower, graphic designer, illustrator, industrial / product designer, interior designer, jewellery designer, make-up artist, museum / gallery conservator, photographer, production designer (theatre, TV, film), tattoo artist, textile designer"
+    },
 
-    "Chemistry": ["Chemistry"],
+    "Biology": {
+        "courses": [
+            "Biology"
+        ],
+        "intro": "A major in biology provides students with a broad base for understanding principles governing life processes at all levels–molecular, cellular and ecological.",
+        "careers": "Applied Biology, (Environmental) Research, or Teaching."
+    },
 
-    "Business": [
-        "Banking and Finance",
-        "Business Administration",
-        "International Business"
-    ],
 
-    "Computing": [
-        "Business Information System",
-        "Computer Engineering",
-        "Computer Science",
-        "Information Technology"
-    ],
+    "Chemistry": {
+        "courses": [
+            "Chemistry"
+        ],
+        "intro": "Chemistry can be defined as the study of matter – what it’s composed of and its structure, its properties, and how it reacts and changes when exposed to different situations",
+        "careers": "Research and Development in Manufacturing Firms. Jobs are also available in the Chemical, Pharmaceutical and Food Industries."
+    },
 
-    "Economics": [
-        "Agricultural Economics",
-        "Development Economics",
-        "Economics",
-        "Finance and Banking"
-    ],
 
-    "Education": [
-        "Early Childhood Education",
-        "Education and Languages",
-        "Teaching English as a Foreign Language",
-        "Teaching English to Speakers of Other Languages(TESOL)"
-    ],
+    "Business": {
+        "courses": [
+            "Banking and Finance", "Business Administration", "International Business", "Business Statistics and Forecasting"
+        ],
+        "intro": "A business administration degree focuses on business management and prepares you to work in the world of commerce.",
+        "careers": "production, sales, accounting, marketing"
+    },
 
-    "Engineering": [
-        "Electrical Engineering",
-        "Electronic Engineering",
-        "Civil Engineering",
-        "Computer Engineering",
-    ],
+    "Computing": {
+        "courses": [
+            "Business Information System", "Computer Engineering", "Computer Science", "Information Technology"
+        ],
+        "intro": "Study computing problems and solutions, and the design of computer systems from a scientific perspective.",
+        "careers": "database administrator, games developer, information systems manager, IT consultant, multimedia programmer, systems analyst / developer, web designer / developer"
+    },
 
-    "Geography": ["Geography"],
-    "History": ["History", "Archaeology"],
+    "Economics": {
+        "courses": [
+            "Agricultural Economics", "Development Economics", "Economics", "Finance and Banking"
+        ],
+        "intro": "Economics educates students on how the economy works and what issues and trends it faces, using parts of Mathematics and Technology.",
+        "careers": "accountant, economist, financial risk / investment analyst, statistician"
+    },
 
-    "Humanities": [
-        "Anthropology",
-        "Archaeology",
-        "Asian Studies",
-        "Khmer Studies",
-        "Southeast Asian Studies"
-    ],
+    "Education": {
+        "courses": [
+            "Early Childhood Education", "Education and Languages", "Teaching English as a Foreign Language",
+            "Teaching English to Speakers of Other Languages(TESOL)"
+        ],
+        "intro": "Helping others through teaching, at any level, can be a very rewarding career choice. A degree in education can prepare students to teach at various levels depending on your preferences.",
+        "careers": "community education officer, teacher, education administrator, teaching assistant, youth worker"
+    },
 
-    "Languages": [
-        "Asian Studies",
-        "Chinese",
-        "Chinese for Business",
-        "English",
-        "English for Business",
-        "English for Communication",
-        "Japanese Language",
-        "Khmer Studies",
-        "Southeast Asian Studies"
-    ],
+    "Engineering": {
+        "courses": [
+            "Electrical Engineering", "Electronic Engineering", "Civil Engineering", "Computer Engineering",
+            "Electronics and Electricity", "Software Engineering"
+        ],
+       "intro": "Apply scientific, economic and social knowledge to designing and building structures, machines and processes. Within the engineering profession, there are thousands of challenging activities in areas such as research, development, design, manufacture and operation of products and services.",
+       "careers": "logistics, engineer, patent lawyer, technical consultant"
+    },
 
-    "Law": [
-        "Law",
-        "ASEAN Law",
-        "Legal Studies"
-    ],
+    "Geography": {
+        "courses": [
+            "Geography"
+        ],
+        "intro": "The study of the physical features of the earth and its atmosphere, and of human activity as it affects and is affected by these, including the distribution of populations and resources and political and economic activities.",
+        "careers": "urban planning, community development, writer/researcher"
+    },
 
-    "Management": [
-        "Hospitality Management",
-        "Hotel and Hospitality Management",
-        "Hotel and Tourism Management",
-        "Management",
-        "Tourism Management",
-        "Media Management"
-    ],
+    "History": {
+        "courses": [
+            "History", "Archaeology"
+        ],
+    "intro": "A degree in history focuses on the interpretation of the past, criticizing evidence and theories about events.",
+    "careers": "teaching, law, social work, business administration"
+    },
 
-    "Marketing": [
-        "Marketing"
-    ],
+    "Humanities": {
+        "courses": [
+            "Anthropology", "Archaeology", "Asian Studies", "Khmer Studies", "Southeast Asian Studies"
+        ],
+        "intro": "Humanities focus on the cultures of various peoples from different periods of time and locations.",
+        "careers": "teacher, advertising sales agent, technical writer, artist, counselor, event organizer, public relations manager, travel agent, lawyer, editor, museum worker / curator, interpreter, translator, genealogist, journalist, foreign correspondent, linguist, human resources specialist"
+    },
 
-    "Mathematics": ["Mathematics"],
+    "Languages": {
+        "courses": [
+            "Asian Studies", "Chinese", "Chinese Language", "Chinese for Business", "English", "English for Business",
+            "English for Communication", "Japanese Language", "Khmer Studies", "Southeast Asian Studies",
+            "English for Translation and Interpretation", "English Business Communication"
+        ],
+        "intro": "The economy is becoming increasingly international and more and more companies need employees who can communicate effectively with colleagues and organizations across the world.",
+        "careers": "translator, interpreter, teacher, foreign civil service, advertising, editing and publishing, subtitles and voice-overs"
+    },
 
-    "Media": ["Journalism"],
+    "Law": {
+        "courses": [
+            "Law", "ASEAN Law", "Legal Studies"
+        ],
+        "intro": "Within the field of law, there are many different areas of specialization such as business law, public law, private law, criminal law and corporate law.",
+        "careers": "lawyer, judge, professional counselor, mediator, politician, banker, entrepreneur, public interest advocate, journalist"
+    },
 
-    "Music": [
-        "Ethnomusicology",
-        "Music"
-    ],
+    "Management": {
+        "courses": [
+            "Hospitality Management", "Hotel and Hospitality Management","Hotel and Tourism Management", "Management",
+            "Tourism Management", "Media Management"
+        ],
+        "intro": "Examines policies and practices in the context of organizations, management theory, leadership, communication, employment relations and organizational behavior.",
+        "careers": "manager, business / financial analyst, accountant, sales representative"
+    },
 
-    "Other Sciences": [
-        "Environmental Science",
-        "Environmental Policy and Planning"
-    ],
+    "Marketing": {
+        "courses": [
+            "Marketing"
+        ],
+        "intro": "Involves researching and satisfying customer needs, through product and service development, planning, pricing, advertising, promotion and distribution.",
+        "careers": "Sales assistant, market researcher, advertising"
+    },
 
-    "Politics": [
-        "Political Science"
-    ],
+    "Mathematics": {
+        "courses": [
+            "Mathematics"
+        ],
+        "intro": "A degree in mathematics provides you with a broad range of skills in problem solving, logical reasoning and flexible thinking.",
+        "careers": "teacher, actuary, operational researcher, statistician"
+    },
 
-    "Public Sector": ["Public Administration"],
+    "Media": {
+        "courses": [
+            "Journalism", "Communications"
+        ],
+        "intro": "Develop and create media and services for communications, advertising, and marketing purposes.",
+        "careers": "media planner, multimedia specialist, researcher, public relations officer, television / film / video producer"
+    },
 
-    "Religion and Philosophy": [
-        "Religion",
-        "Philosophy"
-    ],
+    "Music": {
+        "courses": [
+            "Ethnomusicology",
+            "Music"
+        ],
+        "intro": "Develops musical abilities and students also learn the history, style and practices of musicians and composers.",
+        "careers": "music therapist, musician, teacher, sound technician"
+    },
 
-    "Social Sciences": [
-        "International Relations",
-        "Psychology",
-        "Sociology",
-    ],
+    "Other Sciences": {
+        "courses": [
+            "Environmental Science", "Environmental Policy and Planning"
+        ],
+        "intro": "These degrees are branches or mixtures of the three core sciences specializing in a range of areas.",
+        "careers": "scientist, environmental researcher / planner"
+    },
 
-    "Tourism": [
-        "Hotel and Tourism Management"
-    ]
+    "Politics": {
+        "courses": [
+            "Political Science"
+        ],
+        "intro": "Politics studies people’s values, what governments do, and the effect of all on our lives. It focuses on issues such as democracy, power, freedom, political economy, social movements, international law and conflict.",
+        "careers": "politician, charity officer, diplomatic services operational officer, human resources officer, market researcher, newspaper journalist"
+    },
+
+    "Public Sector": {
+        "courses": [
+        "Public Administration"
+        ],
+        "intro": "Teaches students to serve as managers in the local and state departments of the government.",
+        "careers": "Government / non-government organizations"
+    },
+
+    "Religion and Philosophy": {
+        "courses": [
+            "Religion", "Philosophy"
+        ],
+        "intro": "A degree in religion teaches students of the beliefs and practices of the world’s religions. A degree in philosophy develops intellectual thinking through solving complex and abstract questions.",
+        "careers": "lawyer, teacher, accountant, social worker, banker, entrepreneur"
+    },
+
+    "Social Sciences": {
+        "courses": [
+            "International Relations", "Psychology", "Sociology",
+        ],
+        "intro": "Social science is the scientific study of human society and social relationships.",
+        "careers": "teacher, social worker, psychologist, manager, anthropologist"
+    },
+
+    "Tourism": {
+        "courses": [
+           "Hotel and Tourism Management", "Tourism and Guide"
+        ],
+        "intro": "This degree prepares students to manage travel-related business and related tour services such as travel agency management, tour arranging and planning, tourism marketing, and tourism policy.",
+        "careers": "holiday representative, tour manager, tourism officer, travel agency manager"
+    }
 }
+
 
 if __name__ == "__main__":
 
+    ## Build courses list from category data
+    test_course_data = []
+    for _, category_data in test_category_data.items():
+        test_course_data.extend(category_data["courses"])
+
+    test_course_data = set(test_course_data)
+
+    print("Creating application context...", end=""); sys.stdout.flush()
     with app.app_context():
+        print("done.")
+        
+        print("Creating empty database...", end=""); sys.stdout.flush()
         DeclarativeBase.metadata.drop_all(bind=db.engine)
         DeclarativeBase.metadata.create_all(bind=db.engine)
-
-        # Create categories and courses and link them together
-        categories = {category: Category.create(category, "en") for category in test_category_data}
+        print("done.")
+        
+        print("Creating courses...", end=""); sys.stdout.flush()
         courses = {course: Course.create(course, "en") for course in test_course_data}
+        print("done.")
 
-        for category, cat_courses in test_category_data.items():
-            for course in cat_courses:
-                categories[category].add_course(courses[course])
+        print("Creating categories...", end=""); sys.stdout.flush()
+        categories = {}
+        for category_name, category_data in test_category_data.items():
+            new_category = Category.create(category_name, "en")
+            categories[category_name] = new_category
+
+            new_category.set_intro(category_data["intro"])
+            new_category.set_careers(category_data["careers"])
+            for course in category_data["courses"]:
+                categories[category_name].add_course(courses[course])
+
+            
+
+        print("done.")
 
         # Create universities and link to courses
+        print("Creating universities...")
         universities = {university: University.create(university, "en") for university in test_university_data}
 
         for university, uni_data in test_university_data.items():
+
+            print(university + "...")
             for course in uni_data["courses"]:
                 universities[university].add_course(courses[course])
 
@@ -620,3 +646,5 @@ if __name__ == "__main__":
 
             for facility in uni_data["facilities"]:
                 Facility.create(universities[university].university_id, facility, "en")
+
+    print("Finished creating test data")

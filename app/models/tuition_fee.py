@@ -48,7 +48,22 @@ class TuitionFee(Translatable, BaseModelTranslateable, DeclarativeBase):
             "award": self.current_translation.award,
             "period": self.current_translation.period
         }
-        
+    
+    def __str__(self):
+        if self.current_translation.tuition_fee_min == self.current_translation.tuition_fee_max:
+            return "{award}: {currency}{tuition_fee_min} / {period}".format(
+                award = self.current_translation.award,
+                currency = self.current_translation.currency,
+                tuition_fee_min = self.current_translation.tuition_fee_min,
+                period = self.current_translation.period)
+        else:
+            return "{award}: {currency}{tuition_fee_min} - {currency}{tuition_fee_min} / {period}".format(
+                award = self.current_translation.award,
+                currency = self.current_translation.currency,
+                tuition_fee_min = self.current_translation.tuition_fee_min,
+                tuition_fee_max = self.current_translation.tuition_fee_max,
+                period = self.current_translation.period)
+
 class TuitionFeeTranslation(translation_base(TuitionFee)):
     __tablename__ = 'TuitionFeeTranslation'
     tuition_fee_min = sa.Column(sa.Integer)

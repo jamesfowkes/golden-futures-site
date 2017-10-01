@@ -17,9 +17,12 @@ def get_locale():
     try:
         locale = g.lang
     except:
-        locale = request.accept_languages.best_match(app.config["SUPPORTED_LOCALES"])
-
-    logger.info(locale)
+        try:
+            logger.info("No language in g.lang, falling back to request languages")
+            locale = request.accept_languages.best_match(app.config["SUPPORTED_LOCALES"])
+        except:
+            logger.info("No request (not in context?), falling back to 'en'")
+            locale = "en"
 
     return locale
     

@@ -11,6 +11,10 @@ class __Deleteable__:
         db.session.commit()
 
 class BaseModel(__Deleteable__):
+
+    @classmethod
+    def all(cls):
+        return db.session.query(cls).all()
         
     @classmethod
     def get(cls, **kwargs):
@@ -24,6 +28,10 @@ class BaseModel(__Deleteable__):
             return None
 
 class BaseModelTranslateable(__Deleteable__):
+        
+    @classmethod
+    def all(cls):
+        return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).all()
         
     @classmethod
     def get(cls, **kwargs):
