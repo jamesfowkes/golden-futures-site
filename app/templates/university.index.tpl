@@ -4,6 +4,9 @@
 <div class="container">
     <h1>{{university.university_name}}</h1>
 
+    <h2>{{_("Courses")}}</h2>
+    <p>{{ university.course_names() | join(", ") }}</p>
+
     <h2>{{_("Admissions")}}</h2>
     <ul>
         {% for admission in university.admissions %}
@@ -11,7 +14,6 @@
         {% endfor %}
     </ul>
     
-
     <h2>{{_("Tuition Fees")}}</h2>
     <ul>
         {% for tuition_fee in university.tuition_fees %}

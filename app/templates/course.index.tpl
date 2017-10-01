@@ -15,9 +15,14 @@
             <div id="{{category.category_id}}_collapse" class="collapse" role="tabpanel" aria-labelledby="headingOne">
                 <div class="card-block">
                     <p><strong>{{category.category_intro}}</strong></p>
+                    <p><strong>{{_("Courses and Universities:")}}</strong></p>
                     {% for course in category.courses | sort %}
                         <div>
-                            <p><i>{{course.course_name}}</i>: {{course.university_names() | join(", ")}}</p>
+                            <p><i>{{course.course_name}}</i>:
+                            {% for university in course.universities %}
+                                <a href="{{url_for('.render_university', university_id=university.university_id)}}">{{university.university_name}}</a>
+                            {% endfor %}
+                            </p>
                         </div>
                     {% endfor %}
                 </div>
