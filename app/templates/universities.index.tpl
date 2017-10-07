@@ -35,10 +35,23 @@
             {% for tuition_fee in university.tuition_fees %}
             <p class="card-text">{{ tuition_fee }}</p>
             {% endfor %}
+            <p class="card-text courses">
+            Courses:
+                {% for course in university.courses -%}
+                <span class="course category_span {% for category in course.categories%} category_{{category.category_id}} {% endfor %}">
+                    {{course.course_name}}{% if not loop.last %}<span class="comma">,</span>{% endif %}
+                </span>
+                {%- endfor %}
+            </p>
         </div>
     </div>
     {% endfor %}
     
 </div>
 
+{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    <script src="{{url_for('static', filename='course_filter.js')}}"></script>
 {% endblock %}
