@@ -42,7 +42,12 @@ def render_index():
 def render_universities():
     g.active="universities"
     all_universities = University.all()
-    return render_template('universities.index.tpl', universities=all_universities)
+    all_categories = Category.all()
+    data = {
+        "universities": all_universities,
+        "categories": all_categories
+    }
+    return render_template('universities.index.tpl', data=data)
 
 @website.route("/university/<university_id>", methods=['GET'])
 def render_university(university_id):
