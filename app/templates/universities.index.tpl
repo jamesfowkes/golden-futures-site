@@ -3,7 +3,27 @@
 {% block content %}
 <div class="container">
 
-    <div id="filtering">
+    <div class="card plain" id="filtering">
+        <h4 class="card-title">Search and Filter</h4>
+        <div class="card-body">
+            <div class="btn-group">
+                <div class="dropdown" id="course_filter_dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="course_filter_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ _("Filter by course") }}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="course_filter_btn">
+                        {% for category in data["categories"] | sort %}
+                            <a class="dropdown-item category_filter_button" id="{{ category.category_id }}" href="#">
+                                {{ category.category_name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-default" type="button" id="reset_filter_button">{{ _("Reset") }}</button>
+            </div>
+        </div>
     </div>
 
     {% for university in universities | sort %}
