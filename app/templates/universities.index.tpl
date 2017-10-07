@@ -26,8 +26,8 @@
         </div>
     </div>
 
-    {% for university in universities | sort %}
-    <div class="card plain">
+    {% for university in data["universities"] | sort %}
+    <div class="card plain university_card {% for category in university.categories() %} category_{{category.category_id}} {% endfor %}">
         <h4 class="card-title">
             <a class=".card-link", href="{{url_for('.render_university', university_id=university.university_id)}}">{{university.university_name}}</a>
         </h4>
