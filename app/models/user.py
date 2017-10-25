@@ -1,3 +1,4 @@
+import logging
 import json
 
 import flask_login
@@ -7,6 +8,8 @@ from app.encrypt import bcrypt
 
 from app.models.base_model import BaseModel, DeclarativeBase
 
+logger = logging.getLogger(__name__)
+
 login_manager = flask_login.LoginManager()
 
 def init_app(app):
@@ -15,6 +18,7 @@ def init_app(app):
 @login_manager.user_loader
 def load_user(user_id):
     return User.get_single(username=user_id)
+
 
 class User(BaseModel, DeclarativeBase, flask_login.UserMixin):
     

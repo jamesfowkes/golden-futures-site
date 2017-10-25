@@ -11,26 +11,12 @@ from app.models.category import Category
 
 logger = logging.getLogger(__name__)
 
-website = Blueprint('website', __name__, template_folder='templates', url_prefix='/<lang>')
+website = Blueprint('website', __name__, template_folder='templates')
 
 @jinja2.contextfilter
 @website.app_template_filter()
 def language_name(context, lang):
     return app.config["SUPPORTED_LOCALES"][lang]
-
-@website.url_defaults
-def add_language_code(endpoint, values):
-    values.setdefault('lang', g.lang)
-
-@website.url_value_preprocessor
-def pull_lang(endpoint, values):
-    requested_language = values.pop('lang')
-    logger.info("Requested: %s", requested_language)
-    if requested_language in app.config["SUPPORTED_LOCALES"]:
-        g.lang = requested_language
-    else:
-        g.lang = get_locale()
-        logger.info("%s not supported, using %s from get_locale", requested_language, g.lang)
 
 @website.route("/", methods=['GET'])
 def render_index():
@@ -64,6 +50,7 @@ def render_courses():
 
 @website.before_request
 def init_request():
+    g.lang = get_locale()
     g.ep_data = {}
 
 def init_app(app):
