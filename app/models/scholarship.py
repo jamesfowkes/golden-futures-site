@@ -26,6 +26,12 @@ class Scholarship(Translatable, BaseModelTranslateable, DeclarativeBase):
         self.university_id = university_id
         self.translations[language].scholarship_string = scholarship
 
+    def add_translation(self, translation, language=None):
+        if language:
+            self.translations[language].scholarship_string = translation
+        else:
+            self.current_translation.scholarship_string = translation
+
     @classmethod
     def create(cls, university_id, scholarship, language=None):
         university_id = int(university_id)

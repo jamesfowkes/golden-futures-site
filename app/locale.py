@@ -17,13 +17,19 @@ babel = Babel()
 @babel.localeselector
 def get_locale():
 
-    # If the request already has a language set, use that
+    # If the flask request global already has a language set, use that
     try:
         locale = g.lang
-        logger.info("Loaded language %s from request", locale)
+        logger.info("Loaded language %s from flask global", locale)
         return locale
     except:
         pass
+
+    # If there is a URL lang parameter, use that
+    locale = request.args.get("lang", None)
+    if locale:
+        logger.info("Loaded language %s from request URL params", locale)
+        return locale
 
     # Try using the language stored in the session
     session_locale = session.get("lang")

@@ -5,6 +5,7 @@ import jinja2
 
 from app import app
 from app.locale import get_locale
+from app import session
 
 from app.models.university import University
 from app.models.category import Category
@@ -21,7 +22,7 @@ def language_name(context, lang):
 @website.route("/", methods=['GET'])
 def render_index():
     g.active="index"
-    target_template = "index." + g.lang + ".tpl"
+    target_template = "index.tpl"
     return render_template(target_template)
 
 @website.route("/universities", methods=['GET'])
@@ -51,6 +52,7 @@ def render_courses():
 @website.before_request
 def init_request():
     g.lang = get_locale()
+    session.set("lang", g.lang)
     g.ep_data = {}
 
 def init_app(app):

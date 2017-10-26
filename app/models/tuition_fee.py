@@ -30,6 +30,15 @@ class TuitionFee(Translatable, BaseModelTranslateable, DeclarativeBase):
         self.translations[language].award = award
         self.translations[language].period = period
 
+    def add_translation(self, translation, attr, language=None):
+        if attr not in ["tuition_fee_min", "tuition_fee_max", "currency", "award", "period"]:
+            raise Exception("Translatable attribute %s not recognised".format(attr))
+
+        if language:
+            setattr(self.translations[language], attr, translation)
+        else:
+            setattr(self.current_translation, attr, translation)
+
     @classmethod
     def create(cls, university_id, tuition_fee_min, tuition_fee_max, currency, period, award, language=None):
         university_id = int(university_id)

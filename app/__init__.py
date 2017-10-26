@@ -18,7 +18,7 @@ locale.init_app(app)
 from app import database 
 database.init_app(app)
 
-from app import session 
+from app import session
 session.init_app(app)
 
 from app.models import user

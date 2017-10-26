@@ -22,9 +22,15 @@ class Admission(Translatable, BaseModelTranslateable, DeclarativeBase):
     university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
     university = db.relationship('University', back_populates="admissions")
 
-    def __init__(self, university_id, admission, language):
+    def __init__(self, university_id, admission, language=None):
         self.university_id = university_id
-        self.translations[language].admission_string = admission
+        self.add_translated_admission(admission, language)
+
+    def add_translated_admission(self, admission, language=None):
+        if language:
+            self.translations[language].admission_string = admission
+        else:
+            self.current_translation.admission_string = admission
 
     @classmethod
     def create(cls, university_id, admission, language=None):

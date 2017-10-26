@@ -11,3 +11,7 @@ def init_app(app):
 
 def get(key):
 	return session.get(key, None)
+
+def set(key, value):
+	session[key] = value
+	

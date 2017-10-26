@@ -4,32 +4,38 @@ import json
 
 import flask_login
 
+import sqlalchemy as sa
+from sqlalchemy_i18n import Translatable, translation_base
+
+import app
 from app.database import db
-from app.models.base_model import BaseModel, DeclarativeBase
+from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
 from app.models.university_course_map import university_course_map_table
 from app.models.category_course_map import category_course_map_table
 
 @total_ordering
-class Course(BaseModel, DeclarativeBase):
+class Course(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "Course"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
 
     course_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    course_name =  db.Column(db.String(80), unique=True)
-    language = db.Column(db.String(10))
-    
     universities = db.relationship('University', secondary=university_course_map_table, back_populates="courses")
     categories = db.relationship('Category', secondary=category_course_map_table, back_populates="courses")
 
-    __table_args__ = (db.UniqueConstraint('course_id', 'language', 'course_name', name='_course_unique_cons'),)
+    def __init__(self, course_name, language=None):
+        self.set_name(course_name, language)
 
-    def __init__(self, course_name, language):
-        self.course_name = course_name
-        self.language = language
+    def set_name(self, course_name, language=None):
+        if language:
+            self.translations[language].course_name = course_name
+        else:
+            self.current_translation.course_name = course_name
 
     def __repr__(self):
-        return "<ID: %d, Lang: %s, Name(s): '%s', Categories: '%s'>" % (self.course_id, self.language, self.course_name, ", ". join([c.category_name for c in self.categories]))
+        return "<ID: %d, Name(en): '%s', Categories: '%s'>" % (self.course_id, self.translations["en"].course_name, ", ". join([c.category_name for c in self.categories]))
 
     def __eq__(self, other):
         return self.course_name == other.course_name
@@ -70,3 +76,7 @@ class Course(BaseModel, DeclarativeBase):
     @classmethod
     def get_single(cls, course_name, language):
         return db.session.query(cls).filter_by(course_name=course_name, language=language).one()
+
+class CourseTranslation(translation_base(Course)):
+    __tablename__ = 'CourseTranslation'
+    course_name = sa.Column(sa.Unicode(80))

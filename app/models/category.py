@@ -46,12 +46,24 @@ class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
     def json(self):
         return {"category_name": self.current_translation.category_name, "language": self.language}
 
-    def set_intro(self, intro):
-        self.current_translation.category_intro = intro
+    def set_name(self, category_name, lang):
+        self.translations[lang].category_name = category_name
         db.session.commit()
 
-    def set_careers(self, careers):
-        self.current_translation.category_careers = careers
+    def set_intro(self, intro, lang=None):
+        if lang:
+            self.translations[lang].category_intro = intro
+        else:
+            self.current_translation.category_intro = intro
+
+        db.session.commit()
+
+    def set_careers(self, careers, lang=None):
+        if lang:
+            self.translations[lang].category_careers = careers
+        else:
+            self.current_translation.category_careers = careers
+
         db.session.commit()
 
     def add_course(self, course):

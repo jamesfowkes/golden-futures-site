@@ -24,7 +24,13 @@ class ContactDetail(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     def __init__(self, university_id, contact_detail, language):
         self.university_id = university_id
-        self.translations[language].contact_detail_string = contact_detail
+        self.add_translation(contact_detail, language)
+
+    def add_translation(self, contact_detail, language=None):
+        if language:
+            self.translations[language].contact_detail_string = contact_detail
+        else:
+            self.current_translation.contact_detail_string = contact_detail
 
     @classmethod
     def create(cls, university_id, contact_detail, language=None):

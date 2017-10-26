@@ -579,6 +579,8 @@ test_category_data = {
     }
 }
 
+def khmer(s):
+    return "!" + s + "!"
 
 if __name__ == "__main__":
 
@@ -599,7 +601,11 @@ if __name__ == "__main__":
         print("done.")
         
         print("Creating courses...", end=""); sys.stdout.flush()
-        courses = {course: Course.create(course, "en") for course in test_course_data}
+        courses = {}
+        for course in test_course_data:
+            courses[course] = Course.create(course, "en")
+            courses[course].set_name(khmer(course), "km")
+
         print("done.")
 
         print("Creating categories...", end=""); sys.stdout.flush()
@@ -608,18 +614,24 @@ if __name__ == "__main__":
             new_category = Category.create(category_name, "en")
             categories[category_name] = new_category
 
-            new_category.set_intro(category_data["intro"])
-            new_category.set_careers(category_data["careers"])
+            new_category.set_name(khmer(category_name), "km")
+            new_category.set_intro(category_data["intro"], "en")
+            new_category.set_intro(khmer(category_data["intro"]), "km")
+
+            new_category.set_careers(category_data["careers"], "en")
+            new_category.set_careers(khmer(category_data["careers"]), "km")
+
             for course in category_data["courses"]:
                 categories[category_name].add_course(courses[course])
-
-            
 
         print("done.")
 
         # Create universities and link to courses
         print("Creating universities...")
-        universities = {university: University.create(university, "en") for university in test_university_data}
+        universities = {}
+        for university in test_university_data:
+            universities[university] = University.create(university, "en")
+            universities[university].add_translated_name(khmer(university), "km")
 
         for university, uni_data in test_university_data.items():
 
@@ -628,23 +640,34 @@ if __name__ == "__main__":
                 universities[university].add_course(courses[course])
 
             for admission in uni_data["admission"]:
-                Admission.create(universities[university].university_id, admission, "en")
+                adm = Admission.create(universities[university].university_id, admission, "en")
+                adm.add_translated_admission(khmer(admission), "km")
 
             for tuition_fee in uni_data["tuition_fees"]:
-                TuitionFee.create(
+                fee = TuitionFee.create(
                     universities[university].university_id,
                     tuition_fee["min"], tuition_fee["max"], 
                     tuition_fee["currency"], tuition_fee["period"],
                     tuition_fee["award"], "en"
                 )
 
+                fee.add_translation(int(float(tuition_fee["min"])/ 0.00025), "tuition_fee_min", "km")
+                fee.add_translation(int(float(tuition_fee["max"])/ 0.00025), "tuition_fee_max", "km")
+                fee.add_translation("៛", "currency", "km")
+                fee.add_translation(khmer(tuition_fee["award"]), "award", "km")
+                fee.add_translation(khmer(tuition_fee["period"]), "period", "km")
+
             for scholarship in uni_data["scholarships"]:
-                Scholarship.create(universities[university].university_id, scholarship, "en")
+                sch = Scholarship.create(universities[university].university_id, scholarship, "en")
+                sch.add_translation(khmer("scholarship"), "km")
 
             for contact_detail in uni_data["contact_details"]:
-                ContactDetail.create(universities[university].university_id, contact_detail, "en")
+                det = ContactDetail.create(universities[university].university_id, contact_detail, "en")
+                det.add_translation(khmer(contact_detail), "km")
 
             for facility in uni_data["facilities"]:
-                Facility.create(universities[university].university_id, facility, "en")
+                fac = Facility.create(universities[university].university_id, facility, "en")
+                fac.add_translation(khmer(facility), "km")
 
     print("Finished creating test data")
+

@@ -24,7 +24,13 @@ class Facility(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     def __init__(self, university_id, facility, language):
         self.university_id = university_id
-        self.translations[language].facility_string = facility
+        self.add_translation(facility, language)
+
+    def add_translation(self, facility, language=None):
+        if language:
+            self.translations[language].facility_string = facility
+        else:
+            self.current_translation.facility_string = facility
 
     @classmethod
     def create(cls, university_id, facility, language=None):

@@ -52,8 +52,11 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
     def json(self):
         return {"university_id": self.university_id, "university_name": self.current_translation.university_name, "language": get_current_locale(self)}
     
-    def add_translated_name(self, university_name):
-        self.current_translation.university_name = university_name
+    def add_translated_name(self, university_name, language=None):
+        if language:
+            self.translations[language].university_name = university_name
+        else:
+            self.current_translation.university_name = university_name
         db.session.commit()
         
     @classmethod
