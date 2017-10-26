@@ -97,6 +97,12 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
 
         return category_course_map            
 
+    def maximum_fee(self):
+        return max([fee.tuition_fee_max for fee in self.tuition_fees])
+
+    def minimum_fee(self):
+        return min([fee.tuition_fee_min for fee in self.tuition_fees])
+        
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
     university_name = sa.Column(sa.Unicode(80))

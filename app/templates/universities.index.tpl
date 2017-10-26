@@ -6,10 +6,11 @@
     <div class="card plain" id="filtering">
         <h4 class="card-title">Search and Filter</h4>
         <div class="card-body">
-            <div class="btn-group">
+            <div class="filter_controls">
+                <label class="label label-default" for="course_filter_dropdown">{{ _("Filter by Course") }}:</label>
                 <div class="dropdown" id="course_filter_dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="course_filter_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ _("Filter by course") }}
+                        {{ _("Select Course") }}
                     </button>
                     <div class="dropdown-menu" aria-labelledby="course_filter_btn">
                         {% for category in data["categories"] | sort %}
@@ -20,14 +21,26 @@
                     </div>
                 </div>
             </div>
-            <div class="btn-group">
-                <button class="btn btn-default" type="button" id="reset_filter_button">{{ _("Reset") }}</button>
+            <div class="filter_controls">
+                <div>
+                    <label class="label label-default" for="fee_filter">{{ _("Maximum Tuition Fee") }}:</label>
+                </div>
+                <input class="input" id="fee_filter"></input>
+                <button class="btn btn-default" type="button" id="apply_fee_filter_button">{{ _("Apply") }}</button>
+            </div>
+            <div>
+                <button class="btn btn-default" type="button" style="display:none;" id="reset_all_filter_button">{{ _("Reset All") }}</button>
             </div>
         </div>
     </div>
 
     {% for university in data["universities"] | sort %}
-    <div class="card plain university_card {% for category in university.categories() %} category_{{category.category_id}} {% endfor %}">
+    <div class="card plain university_card"
+    category_id="{% for category in university.categories() %}category_{{category.category_id}}|{% endfor %}"
+    max_fee="{{ university.maximum_fee() }}"
+    min_fee="{{ university.minimum_fee() }}"
+    id="{{ university.university_id }}"
+    >
         <h4 class="card-title">
             <a class=".card-link", href="{{url_for('.render_university', university_id=university.university_id)}}">{{university.university_name}}</a>
         </h4>
@@ -38,7 +51,8 @@
             <p class="card-text courses">
             Courses:
                 {% for course in university.courses -%}
-                <span class="course category_span {% for category in course.categories%} category_{{category.category_id}} {% endfor %}">
+                <span class="course category_span"
+                category_id="{% for category in university.categories() %}category_{{category.category_id}}|{% endfor %}">
                     {{course.course_name}}{% if not loop.last %}<span class="comma">,</span>{% endif %}
                 </span>
                 {%- endfor %}
@@ -53,5 +67,5 @@
 
 {% block js %}
     {{ super() }}
-    <script src="{{url_for('static', filename='course_filter.js')}}"></script>
+    <script src="{{url_for('static', filename='uni_filter.js')}}"></script>
 {% endblock %}
