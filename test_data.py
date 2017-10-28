@@ -22,6 +22,7 @@ from app.models.scholarship import Scholarship
 from app.models.tuition_fee import TuitionFee
 from app.models.contact_detail import ContactDetail
 from app.models.facility import Facility
+from app.models.user import User
 
 from app.models.base_model import DeclarativeBase
 
@@ -579,6 +580,11 @@ test_category_data = {
     }
 }
 
+users = [
+    ["admin", "Administrator", "admin123", True],
+    ["normal", "Normal User", "normal123", False]
+]
+
 def khmer(s):
     return "!" + s + "!"
 
@@ -669,5 +675,9 @@ if __name__ == "__main__":
                 fac = Facility.create(universities[university].university_id, facility, "en")
                 fac.add_translation(khmer(facility), "km")
 
-    print("Finished creating test data")
+        print("Creating users")
 
+        for user in users:
+            user = User.create(*user)
+
+    print("Finished creating test data")

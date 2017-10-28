@@ -39,6 +39,7 @@ class User(BaseModel, DeclarativeBase, flask_login.UserMixin):
     def get_id(self):
         return self.username
     
+    @property
     def is_active(self):
         return True
 
@@ -48,7 +49,7 @@ class User(BaseModel, DeclarativeBase, flask_login.UserMixin):
         return self.admin_flag 
 
     def login(self):
-        flask_login.login_user(self)
+        return flask_login.login_user(self)
 
     def logout(self):
         flask_login.logout_user()

@@ -38,7 +38,7 @@ div.card.plain>div.card-header {
 }
 
 div#filtering button {
-	background-color: #efa83d;	
+	background-color: #efa83d;
 	color: #000000;
 }
 
@@ -56,4 +56,9 @@ div.filter_controls {
 
 form#login input.form-control {
 	margin-bottom: 1em;
+}
+
+form#login button {
+	background-color: #efa83d;
+	color: #000000;
 }

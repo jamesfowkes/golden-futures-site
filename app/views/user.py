@@ -1,11 +1,14 @@
 import json
+import logging
 
-from flask import request, redirect, url_for, Response, abort
+from flask import request, redirect, url_for, Response, abort, flash
 import flask_login
 
 from app.models.user import User
 
 from app import app
+
+logger = logging.getLogger(__name__)
 
 @app.route("/user/create", methods=['POST'])
 @flask_login.login_required
@@ -43,7 +46,8 @@ def login_user():
             if pending_login_user.login():
                 return redirect(url_for("render_dashboard"))
 
-    abort(401)
+    flash("Incorrect username or password - please try again")
+    return redirect(url_for("website.render_login"))
 
 @app.route("/user/logout")
 def logout_user():
