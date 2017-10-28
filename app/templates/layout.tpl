@@ -28,10 +28,13 @@
                     {{ navbar_macro.a_navlink(g.active, "index", url_for('website.render_index'), "Home") }}
                     </li>
                     {{ navbar_macro.li_navitem(g.active, "universities") }}
-                    {{ navbar_macro.a_navlink(g.active, "index", url_for('website.render_universities'), "Universities") }}
+                    {{ navbar_macro.a_navlink(g.active, "universities", url_for('website.render_universities'), "Universities") }}
                     </li>
                     {{ navbar_macro.li_navitem(g.active, "categories") }}
-                    {{ navbar_macro.a_navlink(g.active, "index", url_for('website.render_courses'), "Courses") }}
+                    {{ navbar_macro.a_navlink(g.active, "categories", url_for('website.render_courses'), "Courses") }}
+                    </li>
+                    {{ navbar_macro.li_navitem(g.active, "login") }}
+                    {{ navbar_macro.a_navlink(g.active, "login", url_for('website.render_login'), "Login") }}
                     </li>
                 </ul>
                 <ul class="nav navbar-nav ml-auto">

@@ -49,6 +49,11 @@ def render_courses():
     all_categories = Category.all()
     return render_template('course.index.tpl', categories=all_categories)
 
+@website.route("/login", methods=['GET'])
+def render_login():
+    g.active="login"
+    return render_template('login.index.tpl')
+
 @website.before_request
 def init_request():
     g.lang = get_locale()

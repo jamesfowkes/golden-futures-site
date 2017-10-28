@@ -50,6 +50,10 @@ div.filter_controls {
 	padding-bottom: 1em;
 }
 
-.btn:focus{
+.btn:focus {
     outline: none;
+}
+
+form#login input.form-control {
+	margin-bottom: 1em;
 }
