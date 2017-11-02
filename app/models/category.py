@@ -44,7 +44,7 @@ class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
         return self.current_translation.category_name < other.current_translation.category_name
 
     def json(self):
-        return {"category_name": self.current_translation.category_name, "language": self.language}
+        return {"category_name": self.current_translation.category_name, "language": get_current_locale(self)}
 
     def set_name(self, category_name, lang):
         self.translations[lang].category_name = category_name
@@ -84,6 +84,6 @@ class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
 
 class CategoryTranslation(translation_base(Category)):
     __tablename__ = 'CategoryTranslation'
-    category_name = sa.Column(sa.Unicode(80))
+    category_name = sa.Column(sa.Unicode(80), unique=True)
     category_intro = sa.Column(sa.Unicode())
-    category_careers = sa.Column(sa.Unicode())    
+    category_careers = sa.Column(sa.Unicode())

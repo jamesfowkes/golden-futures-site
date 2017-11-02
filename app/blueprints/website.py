@@ -1,6 +1,8 @@
 import logging
 
-from flask import Blueprint, g, render_template, request, redirect
+from flask import Blueprint, g, render_template, request, redirect, url_for
+import flask_login
+
 import jinja2
 
 from app import app
@@ -17,7 +19,16 @@ website = Blueprint('website', __name__, template_folder='templates')
 @jinja2.contextfilter
 @website.app_template_filter()
 def language_name(context, lang):
-    return app.config["SUPPORTED_LOCALES"][lang]
+    if "SUPPORTED_LOCALES" in app.config:
+        try:
+            return app.config["SUPPORTED_LOCALES"][lang]
+        except KeyError:
+            raise Exception(
+                "Language {} not found in supported languages ({})".format(
+                    lang, ", ".join(app.config["SUPPORTED_LOCALES"]
+                    )
+                )
+            )
 
 @website.route("/", methods=['GET'])
 def render_index():
@@ -54,9 +65,26 @@ def render_login():
     g.active="login"
     return render_template('login.index.tpl')
 
+@website.route("/logout", methods=['GET'])
+def logout():
+    g.active="logout"
+    flask_login.logout_user()
+    return redirect(url_for("website.render_index"))
+
+@website.route("/dashboard", methods=['GET'])
+@flask_login.login_required
+def render_dashboard():
+    return render_template('dashboard.tpl')
+
+@website.route("/settings", methods=['GET'])
+@flask_login.login_required
+def render_user_settings():
+    return render_template('user_settings.tpl')
+
 @website.before_request
 def init_request():
     g.lang = get_locale()
+    logging.info("Set request language %s", g.lang)
     session.set("lang", g.lang)
     g.ep_data = {}
 

@@ -30,6 +30,7 @@ div.card.plain {
 	margin-top: 1em;
 	padding-top: 1em;
 	padding-left: 1em;
+	padding-right: 1em;
 	background-color: #ffb84d;
 }
 
@@ -54,7 +55,11 @@ div.filter_controls {
     outline: none;
 }
 
-form#login input.form-control {
+form input.form-control {
+	margin-bottom: 1em;
+}
+
+form button {
 	margin-bottom: 1em;
 }
 

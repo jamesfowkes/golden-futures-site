@@ -33,8 +33,8 @@ def get_locale():
 
     # Try using the language stored in the session
     session_locale = session.get("lang")
-    if session_locale:
-        logger.info("Loaded language %s from session", locale)
+    if session_locale is not None:
+        logger.info("Loaded language %s from session", session_locale)
         return session_locale
 
     # Try using the language of the logged-in user
@@ -52,11 +52,6 @@ def get_locale():
         # If that fails, fall back to english
         logger.info("Falling back to English")
         return "en"
-
-@app.route('/set_language')
-def set_language():
-    lang = request.args.get('lang', type=int)
-    return
 
 def init_app(app):
     babel.init_app(app)

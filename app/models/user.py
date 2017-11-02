@@ -19,7 +19,6 @@ def init_app(app):
 def load_user(user_id):
     return User.get_single(username=user_id)
 
-
 class User(BaseModel, DeclarativeBase, flask_login.UserMixin):
     
     __tablename__ = "User"

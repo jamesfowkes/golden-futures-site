@@ -44,7 +44,7 @@ def login_user():
         pending_login_user = User.get_single(username=request.form["username"])
         if pending_login_user and pending_login_user.match_password(request.form["password"]):
             if pending_login_user.login():
-                return redirect(url_for("render_dashboard"))
+                return redirect(url_for("website.render_dashboard"))
 
     flash("Incorrect username or password - please try again")
     return redirect(url_for("website.render_login"))

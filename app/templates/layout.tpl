@@ -1,4 +1,4 @@
-{% import 'navbar.macro' as navbar_macro %}
+{% import 'navbar.macro' as navbar_macro with context%}
 
 <html lang="en">
 <head>
@@ -10,6 +10,9 @@
     
     <title>{{_("Golden Futures University Guide 2017-2018")}}</title>
 
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
 </head>
 
 {% block body %}
@@ -33,10 +36,22 @@
                     {{ navbar_macro.li_navitem(g.active, "categories") }}
                     {{ navbar_macro.a_navlink(g.active, "categories", url_for('website.render_courses'), "Courses") }}
                     </li>
+
+                {% if current_user.is_authenticated %}
+
+                    </li>
+                </ul>
+                    {{ navbar_macro.render_user_menu() }}
+
+                {% else %}
+                    
                     {{ navbar_macro.li_navitem(g.active, "login") }}
                     {{ navbar_macro.a_navlink(g.active, "login", url_for('website.render_login'), "Login") }}
                     </li>
                 </ul>
+                    
+                {% endif %}
+
                 <ul class="nav navbar-nav ml-auto">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -57,6 +72,7 @@
     </div>
 
     {% block js  %}
+        <script src="{{url_for('static', filename='util.js')}}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
