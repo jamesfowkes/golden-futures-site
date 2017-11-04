@@ -1,3 +1,7 @@
+function get_div(classname) {
+	return "<div class='" + classname + "''>";
+}
+
 function get_label(for_element) {
 	return "<label for='" + for_element + "'>";
 }

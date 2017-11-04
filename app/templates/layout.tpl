@@ -10,6 +10,8 @@
     
     <title>{{_("Golden Futures University Guide 2017-2018")}}</title>
 
+    <script src="https://use.fontawesome.com/0bde7bffdf.js"></script>
+    
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>

@@ -1,6 +1,23 @@
-$( document ).ready(function() {
+function add_new_career_input(name) {
+  container = $(get_div("form-inline"));
+  span = $("<span>");
+  new_label = $(get_label(name));
+  new_input = $(get_text_input(name, name));
+  remove_button = $("<i class='fa fa-times delete-icon' aria-hidden='true'></i>");
 
-    $("#add_category").click(function(event) {
+  span.append(new_label);
+  span.append(new_input);
+  span.append(remove_button);
+  
+  container.append(span);
+
+  $("#category_careers").append(container);
+
+  return false;
+}
+
+$( document ).ready(function() {
+  $("#add_category").click(function(event) {
       
       $.postJSON($SCRIPT_ROOT + '/category/create', {
         category_name: $("#category_name").val(),
@@ -16,15 +33,9 @@ $( document ).ready(function() {
     var career_id = 0;
     $("#add_career").click(function(event) {
       name = 'input_career' + career_id;
-      new_label = $(get_label(name));
-      new_input = $(get_text_input(name, name));
-      remove_button = $("<span class='glyphicon glyphicon-remove'></span>");
+      add_new_career_input(name);
       career_ids.push(name);
       career_id++;
-      $("#category_careers").append(new_label);
-      $("#category_careers").append(new_input);
-      $("#category_careers").append(remove_button);
-      return false;
     });
 
     $(".remove_career").click(function(event) {
