@@ -15,6 +15,7 @@
             <div id="{{category.category_id}}_collapse" class="collapse" role="tabpanel" aria-labelledby="headingOne">
                 <div class="card-block">
                     <p><strong>{{category.category_intro}}</strong></p>
+                    <p><strong>{{_("Careers")}}</strong>: {{category.category_careers}}</p>
                     <p><strong>{{_("Courses and Universities:")}}</strong></p>
                     {% for course in category.courses | sort %}
                         <div>
