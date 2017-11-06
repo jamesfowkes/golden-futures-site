@@ -84,7 +84,7 @@ def render_user_settings():
 @website.before_request
 def init_request():
     g.lang = get_locale()
-    logging.info("Set request language %s", g.lang)
+    logger.info("Set request language %s", g.lang)
     session.set("lang", g.lang)
     g.ep_data = {}
 
