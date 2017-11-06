@@ -12,16 +12,14 @@
 
 {% macro render_add_new_category_form() -%}
 <form>
-    <div id="form_add_category" class="form-group">
+    <div id="form_add_category" class="form-group" action="{{url_for('create_category')}}"">
         <h4>{{ _("Category Details") }}</h4>
         <label for="category_name" class="sr-only">{{ _("Category Name") }}</label>
         <input class="form-control" type="text" id="category_name" name="category_name" placeholder="Category Name" lang="{{g.lang}}" required>
         <label for="category_intro" class="sr-only">{{ _("Category Introduction") }}</label>
         <input class="form-control" type="text" id="category_intro" name="category_intro" placeholder="Category Introduction" lang="{{g.lang}}" required>
-        <div id="category_careers">
-            <h4>{{_("Add Careers") }}</h4>
-        </div>
-        <button id="add_career" class="btn btn-default btn-sm" type="button">{{_("Add Career")}}</button>
+        <label for="category_careers" class="sr-only">{{ _("Category Careers") }}</label>
+        <input class="form-control" type="text" id="category_careers" name="category_careers" placeholder="Category Careers" lang="{{g.lang}}" required>
         <button id="add_category" class="btn btn-default btn-block" type="button">{{_("Submit New Category")}}</button>
     </div>
 </form>

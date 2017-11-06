@@ -1,4 +1,4 @@
-function add_new_career_input(name) {
+/*function add_new_career_input(name) {
   container = $(get_div("form-inline"));
   span = $("<span>");
   new_label = $(get_label(name));
@@ -14,14 +14,16 @@ function add_new_career_input(name) {
   $("#category_careers").append(container);
 
   return false;
-}
+}*/
 
 $( document ).ready(function() {
   $("#add_category").click(function(event) {
       
-      $.postJSON($SCRIPT_ROOT + '/category/create', {
+      $.post($SCRIPT_ROOT + '/category/create', {
         category_name: $("#category_name").val(),
-        language: $("#category_name").attr("lang")
+        language: $("#category_name").attr("lang"),
+        category_intro: $("#category_intro").val(),
+        category_careers: $("#category_careers").val()
       }, function(data) {
         alert(text(data.result));
       });
@@ -29,7 +31,7 @@ $( document ).ready(function() {
 
     });
 
-    var career_ids = [];
+    /*var career_ids = [];
     var career_id = 0;
     $("#add_career").click(function(event) {
       name = 'input_career' + career_id;
@@ -40,5 +42,5 @@ $( document ).ready(function() {
 
     $(".remove_career").click(function(event) {
       return false;
-    });
+    });*/
 });
