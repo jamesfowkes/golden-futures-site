@@ -55,11 +55,11 @@ class BaseModelTranslateable(__Deleteable__):
         """
 
         try:
-            logger.info("Class: {}, lang: {}, params: {}".format(cls.__name__, language, kwargs))
+            #logger.info("Class: {}, lang: {}, params: {}".format(cls.__name__, language, kwargs))
             all_results_for_language = db.session.query(cls).options(
                 sqlalchemy.orm.joinedload(cls.translations[language])).all()
 
-            logger.info("Got {} results: ".format(len(all_results_for_language)))
+            #logger.info("Got {} results: ".format(len(all_results_for_language)))
             for res in all_results_for_language:
                 logger.info(res)
                 match = True
@@ -70,8 +70,8 @@ class BaseModelTranslateable(__Deleteable__):
                     except KeyError:
                         attr = getattr(res, k)
 
-                    logger.info(attr)
-                    logger.info("%s: %s, %s", k, v, getattr(res, k))
+                    #logger.info(attr)
+                    #logger.info("%s: %s, %s", k, v, getattr(res, k))
                     match = match and attr == v
 
                 if match:

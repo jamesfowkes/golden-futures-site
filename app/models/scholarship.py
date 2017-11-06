@@ -6,21 +6,12 @@ import flask_login
 
 import sqlalchemy as sa
 from sqlalchemy_i18n import Translatable, translation_base
-from sqlalchemy_i18n.utils import get_current_locale
 
 import app
 from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
-class Scholarship(Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "Scholarship"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    scholarship_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
-    university = db.relationship('University', back_populates="scholarships")
+class ScholarshipBase():
 
     def __init__(self, university_id, scholarship, language):
         self.university_id = university_id
@@ -47,7 +38,32 @@ class Scholarship(Translatable, BaseModelTranslateable, DeclarativeBase):
             "scholarship": self.current_translation.scholarship_string
         }
 
+class Scholarship(ScholarshipBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "Scholarship"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    scholarship_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
+    university = db.relationship('University', back_populates="scholarships")
+
 class ScholarshipTranslation(translation_base(Scholarship)):
     __tablename__ = 'ScholarshipTranslation'
+    scholarship_string = sa.Column(sa.Unicode(80))
+    unique_scholarship_constraint = sa.PrimaryKeyConstraint('id', 'scholarship_string', 'locale', name='ufc_1')
+
+class ScholarshipPending(ScholarshipBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "ScholarshipPending"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    scholarship_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
+    university = db.relationship('UniversityPending', back_populates="scholarships")
+
+class ScholarshipPendingTranslation(translation_base(ScholarshipPending)):
+    __tablename__ = 'ScholarshipPendingTranslation'
     scholarship_string = sa.Column(sa.Unicode(80))
     unique_scholarship_constraint = sa.PrimaryKeyConstraint('id', 'scholarship_string', 'locale', name='ufc_1')

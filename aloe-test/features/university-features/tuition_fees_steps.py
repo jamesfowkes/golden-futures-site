@@ -12,7 +12,7 @@ import sqlalchemy
 from app import app
 from app.database import db
 
-from app.models.university import University
+from app.models.university import UniversityPending
 
 def split_currency_string(tuition_fee):
     return tuition_fee[0:-3], tuition_fee[-3:]
@@ -33,7 +33,7 @@ def the_user_creates_the_tuition_fee(step, tuition_fee, period, award, universit
     tuition_fee, currency = split_currency_string(tuition_fee)
     with app.test_request_context():
 
-        university_id = University.get_by_name(university_name=university_name, language=aloe.world.language).university_id
+        university_id = UniversityPending.get_by_name(university_name=university_name, language=aloe.world.language).university_id
 
         aloe.world.response = aloe.world.app.post(
             '/tuition_fee/create', 
@@ -59,6 +59,6 @@ def the_following_tuition_fee_details_are_returned(step):
 @aloe.step(u'And the tuition fees (\d*) (\w*) per (\w*) for a \"([\w\d ]*)\" should exist at \"([\w\d ]*)\" in language \"([\w\d ]*)\"')
 def the_tuition_fee_should_exist(step, tuition_fee, currency, period, award, university_name, language):
     with app.test_request_context():
-        university = University.get_by_name(university_name=university_name, language=aloe.world.language)
+        university = UniversityPending.get_by_name(university_name=university_name, language=aloe.world.language)
         exists = any([tuition_fee_matches(f, tuition_fee, currency, period, award) for f in university.tuition_fees])
         assert exists

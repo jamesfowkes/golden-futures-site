@@ -13,7 +13,7 @@ from app import app
 from app.database import db
 
 from app.models.user import User
-from app.models.category import Category
+from app.models.category import CategoryPending
 
 @aloe.step(u"the user creates the category \"([\w\d ]*)\"")
 def the_user_creates_the_category(step, category_name):
@@ -40,9 +40,9 @@ def the_user_deletes_the_category(step, category_name):
 def the_category_exists(step, category):
     with app.app_context():
         try:
-            Category.create(category_name=category, language=aloe.world.language)
+            CategoryPending.create(category_name=category, language=aloe.world.language)
         except sqlalchemy.exc.IntegrityError:
-            db.session.rollback() # Category already in the system
+            db.session.rollback() # Category already pending
 
 @aloe.step(u'the following category details are returned:')
 def and_the_following_user_details_are_returned(step):
@@ -51,19 +51,19 @@ def and_the_following_user_details_are_returned(step):
 @aloe.step(u'the category \"([\w\d ]*)\" should exist in language \"([\w\d ]*)\"')
 def the_category_should_exist_in_language(step, category_name, language):
     with app.app_context():
-        category = Category.get_single(category_name=category_name, language=language)
+        category = CategoryPending.get_single(category_name=category_name, language=language)
         assert_equals(category.translations[language].category_name, category_name)
         
 @aloe.step(u'the category \"([\w\d ]*)\" should not exist')
 def the_category_should_not_exist(step, category_name):
     with app.app_context():
-        category = Category.get_single(category_name=category_name)
+        category = CategoryPending.get_single(category_name=category_name)
         assert_equals(None, category)
 
 @aloe.step(u'the category \"([\w\d ]*)\" should have the courses:')
 def the_category_should_have_the_courses(step, category_name):
     with app.app_context():
-        category = Category.get_single(category_name=category_name)
+        category = CategoryPending.get_single(category_name=category_name)
         
         expected_course_names = [course["course_name"] for course in step.hashes]
         expected_course_languages = [course["language"] for course in step.hashes]

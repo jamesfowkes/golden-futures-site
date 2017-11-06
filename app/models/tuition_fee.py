@@ -6,21 +6,12 @@ import flask_login
 
 import sqlalchemy as sa
 from sqlalchemy_i18n import Translatable, translation_base
-from sqlalchemy_i18n.utils import get_current_locale
 
 import app
 from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
-class TuitionFee(Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "TuitionFee"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    tuition_fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
-    university = db.relationship('University', back_populates="tuition_fees")
+class TuitionFeeBase():
 
     def __init__(self, university_id, tuition_fee_min, tuition_fee_max, currency, period, award, language):
         self.university_id = university_id
@@ -79,8 +70,36 @@ class TuitionFee(Translatable, BaseModelTranslateable, DeclarativeBase):
                 tuition_fee_max = self.current_translation.tuition_fee_max,
                 period = period_string)
 
+class TuitionFee(TuitionFeeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "TuitionFee"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    tuition_fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
+    university = db.relationship('University', back_populates="tuition_fees")
+
 class TuitionFeeTranslation(translation_base(TuitionFee)):
     __tablename__ = 'TuitionFeeTranslation'
+    tuition_fee_min = sa.Column(sa.Integer)
+    tuition_fee_max = sa.Column(sa.Integer)
+    currency = sa.Column(sa.Unicode(6))
+    award = sa.Column(sa.Unicode(80))
+    period = sa.Column(sa.Unicode(20))
+
+class TuitionFeePending(TuitionFeeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "TuitionFeePending"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    tuition_fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
+    university = db.relationship('UniversityPending', back_populates="tuition_fees")
+
+class TuitionFeePendingTranslation(translation_base(TuitionFeePending)):
+    __tablename__ = 'TuitionFeePendingTranslation'
     tuition_fee_min = sa.Column(sa.Integer)
     tuition_fee_max = sa.Column(sa.Integer)
     currency = sa.Column(sa.Unicode(6))

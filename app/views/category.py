@@ -4,7 +4,7 @@ import json
 from flask import request, redirect, url_for, Response, abort
 import flask_login
 
-from app.models.category import Category
+from app.models.category import CategoryPending
 
 from app import app
 
@@ -25,14 +25,14 @@ def create_category():
         language = request.args["language"]
 
     logger.info("Creating category {} in language {}".format(category_name, language))
-    category = Category.create(category_name, language)
+    category = CategoryPending.create(category_name, language)
     return json.dumps(category.json())
 
 @app.route("/<language>/category/delete", methods=['POST'])
 @flask_login.login_required
 def delete_category(language):
     if request.method == 'POST':
-        category = Category.get_single(category_name=request.form["category_name"], language=language)
+        category = CategoryPending.get_single(category_name=request.form["category_name"], language=language)
         if len(category.courses):
             abort(409)
 

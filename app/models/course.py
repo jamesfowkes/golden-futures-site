@@ -14,21 +14,16 @@ from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
 from app.models.university_course_map import university_course_map_table
+from app.models.university_course_map import university_course_pending_map_table
+
 from app.models.category_course_map import category_course_map_table
-from app.models.category import Category
+from app.models.category_course_map import category_course_pending_map_table
+
+from app.models.category import CategoryPending
 
 logger = logging.getLogger(__name__)
 
-@total_ordering
-class Course(Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "Course"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    course_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    universities = db.relationship('University', secondary=university_course_map_table, back_populates="courses")
-    categories = db.relationship('Category', secondary=category_course_map_table, back_populates="courses")
+class CourseBase():
 
     def __init__(self, course_name, language=None):
         self.set_name(course_name, language)
@@ -40,7 +35,7 @@ class Course(Translatable, BaseModelTranslateable, DeclarativeBase):
             self.current_translation.course_name = course_name
 
     def add_to_category(self, category_id):
-        category = Category.get_single(category_id=category_id)
+        category = CategoryPending.get_single(category_id=category_id)
         self.categories.append(category)
         db.session.add(self)
         db.session.commit()
@@ -71,12 +66,13 @@ class Course(Translatable, BaseModelTranslateable, DeclarativeBase):
         return [uni.university_name for uni in self.universities]
         
     @classmethod
-    def create(cls, course_name, language, category_id):
+    def create(cls, course_name, language, category_id=None):
         logger.info("Creating course %s (%s)", course_name, language)
         course = cls(course_name, language)
         db.session.add(course)
         db.session.commit()
-        course.add_to_category(category_id)
+        if category_id:
+            course.add_to_category(category_id)
         return course
 
     @classmethod
@@ -90,6 +86,31 @@ class Course(Translatable, BaseModelTranslateable, DeclarativeBase):
         except:
             return None
 
+@total_ordering
+class Course(CourseBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "Course"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    course_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    universities = db.relationship('University', secondary=university_course_map_table, back_populates="courses")
+    categories = db.relationship('Category', secondary=category_course_map_table, back_populates="courses")
+
 class CourseTranslation(translation_base(Course)):
     __tablename__ = 'CourseTranslation'
+    course_name = sa.Column(sa.Unicode(80))
+
+class CoursePending(CourseBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "CoursePending"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    course_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    universities = db.relationship('UniversityPending', secondary=university_course_pending_map_table, back_populates="courses")
+    categories = db.relationship('CategoryPending', secondary=category_course_pending_map_table, back_populates="courses")
+
+class CoursePendingTranslation(translation_base(CoursePending)):
+    __tablename__ = 'CoursePendingTranslation'
     course_name = sa.Column(sa.Unicode(80))

@@ -16,19 +16,11 @@ from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
 from app.models.category_course_map import category_course_map_table
+from app.models.category_course_map import category_course_pending_map_table
 
 logger = logging.getLogger(__name__)
 
-@total_ordering
-class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "Category"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    category_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    courses = db.relationship('Course', secondary=category_course_map_table, back_populates="categories")
-
+class CategoryBase():
     def __init__(self, category_name, language):
         self.translations[language].category_name = category_name
 
@@ -90,8 +82,34 @@ class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
         db.session.commit()
         return category
 
+@total_ordering
+class Category(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "Category"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    category_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    courses = db.relationship('Course', secondary=category_course_map_table, back_populates="categories")
+
+
 class CategoryTranslation(translation_base(Category)):
     __tablename__ = 'CategoryTranslation'
+    category_name = sa.Column(sa.Unicode(80), unique=True)
+    category_intro = sa.Column(sa.Unicode())
+    category_careers = sa.Column(sa.Unicode())
+
+class CategoryPending(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "CategoryPending"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    category_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    courses = db.relationship('CoursePending', secondary=category_course_pending_map_table, back_populates="categories")
+
+class CategoryPendingTranslation(translation_base(CategoryPending)):
+    __tablename__ = 'CategoryPendingTranslation'
     category_name = sa.Column(sa.Unicode(80), unique=True)
     category_intro = sa.Column(sa.Unicode())
     category_careers = sa.Column(sa.Unicode())
