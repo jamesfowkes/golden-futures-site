@@ -23,11 +23,12 @@ def create_a_user(step, user_type):
                 'username': step.hashes[0]["username"],
                 'given_name': step.hashes[0]["given_name"],
                 'password': step.hashes[0]["password"],
-                'is_admin' : user_type == "admin"
+                'is_admin' : user_type == "admin",
+                'language': aloe.world.language
             }
         )
 
-@aloe.step(u"the (admin|standard) user is ((?:not )?logged) in")
+@aloe.step(u"the (admin|standard|french) user is ((?:not )?logged) in")
 def login_user(step, user_type, login_or_out):
 
     with app.test_request_context():
@@ -35,17 +36,19 @@ def login_user(step, user_type, login_or_out):
             data={'username': 'standard', 'password': 'standard'}
         elif user_type == "admin":
             data={'username': 'admin', 'password': 'admin'}
+        elif user_type == "french":
+            data={'username': 'ordinaire', 'password': 'standard'}
 
         if login_or_out == "logged":
             aloe.world.app.post(
                 '/user/login', 
                 data=data,
-                follow_redirects=True
+                follow_redirects=False
             )
         elif login_or_out == "not logged":
             aloe.world.app.get(
                 '/user/logout', 
-                follow_redirects=True
+                follow_redirects=False
             )
 
 @aloe.step(u'And the following user details are returned:')
@@ -58,7 +61,7 @@ def try_login_with_credentials(step):
         aloe.world.response = aloe.world.app.post(
                 '/user/login', 
                 data=step.hashes[0],
-                follow_redirects=True
+                follow_redirects=False
         )
 
 @aloe.step(u"the user deletes the (admin|standard) user")

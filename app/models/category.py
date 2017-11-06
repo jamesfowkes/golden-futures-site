@@ -1,3 +1,5 @@
+import logging
+
 from functools import total_ordering
 
 import json
@@ -14,6 +16,8 @@ from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
 from app.models.category_course_map import category_course_map_table
+
+logger = logging.getLogger(__name__)
 
 @total_ordering
 class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
@@ -44,7 +48,10 @@ class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
         return self.current_translation.category_name < other.current_translation.category_name
 
     def json(self):
-        return {"category_name": self.current_translation.category_name, "language": get_current_locale(self)}
+        return {
+            "category_name": self.current_translation.category_name,
+            "language": get_current_locale(self)
+            }
 
     def set_name(self, category_name, lang):
         self.translations[lang].category_name = category_name
@@ -77,6 +84,7 @@ class Category(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     @classmethod
     def create(cls, category_name, language):
+        logger.info("Creating category %s (%s)", category_name, language)
         category = cls(category_name, language)
         db.session.add(category)
         db.session.commit()

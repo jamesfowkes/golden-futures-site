@@ -7,14 +7,17 @@ from app.models.course import Course
 
 from app import app
 
-@app.route("/<lang>/course/create", methods=['POST'])
+@app.route("/course/create", methods=['POST'])
 @flask_login.login_required
-def create_course(lang):
+def create_course():
     if request.method == 'POST':
-        course = Course.create(request.form["course_name"], request.form["category_id"], lang)
+        course_name = request.form["course_name"]
+        category_id = request.form["category_id"]
+        language = request.form["language"]
+        course = Course.create(course_name, language, category_id)
         return json.dumps(course.json())
 
-@app.route("/<lang>/course/<course_id>/translate", methods=['POST'])
+@app.route("/course/<course_id>/translate", methods=['POST'])
 @flask_login.login_required
 def add_course_translation(lang, course_id):
     if request.method == 'POST':

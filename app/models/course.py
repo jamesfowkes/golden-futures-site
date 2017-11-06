@@ -1,3 +1,5 @@
+import logging
+
 from functools import total_ordering
 
 import json
@@ -13,6 +15,9 @@ from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
 from app.models.university_course_map import university_course_map_table
 from app.models.category_course_map import category_course_map_table
+from app.models.category import Category
+
+logger = logging.getLogger(__name__)
 
 @total_ordering
 class Course(Translatable, BaseModelTranslateable, DeclarativeBase):
@@ -34,8 +39,18 @@ class Course(Translatable, BaseModelTranslateable, DeclarativeBase):
         else:
             self.current_translation.course_name = course_name
 
+    def add_to_category(self, category_id):
+        category = Category.get_single(category_id=category_id)
+        self.categories.append(category)
+        db.session.add(self)
+        db.session.commit()
+
     def __repr__(self):
-        return "<ID: %d, Name(en): '%s', Categories: '%s'>" % (self.course_id, self.translations["en"].course_name, ", ". join([c.category_name for c in self.categories]))
+        return "<ID: {}, Names: '{}', Categories: '{}'>".format(
+            self.course_id,
+            ", ".join(["{} ({})".format(translation.course_name, lang) for lang, translation in self.translations.items()]),
+            ", ".join([str(c.category_name) for c in self.categories])
+        )
 
     def __eq__(self, other):
         return self.course_name == other.course_name
@@ -56,10 +71,12 @@ class Course(Translatable, BaseModelTranslateable, DeclarativeBase):
         return [uni.university_name for uni in self.universities]
         
     @classmethod
-    def create(cls, course_name, language):
+    def create(cls, course_name, language, category_id):
+        logger.info("Creating course %s (%s)", course_name, language)
         course = cls(course_name, language)
         db.session.add(course)
         db.session.commit()
+        course.add_to_category(category_id)
         return course
 
     @classmethod
@@ -72,10 +89,6 @@ class Course(Translatable, BaseModelTranslateable, DeclarativeBase):
             return db.session.query(cls).filter_by(course_id=course_id).one()
         except:
             return None
-
-    @classmethod
-    def get_single(cls, course_name, language):
-        return db.session.query(cls).filter_by(course_name=course_name, language=language).one()
 
 class CourseTranslation(translation_base(Course)):
     __tablename__ = 'CourseTranslation'

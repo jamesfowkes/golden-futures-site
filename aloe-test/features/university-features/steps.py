@@ -19,8 +19,10 @@ def the_user_creates_the_university(step, university_name):
     with app.test_request_context():
         aloe.world.response = aloe.world.app.post(
             '/university/create', 
-            data={'university_name':university_name},
-            headers=[("Accept-Language", aloe.world.language)]
+            data={
+                'university_name':university_name,
+                'language': aloe.world.language
+            }
         )
 
 @aloe.step(u'the following university details are returned:')
@@ -41,16 +43,18 @@ def the_university_exists(step, university_name, language):
         try:
             University.create(university_name=university_name, language=language)
         except sqlalchemy.exc.IntegrityError:
-            db.session.rollback() # Category already in the system
+            db.session.rollback() # University already in the system
 
 @aloe.step(u"the user adds the translation \"([\w\d ]*)\" to university \"([\w\d ]*)\"")
 def the_user_adds_the_university_translation(step, translation, university_name):
     with app.test_request_context():
-        university = University.get_by_name(university_name=university_name)
+        university = University.get_by_name(university_name=university_name, language="en")
         aloe.world.response = aloe.world.app.post(
             "/university/" + str(university.university_id) + "/translate", 
-            data={'university_name':translation},
-            headers=[("Accept-Language", aloe.world.language)]
+            data={
+                'university_name':translation,
+                'language':aloe.world.language
+            }
         )
 
 @aloe.step(u'the university \"([\w\d ]*)\" should have \"([\w\d ]*)\" translation \"([\w\d ]*)\"')

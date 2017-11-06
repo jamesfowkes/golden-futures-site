@@ -15,13 +15,17 @@ logger = logging.getLogger(__name__)
 def create_category():
     if request.method == 'POST':
         category_name = request.form["category_name"]
-        language = request.form["langauge"]
+        category_intro = request.form["category_intro"]
+        category_careers = request.form["category_careers"]
+        language = request.form["language"]
     else:
         category_name = request.args["category_name"]
-        language = request.args["langauge"]
+        category_intro = request.args["category_intro"]
+        category_careers = request.args["category_careers"]
+        language = request.args["language"]
 
-    logger.info("Creating category {} in langauge {}".format(category_name, language))
-    category = Category.create(category, language)
+    logger.info("Creating category {} in language {}".format(category_name, language))
+    category = Category.create(category_name, language)
     return json.dumps(category.json())
 
 @app.route("/<language>/category/delete", methods=['POST'])

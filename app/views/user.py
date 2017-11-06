@@ -18,8 +18,9 @@ def create_user():
             username = request.form["username"]
             given_name = request.form["given_name"]
             password = request.form["password"]
+            language = request.form["language"]
             is_admin = request.form.get("is_admin", False)
-            user = User.create(username, given_name, password, is_admin)
+            user = User.create(username, given_name, password, is_admin, language)
             return json.dumps(user.json())
         else:
             abort(403)

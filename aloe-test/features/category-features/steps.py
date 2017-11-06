@@ -19,8 +19,13 @@ from app.models.category import Category
 def the_user_creates_the_category(step, category_name):
     with app.test_request_context():
         aloe.world.response = aloe.world.app.post(
-            "/" + aloe.world.language + '/category/create', 
-            data={'category_name':category_name}
+            "/category/create",
+            data={
+                "category_name": category_name,
+                "category_intro": "Aloe test category introduction",
+                "category_careers":  "Behaviour Driven Development",
+                "language": aloe.world.language
+            }
         )
 
 @aloe.step(u"the user deletes the category \"([\w\d ]*)\"")
@@ -47,8 +52,7 @@ def and_the_following_user_details_are_returned(step):
 def the_category_should_exist_in_language(step, category_name, language):
     with app.app_context():
         category = Category.get_single(category_name=category_name, language=language)
-        assert_equals(category.category_name, category_name)
-        assert_equals(category.language, language)
+        assert_equals(category.translations[language].category_name, category_name)
         
 @aloe.step(u'the category \"([\w\d ]*)\" should not exist')
 def the_category_should_not_exist(step, category_name):
@@ -61,11 +65,13 @@ def the_category_should_have_the_courses(step, category_name):
     with app.app_context():
         category = Category.get_single(category_name=category_name)
         
-        expected_courses = [course["course_name"] for course in step.hashes]
-        expected_languages = [course["language"] for course in step.hashes]
+        expected_course_names = [course["course_name"] for course in step.hashes]
+        expected_course_languages = [course["language"] for course in step.hashes]
 
-        actual_courses = [c.course_name for c in category.courses]
-        actual_languages = [c.language for c in category.courses]
+        actual_courses = {c.course_name: c for c in category.courses}
 
-        assert_equals(expected_courses, actual_courses)
-        assert_equals(expected_languages, actual_languages)
+        assert_equals(set(expected_course_names), set(actual_courses.keys()))
+        
+        for (expected_course_name, expected_language) in zip(expected_course_names, expected_course_languages):
+            actual_course_name = actual_courses[expected_course_name].translations[expected_language].course_name
+            assert_equals(expected_course_name, actual_course_name)

@@ -13,7 +13,10 @@ from app.locale import get_locale
 @flask_login.login_required
 def create_university():
     if request.method == 'POST':
-        university = University.create(request.form["university_name"], get_locale())
+        university = University.create(
+            request.form["university_name"],
+            request.form["language"]
+        )
         return json.dumps(university.json())
 
 @app.route("/university/<university_id>/translate", methods=['POST'])
@@ -21,6 +24,9 @@ def create_university():
 def add_university_translation(university_id):
     if request.method == 'POST':
         university = University.get_single_by_id(int(university_id))
-        university.add_translated_name(request.form["university_name"])
+        university.add_translated_name(
+            request.form["university_name"],
+            request.form["language"]
+        )
         return json.dumps(university.json())
         

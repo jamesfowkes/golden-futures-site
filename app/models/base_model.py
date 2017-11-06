@@ -1,9 +1,13 @@
+import logging
+
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 
 from app.database import db
 
 DeclarativeBase = declarative_base()  
+
+logger = logging.getLogger(__name__)
 
 class __Deleteable__:
     def delete(self):
@@ -39,8 +43,41 @@ class BaseModelTranslateable(__Deleteable__):
 
     @classmethod
     def get_single_with_language(cls, language, **kwargs):
+        """
+        This should be as simple as
+        
+        return db.session.query(cls).options(
+                sqlalchemy.orm.joinedload(cls.translations[language])
+            ).filter_by(**kwargs).one()
+
+        but this returns all rows (not sure why), so have to manually go through the returned results
+        looking for kwargs matches
+        """
+
         try:
-            return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.translations[language])).filter_by(**kwargs).one()
+            logger.info("Class: {}, lang: {}, params: {}".format(cls.__name__, language, kwargs))
+            all_results_for_language = db.session.query(cls).options(
+                sqlalchemy.orm.joinedload(cls.translations[language])).all()
+
+            logger.info("Got {} results: ".format(len(all_results_for_language)))
+            for res in all_results_for_language:
+                logger.info(res)
+                match = True
+
+                for k,v in kwargs.items():
+                    try:
+                        attr = getattr(res.translations[language], k)
+                    except KeyError:
+                        attr = getattr(res, k)
+
+                    logger.info(attr)
+                    logger.info("%s: %s, %s", k, v, getattr(res, k))
+                    match = match and attr == v
+
+                if match:
+                    return res
+
+            return None
         except sqlalchemy.orm.exc.NoResultFound:
             return None            
 

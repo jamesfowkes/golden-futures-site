@@ -21,8 +21,12 @@ def the_user_adds_the_course(step, course_name, category_name):
     with app.test_request_context():
         category_id = Category.get_single(category_name=category_name).category_id
         aloe.world.response = aloe.world.app.post(
-            '/' + aloe.world.language + '/course/create', 
-            data={'course_name':course_name, "category_id": str(category_id)}
+            '/course/create', 
+            data={
+                'course_name':course_name,
+                "category_id": str(category_id),
+                "language": aloe.world.language
+            }
         )
 
 @aloe.step(u'the following course details are returned:')
@@ -41,9 +45,8 @@ def the_course_exists_in_category(step, course, category_name):
 @aloe.step(u'the course \"([\w\d ]*)\" should exist')
 def the_course_should_exist(step, course_name):
     with app.app_context():
-        courses = Course.get_by_name(course_name=course_name)
-        assert_equals(len(courses), 1)
-        assert_equals(courses[0].language, aloe.world.language)
+        course = Course.get_single(course_name=course_name, language=aloe.world.language)
+        assert_equals(course.translations[aloe.world.language].course_name, course_name)
 
 @aloe.step(u'the course \"([\w\d ]*)\" should have the translations')
 def the_course_should_have_the_translations(step, course_name):

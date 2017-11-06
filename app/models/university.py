@@ -1,3 +1,5 @@
+import logging
+
 import json
 
 from flask import g
@@ -19,6 +21,8 @@ import app.models.admission
 import app.models.tuition_fee
 
 from app.models.university_course_map import university_course_map_table
+
+logger = logging.getLogger(__name__)
 
 class University(Translatable, BaseModelTranslateable, DeclarativeBase):
 
@@ -53,6 +57,7 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
         return {"university_id": self.university_id, "university_name": self.current_translation.university_name, "language": get_current_locale(self)}
     
     def add_translated_name(self, university_name, language=None):
+        logger.info("Adding translation %s (%s) to university %s", university_name, language, self.translations["en"].university_name)
         if language:
             self.translations[language].university_name = university_name
         else:
@@ -68,7 +73,7 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     @classmethod
     def get_by_name(cls, university_name, language=None):
-        return cls.get_single(university_name=university_name, language=language)
+        return cls.get_single_with_language(language, university_name=university_name)
 
     @classmethod
     def get_single_by_id(cls, university_id):

@@ -7,6 +7,6 @@ And the university "University of Life" exists in "en"
 When the user adds the tuition fee "1000000USD" per year for a "Swimming Certificate" to university "University of Life"
 Then I should get a '200' response
 And the following tuition fees are returned:
- | university_name | tuition_fee | currency | award | period |
- | University of Life | 1000000 | USD | Swimming Certificate | year |
+ | university_name | tuition_fee_min | tuition_fee_max | currency | award | period |
+ | University of Life | 1000000 | 1000000 | USD | Swimming Certificate | year |
 And the tuition fees 1000000 USD per year for a "Swimming Certificate" should exist at "University of Life" in language "en"
