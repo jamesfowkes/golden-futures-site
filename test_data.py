@@ -581,8 +581,8 @@ test_category_data = {
 }
 
 users = [
-    ["admin", "Administrator", "admin123", True],
-    ["normal", "Normal User", "normal123", False]
+    ["admin", "Administrator", "admin123", True, "en"],
+    ["normal", "Normal User", "normal123", False, "en"]
 ]
 
 def khmer(s):
