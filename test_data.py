@@ -604,6 +604,10 @@ pending_edits = {
     "category": [["Mathematics", "A degree in mathematics provides you with a broad range of skills in problem solving, logical reasoning and flexible thinking.", "teacher, actuary, operational researcher, statistician, professional nerd"]]   
 }
 
+pending_deletions = {
+    "category": [["Computing"]]
+}
+
 def khmer(s):
     return "!" + s + "!"
 
@@ -707,18 +711,24 @@ if __name__ == "__main__":
                 print("Adding pending additions")
 
                 for addition in pending_additions["category"]:
-                    print("Addition '{}'".format(addition[0]))
-                    category = CategoryPending.add(category_name=addition[0], language="en")
+                    print("Addition of '{}'".format(addition[0]))
+                    category = CategoryPending.addition(category_name=addition[0], language="en")
                     category.set_intro(addition[1], "en")
                     category.set_careers(addition[2], "en")
 
                 print("Adding pending edits")
 
                 for edit in pending_edits["category"]:
-                    print("Edit '{}'".format(edit[0]))
+                    print("Edit of '{}'".format(edit[0]))
                     category = CategoryPending.edit(categories[edit[0]])
                     category.set_intro(edit[1], "en")
                     category.set_careers(edit[2], "en")
+
+                print("Adding pending deletions")
+
+                for deletion in pending_deletions["category"]:
+                    print("Deletion of '{}'".format(deletion[0]))
+                    category = CategoryPending.deletion(categories[deletion[0]])
 
         print("Finished creating test data")
 

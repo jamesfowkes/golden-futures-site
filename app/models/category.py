@@ -154,6 +154,10 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
             category = Category.get(category_id=self.category_id).one();
             logger.info("Editing category %s", category.translations["en"].category_name)
             category.update(self)
+        elif self.pending_type == "del":
+            category = Category.get(category_id=self.category_id).one();
+            logger.info("Deleting category %s", category.translations["en"].category_name)
+            category.delete()
 
         self._delete()
 
@@ -167,7 +171,7 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         return new
 
     @classmethod
-    def add(cls, category_name, language):
+    def addition(cls, category_name, language):
         pending = cls(category_name, language, "add")
         return pending
 
@@ -178,7 +182,7 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         return pending
 
     @classmethod
-    def delete(cls, existing_category):
+    def deletion(cls, existing_category):
         pending = cls.create_from(existing_category, "del")
         pending.pending_type = "del"
         return pending

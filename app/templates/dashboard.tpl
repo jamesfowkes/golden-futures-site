@@ -9,36 +9,31 @@
 {%- endmacro %}
 
 {% macro render_pending_additions(additions) -%}
-    {% if additions | length %}
-        <div id="additions">
-            <h4>{{_("Additions")}}</h4>
-            {% for addition in additions["category"] %}
-                <span>{{_("New Category")}}: <strong>{{addition}}</strong> {{approve("category", addition.pending_id)}} {{reject("category", addition.pending_id)}}</span>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div id="additions">
+        <h4>{{_("Additions")}}</h4>
+        {% for addition in additions["category"] %}
+            <span>{{_("New Category")}}: <strong>{{addition}}</strong> {{approve("category", addition.pending_id)}} {{reject("category", addition.pending_id)}}</span>
+        {% endfor %}
+    </div>
 {%- endmacro %}
 
 {% macro render_pending_edits(edits) -%}
-    {% if edits | length %}
-        <div id="edits">
-            <h4>{{_("Edits")}}</h4>
-            {% for edit in edits["category"] %}
-                <span>{{_("Edit Category")}}: <strong>{{edit}}</strong> {{approve("category", edit.pending_id)}} {{reject("category", edit.pending_id)}}</span>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div id="edits">
+        <h4>{{_("Edits")}}</h4>
+        {% for edit in edits["category"] %}
+            <span>{{_("Edit Category")}}: <strong>{{edit}}</strong> {{approve("category", edit.pending_id)}} {{reject("category", edit.pending_id)}}</span>
+        {% endfor %}
+    </div>
+
 {%- endmacro %}
 
 {% macro render_pending_deletions(deletions) -%}
-    {% if deletions | length %}
-        <div id="deletions">
-            <h4>{{_("Deletions")}}</h4>
-            {% for deletion in deletions["category"] %}
-                <span>{{_("Remove Category")}}: <strong>{{deletion}}</strong> {{approve("category", deletion.pending_id)}} {{reject("category", deletion.pending_id)}}</span>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div id="deletions">
+        <h4>{{_("Deletions")}}</h4>
+        {% for deletion in deletions["category"] %}
+            <span>{{_("Remove Category")}}: <strong>{{deletion}}</strong> {{approve("category", deletion.pending_id)}} {{reject("category", deletion.pending_id)}}</span>
+        {% endfor %}
+    </div>
 {%- endmacro %}
 
 {% macro render_pending_changes() -%}

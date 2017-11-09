@@ -1,3 +1,33 @@
+function show_or_hide_approval_divs()
+{
+  if ($("div#additions > span").length == 0)
+  {
+    $("div#additions").hide();
+  }
+  else
+  {
+    $("div#additions").show();
+  }
+
+  if ($("div#edits > span").length == 0)
+  {
+    $("div#edits").hide();
+  }
+  else
+  {
+    $("div#edits").show();
+  }
+
+if ($("div#deletions > span").length == 0)
+  {
+    $("div#deletions").hide();
+  }
+  else
+  {
+    $("div#deletions").show();
+  }
+}
+
 $( document ).ready(function() {
   $("#add_category").click(function(event) {
       
@@ -10,7 +40,6 @@ $( document ).ready(function() {
         alert(data.result);
       });
       return false;
-
   });
 
   function ajax_fn(url, data_attr) {
@@ -24,6 +53,7 @@ $( document ).ready(function() {
           if (data.result)
           {
             $(this).parent().remove();
+            show_or_hide_approval_divs();
           }
           return false;
         }
@@ -34,4 +64,5 @@ $( document ).ready(function() {
   $(".approve-category").click(ajax_fn('/category/pending/approve', "approveid"));
   $(".reject-category").click(ajax_fn('/category/pending/reject', "rejectid"));
 
+  show_or_hide_approval_divs();
 });
