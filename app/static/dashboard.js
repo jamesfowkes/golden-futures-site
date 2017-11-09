@@ -1,21 +1,3 @@
-/*function add_new_career_input(name) {
-  container = $(get_div("form-inline"));
-  span = $("<span>");
-  new_label = $(get_label(name));
-  new_input = $(get_text_input(name, name));
-  remove_button = $("<i class='fa fa-times delete-icon' aria-hidden='true'></i>");
-
-  span.append(new_label);
-  span.append(new_input);
-  span.append(remove_button);
-  
-  container.append(span);
-
-  $("#category_careers").append(container);
-
-  return false;
-}*/
-
 $( document ).ready(function() {
   $("#add_category").click(function(event) {
       
@@ -25,22 +7,31 @@ $( document ).ready(function() {
         category_intro: $("#category_intro").val(),
         category_careers: $("#category_careers").val()
       }, function(data) {
-        alert(text(data.result));
+        alert(data.result);
       });
       return false;
 
-    });
+  });
 
-    /*var career_ids = [];
-    var career_id = 0;
-    $("#add_career").click(function(event) {
-      name = 'input_career' + career_id;
-      add_new_career_input(name);
-      career_ids.push(name);
-      career_id++;
-    });
+  function ajax_fn(url, data_attr) {
+    return function(event) {
+      $.ajax({
+        type: "POST",
+        url: $SCRIPT_ROOT + url,
+        context: event.target,
+        data: {category_id: $(this).attr(data_attr)},
+        success: function(data) {
+          if (data.result)
+          {
+            $(this).parent().remove();
+          }
+          return false;
+        }
+      });
+    }
+  }
 
-    $(".remove_career").click(function(event) {
-      return false;
-    });*/
+  $(".approve-category").click(ajax_fn('/category/pending/approve', "approveid"));
+  $(".reject-category").click(ajax_fn('/category/pending/reject', "rejectid"));
+
 });

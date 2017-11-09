@@ -13,7 +13,7 @@ from sqlalchemy_i18n.utils import get_current_locale
 import app
 from app.database import db
 
-from app.models.base_model import BaseModelTranslateable, DeclarativeBase
+from app.models.base_model import BaseModelTranslateable, DeclarativeBase, PendingChangeBase
 
 from app.models.category_course_map import category_course_map_table
 from app.models.category_course_map import category_course_pending_map_table
@@ -22,11 +22,15 @@ logger = logging.getLogger(__name__)
 
 class CategoryBase():
     def __init__(self, category_name, language):
+        logger.info("Creating base category %s (%s)", category_name, language)
         self.translations[language].category_name = category_name
 
     def __hash__(self):
         return self.category_id
-        
+    
+    def __str__(self):    
+        return self.current_translation.category_name
+
     def __repr__(self):
         return "<ID: '%d', Name: '%s'>" % (self.category_id, self.current_translation.category_name)
 
@@ -78,9 +82,27 @@ class CategoryBase():
     def create(cls, category_name, language):
         logger.info("Creating category %s (%s)", category_name, language)
         category = cls(category_name, language)
+        
         db.session.add(category)
         db.session.commit()
+
         return category
+
+    @classmethod
+    def create_from(cls, existing_category):
+        new = cls("","en")
+        new.update(existing_category)
+        return new
+
+    def update(self, other):
+        self.category_id = other.category_id
+        for lang in app.app.config["SUPPORTED_LOCALES"]:
+            self.translations[lang].category_name = other.translations[lang].category_name
+            self.translations[lang].category_intro = other.translations[lang].category_intro
+            self.translations[lang].category_careers = other.translations[lang].category_careers
+
+        db.session.add(self)
+        db.session.commit()
 
 @total_ordering
 class Category(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBase):
@@ -92,21 +114,74 @@ class Category(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBa
     category_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     courses = db.relationship('Course', secondary=category_course_map_table, back_populates="categories")
 
-
 class CategoryTranslation(translation_base(Category)):
     __tablename__ = 'CategoryTranslation'
     category_name = sa.Column(sa.Unicode(80), unique=True)
     category_intro = sa.Column(sa.Unicode())
     category_careers = sa.Column(sa.Unicode())
 
-class CategoryPending(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "CategoryPending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
     locale = 'en'
 
-    category_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    pending_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    category_id = db.Column(db.Integer, unique=True, nullable=True)
+    pending_type = db.Column(db.String(6), nullable=False)
+
     courses = db.relationship('CoursePending', secondary=category_course_pending_map_table, back_populates="categories")
+
+    def __init__(self, category_name, language, pending_type):
+        self.pending_type = pending_type
+        CategoryBase.__init__(self, category_name, language)
+        db.session.add(self)
+        db.session.commit()
+
+    def _delete(self):
+        for lang, translation in self.translations:
+            db.session.delete(translation)
+
+        super(BaseModelTranslateable,self).delete()
+
+    def approve(self):
+        if self.pending_type == "add":
+            logger.info("Adding category %s", self.translations["en"].category_name)
+            new_category = Category.create(self.translations["en"].category_name, "en")
+            new_category.set_intro(self.translations["en"].category_intro, "en")
+            new_category.set_careers(self.translations["en"].category_careers, "en")
+        elif self.pending_type == "edit":
+            category = Category.get(category_id=self.category_id).one();
+            logger.info("Editing category %s", category.translations["en"].category_name)
+            category.update(self)
+
+        self._delete()
+
+    def reject(self):
+        self._delete()
+
+    @classmethod
+    def create_from(cls, existing_category, pending_type):
+        new = cls("", "en", pending_type)
+        new.update(existing_category)
+        return new
+
+    @classmethod
+    def add(cls, category_name, language):
+        pending = cls(category_name, language, "add")
+        return pending
+
+    @classmethod
+    def edit(cls, existing_category):
+        pending = cls.create_from(existing_category, "edit")
+        pending.pending_type = "edit"
+        return pending
+
+    @classmethod
+    def delete(cls, existing_category):
+        pending = cls.create_from(existing_category, "del")
+        pending.pending_type = "del"
+        return pending
 
 class CategoryPendingTranslation(translation_base(CategoryPending)):
     __tablename__ = 'CategoryPendingTranslation'

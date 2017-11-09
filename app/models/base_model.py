@@ -93,3 +93,17 @@ class BaseModelTranslateable(__Deleteable__):
                 return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).filter_by(**kwargs).one()
             except sqlalchemy.orm.exc.NoResultFound:
                 return None
+
+class PendingChangeBase():
+
+    @classmethod
+    def additions(cls):
+        return db.session.query(cls).filter(cls.pending_type=="add").all()
+
+    @classmethod
+    def edits(cls):
+        return db.session.query(cls).filter(cls.pending_type=="edit").all()
+
+    @classmethod
+    def deletions(cls):
+        return db.session.query(cls).filter(cls.pending_type=="del").all()

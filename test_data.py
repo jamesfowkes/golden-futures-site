@@ -1,4 +1,12 @@
-"""
+""" test_data.py
+
+Usage:
+    test_data.py create [--add_pending]
+    test_data.py copy
+    test_data.py make_original
+
+Options:
+    --add_pending    Add a set of pending changes
 
 This data is used for debugging the website.
 Unit and BDD tests use their own datasets.
@@ -7,6 +15,9 @@ Unit and BDD tests use their own datasets.
 
 import os
 import sys
+import shutil
+
+import docopt
 
 from flask import current_app
 
@@ -15,7 +26,7 @@ os.environ["GF_CONFIG_CLASS"] = "config.DebugConfig"
 from app import app
 from app.database import db
 from app.models.university import University
-from app.models.category import Category
+from app.models.category import Category, CategoryPending
 from app.models.course import Course
 from app.models.admission import Admission
 from app.models.scholarship import Scholarship
@@ -585,99 +596,134 @@ users = [
     ["normal", "Normal User", "normal123", False, "en"]
 ]
 
+pending_additions = {
+    "category": [["Inhumanities", "Using the humanities for mischief and profit", "Investment Banker, Homeopath"]]
+}
+
+pending_edits = {
+    "category": [["Mathematics", "A degree in mathematics provides you with a broad range of skills in problem solving, logical reasoning and flexible thinking.", "teacher, actuary, operational researcher, statistician, professional nerd"]]   
+}
+
 def khmer(s):
     return "!" + s + "!"
 
 if __name__ == "__main__":
 
-    ## Build courses list from category data
-    test_course_data = []
-    for _, category_data in test_category_data.items():
-        test_course_data.extend(category_data["courses"])
+    args = docopt.docopt(__doc__)
 
-    test_course_data = set(test_course_data)
+    if args["create"]:
+        ## Build courses list from category data
+        test_course_data = []
+        for _, category_data in test_category_data.items():
+            test_course_data.extend(category_data["courses"])
 
-    print("Creating application context...", end=""); sys.stdout.flush()
-    with app.app_context():
-        print("done.")
-        
-        print("Creating empty database...", end=""); sys.stdout.flush()
-        DeclarativeBase.metadata.drop_all(bind=db.engine)
-        DeclarativeBase.metadata.create_all(bind=db.engine)
-        print("done.")
-        
-        print("Creating courses...", end=""); sys.stdout.flush()
-        courses = {}
-        for course in test_course_data:
-            courses[course] = Course.create(course, "en")
-            courses[course].set_name(khmer(course), "km")
+        test_course_data = set(test_course_data)
 
-        print("done.")
+        print("Creating application context...", end=""); sys.stdout.flush()
+        with app.app_context():
+            print("done.")
+            
+            print("Creating empty database {}...".format(app.config["SQLALCHEMY_DATABASE_URI"]), end=""); sys.stdout.flush()
+            DeclarativeBase.metadata.drop_all(bind=db.engine)
+            DeclarativeBase.metadata.create_all(bind=db.engine)
+            print("done.")
+            
+            print("Creating courses...", end=""); sys.stdout.flush()
+            courses = {}
+            for course in test_course_data:
+                courses[course] = Course.create(course, "en")
+                courses[course].set_name(khmer(course), "km")
 
-        print("Creating categories...", end=""); sys.stdout.flush()
-        categories = {}
-        for category_name, category_data in test_category_data.items():
-            new_category = Category.create(category_name, "en")
-            categories[category_name] = new_category
+            print("done.")
 
-            new_category.set_name(khmer(category_name), "km")
-            new_category.set_intro(category_data["intro"], "en")
-            new_category.set_intro(khmer(category_data["intro"]), "km")
+            print("Creating categories...", end=""); sys.stdout.flush()
+            categories = {}
+            for category_name, category_data in test_category_data.items():
+                new_category = Category.create(category_name, "en")
+                categories[category_name] = new_category
 
-            new_category.set_careers(category_data["careers"], "en")
-            new_category.set_careers(khmer(category_data["careers"]), "km")
+                new_category.set_name(khmer(category_name), "km")
+                new_category.set_intro(category_data["intro"], "en")
+                new_category.set_intro(khmer(category_data["intro"]), "km")
 
-            for course in category_data["courses"]:
-                categories[category_name].add_course(courses[course])
+                new_category.set_careers(category_data["careers"], "en")
+                new_category.set_careers(khmer(category_data["careers"]), "km")
 
-        print("done.")
+                for course in category_data["courses"]:
+                    categories[category_name].add_course(courses[course])
 
-        # Create universities and link to courses
-        print("Creating universities...")
-        universities = {}
-        for university in test_university_data:
-            universities[university] = University.create(university, "en")
-            universities[university].add_translated_name(khmer(university), "km")
+            print("done.")
 
-        for university, uni_data in test_university_data.items():
+            # Create universities and link to courses
+            print("Creating universities...")
+            universities = {}
+            for university in test_university_data:
+                universities[university] = University.create(university, "en")
+                universities[university].add_translated_name(khmer(university), "km")
 
-            print(university + "...")
-            for course in uni_data["courses"]:
-                universities[university].add_course(courses[course])
+            for university, uni_data in test_university_data.items():
 
-            for admission in uni_data["admission"]:
-                adm = Admission.create(universities[university].university_id, admission, "en")
-                adm.add_translated_admission(khmer(admission), "km")
+                print(university + "...")
+                for course in uni_data["courses"]:
+                    universities[university].add_course(courses[course])
 
-            for tuition_fee in uni_data["tuition_fees"]:
-                fee = TuitionFee.create(
-                    universities[university].university_id,
-                    tuition_fee["min"], tuition_fee["max"], 
-                    tuition_fee["currency"], tuition_fee["period"],
-                    tuition_fee["award"], "en"
-                )
+                for admission in uni_data["admission"]:
+                    adm = Admission.create(universities[university].university_id, admission, "en")
+                    adm.add_translated_admission(khmer(admission), "km")
 
-                fee.add_translation(int(float(tuition_fee["min"])/ 0.00025), "tuition_fee_min", "km")
-                fee.add_translation(int(float(tuition_fee["max"])/ 0.00025), "tuition_fee_max", "km")
-                fee.add_translation("៛", "currency", "km")
-                fee.add_translation(khmer(tuition_fee["award"]), "award", "km")
-                fee.add_translation(khmer(tuition_fee["period"]), "period", "km")
+                for tuition_fee in uni_data["tuition_fees"]:
+                    fee = TuitionFee.create(
+                        universities[university].university_id,
+                        tuition_fee["min"], tuition_fee["max"], 
+                        tuition_fee["currency"], tuition_fee["period"],
+                        tuition_fee["award"], "en"
+                    )
 
-            for scholarship in uni_data["scholarships"]:
-                sch = Scholarship.create(universities[university].university_id, scholarship, "en")
-                sch.add_translation(khmer("scholarship"), "km")
+                    fee.add_translation(int(float(tuition_fee["min"])/ 0.00025), "tuition_fee_min", "km")
+                    fee.add_translation(int(float(tuition_fee["max"])/ 0.00025), "tuition_fee_max", "km")
+                    fee.add_translation("៛", "currency", "km")
+                    fee.add_translation(khmer(tuition_fee["award"]), "award", "km")
+                    fee.add_translation(khmer(tuition_fee["period"]), "period", "km")
 
-            for contact_detail in uni_data["contact_details"]:
-                det = ContactDetail.create(universities[university].university_id, contact_detail, "en")
-                det.add_translation(khmer(contact_detail), "km")
+                for scholarship in uni_data["scholarships"]:
+                    sch = Scholarship.create(universities[university].university_id, scholarship, "en")
+                    sch.add_translation(khmer("scholarship"), "km")
 
-            for facility in uni_data["facilities"]:
-                fac = Facility.create(universities[university].university_id, facility, "en")
-                fac.add_translation(khmer(facility), "km")
+                for contact_detail in uni_data["contact_details"]:
+                    det = ContactDetail.create(universities[university].university_id, contact_detail, "en")
+                    det.add_translation(khmer(contact_detail), "km")
 
-        print("Creating users")
+                for facility in uni_data["facilities"]:
+                    fac = Facility.create(universities[university].university_id, facility, "en")
+                    fac.add_translation(khmer(facility), "km")
 
-        for user in users:
-            user = User.create(*user)
+            print("Creating users")
 
-    print("Finished creating test data")
+            for user in users:
+                user = User.create(*user)
+
+            if args["--add_pending"]:
+
+                print("Adding pending additions")
+
+                for addition in pending_additions["category"]:
+                    print("Addition '{}'".format(addition[0]))
+                    category = CategoryPending.add(category_name=addition[0], language="en")
+                    category.set_intro(addition[1], "en")
+                    category.set_careers(addition[2], "en")
+
+                print("Adding pending edits")
+
+                for edit in pending_edits["category"]:
+                    print("Edit '{}'".format(edit[0]))
+                    category = CategoryPending.edit(categories[edit[0]])
+                    category.set_intro(edit[1], "en")
+                    category.set_careers(edit[2], "en")
+
+        print("Finished creating test data")
+
+    elif args["copy"]:
+        shutil.copy("app/debug.original.db", "app/debug.db")
+
+    elif args["make_original"]:
+        shutil.copy("app/debug.db", "app/debug.original.db")

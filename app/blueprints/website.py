@@ -12,6 +12,8 @@ from app import session
 from app.models.university import University
 from app.models.category import Category
 
+from app.models.pending_changes import PendingChanges
+
 logger = logging.getLogger(__name__)
 
 website = Blueprint('website', __name__, template_folder='templates')
@@ -74,7 +76,9 @@ def logout():
 @website.route("/dashboard", methods=['GET'])
 @flask_login.login_required
 def render_dashboard():
-    return render_template('dashboard.tpl')
+    pending_changes = PendingChanges.all()
+
+    return render_template('dashboard.tpl', pending=pending_changes)
 
 @website.route("/settings", methods=['GET'])
 @flask_login.login_required
