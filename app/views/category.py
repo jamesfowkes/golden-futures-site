@@ -3,6 +3,7 @@ import json
 
 from flask import request, redirect, jsonify, url_for, Response, abort
 import flask_login
+from flask.ext.babel import gettext
 
 from app.models.category import CategoryPending
 
@@ -28,7 +29,18 @@ def create_category():
     category = CategoryPending.addition(category_name, language)
     category.set_intro(category_intro)
     category.set_careers(category_careers)
-    return json.dumps(category.json())
+
+    data = {
+        "entries": [
+            gettext("New Category") +": " + category.category_name,
+            gettext("Introduction") +": " + category.category_intro,
+            gettext("Careers") +": " + category.category_careers
+        ],
+        "pending_id": category.pending_id,
+        "approve_text": gettext("Approve"),
+        "reject_text": gettext("Reject")
+    }
+    return jsonify(data)
 
 @app.route("/<language>/category/delete", methods=['POST'])
 @flask_login.login_required

@@ -1,30 +1,64 @@
-function show_or_hide_approval_divs()
-{
-  if ($("div#additions > div.pending").length == 0)
-  {
+function show_hide_approval_divs() {
+  var has_additions = $("div#additions > div.pending").length > 0;
+  var has_edits = $("div#edits > div.pending").length > 0;
+  var has_deletions = $("div#deletions > div.pending").length > 0;
+
+  if (has_additions) {
+    $("div#additions").show();
+  } else {
     $("div#additions").hide();
   }
-  else
-  {
-    $("div#additions").show();
-  }
 
-  if ($("div#edits > div.pending").length == 0)
-  {
+  if (has_edits) {
+    $("div#edits").show();
+  } else {
     $("div#edits").hide();
   }
-  else
-  {
-    $("div#edits").show();
-  }
 
-if ($("div#deletions > div.pending").length == 0)
-  {
+  if (has_deletions) {
+    $("div#deletions").show();
+  } else {
     $("div#deletions").hide();
   }
-  else
-  {
-    $("div#deletions").show();
+
+  if (has_additions || has_edits || has_deletions) {
+    $("div#pending_changes").show();
+  } else {
+    $("div#pending_changes").hide();
+  }
+}
+
+function approve_button(approve_id, class_type, button_text)
+{
+  return $('<button type="button" approveid="' + approve_id + '" class="approve-' + class_type + ' btn btn-outline-success btn-sm">' + button_text + '</button>')
+}
+
+function reject_button(reject_id, class_type, button_text)
+{
+  return $('<button type="button" approveid="' + reject_id + '" class="reject-' + class_type + ' btn btn-outline-danger btn-sm">' + button_text + '</button>')
+}
+
+function add_approval_div(container_id, entries, pending_id, class_type, approve_text, reject_text)
+{
+  container_div = $("div#" + container_id);
+  new_div = $('<div class="pending">');
+
+  new_approve_button = approve_button(pending_id, class_type, approve_text);
+  new_reject_button = reject_button(pending_id, class_type, reject_text);
+
+  for (var i = 0, len = entries.length; i < len; i++) {
+    new_p = $("<p></p>").text(entries[i]);
+    new_div.append(new_p)
+  }
+  new_div.append(new_approve_button)
+  new_approve_button.after(" ");
+  new_div.append(new_reject_button)
+  container_div.append(new_div)
+}
+
+function refresh_approval_divs() {
+  if ($("div#pending_changes").length) {
+    show_hide_approval_divs();
   }
 }
 
@@ -37,11 +71,13 @@ $( document ).ready(function() {
         category_intro: $("#category_intro").val(),
         category_careers: $("#category_careers").val()
       }, function(data) {
+        add_approval_div("additions", data["entries"], data["pending_id"], "category", data["approve_text"], data["reject_text"]);
+        refresh_approval_divs();
       });
       return false;
   });
 
-  function ajax_fn(url, data_attr) {
+  function pending_changes_ajax_handler(url, data_attr) {
     return function(event) {
       $.ajax({
         type: "POST",
@@ -52,7 +88,7 @@ $( document ).ready(function() {
           if (data.result)
           {
             $(this).parent().remove();
-            show_or_hide_approval_divs();
+            refresh_approval_divs();
           }
           return false;
         }
@@ -60,8 +96,8 @@ $( document ).ready(function() {
     }
   }
 
-  $(".approve-category").click(ajax_fn('/category/pending/approve', "approveid"));
-  $(".reject-category").click(ajax_fn('/category/pending/reject', "rejectid"));
+  $('body').on('click', '.approve-category', pending_changes_ajax_handler('/category/pending/approve', "approveid"));
+  $(".reject-category").click(pending_changes_ajax_handler('/category/pending/reject', "rejectid"));
 
-  show_or_hide_approval_divs();
+  refresh_approval_divs();
 });
