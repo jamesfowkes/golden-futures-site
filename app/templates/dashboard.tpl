@@ -50,14 +50,18 @@
 {%- endmacro %}
 
 {% macro render_pending_changes() -%}
-<div class="card plain" id="pending_changes">
-    <div class="card-title" role="tab" id="approval_heading">
-        <a data-toggle="collapse" data-parent="#accordion" href="approval_collapse" aria-expanded="true" aria-controls="approval_collapse">
-            <h3>{{_("Waiting for Approval")}}</h3>
-        </a>
-        {{ render_pending_additions(pending.additions) }}
-        {{ render_pending_edits(pending.edits) }}
-        {{ render_pending_deletions(pending.deletions) }}
+<div id="pending_changes" role="tablist">
+    <div class="card plain">
+        <div class="card-title" role="tab" id="approval_heading">
+            <a data-toggle="collapse" data-parent="#pending_changes" href="#approval_collapse" aria-expanded="true" aria-controls="approval_collapse">
+                <h3>{{_("Waiting for Approval")}}</h3>
+            </a>
+            <div id="approval_collapse" class="collapse show">
+            {{ render_pending_additions(pending.additions) }}
+            {{ render_pending_edits(pending.edits) }}
+            {{ render_pending_deletions(pending.deletions) }}
+            </div>
+        </div>
     </div>
 </div>
 {%- endmacro %}
@@ -83,44 +87,79 @@
 {% block content %}
 <div class="container">
     <h2>{{_("Your Dashboard") }}</h2>
-
-    <div id="accordion" role="tablist" aria-multiselectable="true">
-
-        {% if current_user.is_admin() %}
+    
+    {% if current_user.is_admin() %}
+    <div>
         {{ render_pending_changes() }}
-        {% endif %}
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-sm-6">
+            <div id="add_accordion" role="tablist" aria-multiselectable="true">
+                <div class="card plain">
+                    <div class="card-title" role="tab" id="categories_heading">
+                        <h3>
+                            <a data-toggle="collapse" data-parent="#add_accordion" href="#add_category_collapse" aria-expanded="true" aria-controls="add_category_collapse">
+                            {{_("Add New Category")}}
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="add_category_collapse" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+                        <div class="card-block">
+                            {{ render_add_new_category_form() }}
+                        </div>
+                    </div>
+                </div>
 
-        <div class="card plain">
-            <div class="card-title" role="tab" id="categories_heading">
-                <h3>
-                    <a data-toggle="collapse" data-parent="#accordion" href="#add_category_collapse" aria-expanded="true" aria-controls="add_category_collapse">
-                    {{_("Add New Category")}}
-                    </a>
-                </h3>
-            </div>
-            <div id="add_category_collapse" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                <div class="card-block">
-                    {{ render_add_new_category_form() }}
+                <div class="card plain">
+                    <div class="card-title" role="tab" id="courses_heading">
+                        <a data-toggle="collapse" data-parent="#add_accordion" href="courses_collapse" aria-expanded="true" aria-controls="courses_collapse">
+                            <h3>{{_("Add Courses")}}</h3>
+                        </a>
+                    </div>
+                </div>
+                <div class="card plain">
+                    <div class="card-title" role="tab" id="universities_heading">
+                        <a data-toggle="collapse" data-parent="#add_accordion" href="universities_collapse" aria-expanded="true" aria-controls="universities_collapse">
+                            <h3>{{_("Add Universities")}}</h3>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="col-sm-6">
+            <div id="edit_accordion" role="tablist" aria-multiselectable="true">
+                <div class="card plain">
+                    <div class="card-title" role="tab" id="categories_heading">
+                        <h3>
+                            <a data-toggle="collapse" data-parent="#edit_accordion" href="#edit_category_collapse" aria-expanded="true" aria-controls="edit_category_collapse">
+                            {{_("Edit Categories")}}
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="edit_category_collapse" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
 
-        <div class="card plain">
-            <div class="card-title" role="tab" id="courses_heading">
-                <a data-toggle="collapse" data-parent="#accordion" href="courses_collapse" aria-expanded="true" aria-controls="courses_collapse">
-                    <h3>{{_("Add/Edit Courses")}}</h3>
-                </a>
+                    </div>
+                </div>
+
+                <div class="card plain">
+                    <div class="card-title" role="tab" id="courses_heading">
+                        <a data-toggle="collapse" data-parent="#edit_accordion" href="courses_collapse" aria-expanded="true" aria-controls="courses_collapse">
+                            <h3>{{_("Edit Courses")}}</h3>
+                        </a>
+                    </div>
+                </div>
+                <div class="card plain">
+                    <div class="card-title" role="tab" id="universities_heading">
+                        <a data-toggle="collapse" data-parent="#edit_accordion" href="universities_collapse" aria-expanded="true" aria-controls="universities_collapse">
+                            <h3>{{_("Edit Universities")}}</h3>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="card plain">
-            <div class="card-title" role="tab" id="universities_heading">
-                <a data-toggle="collapse" data-parent="#accordion" href="universities_collapse" aria-expanded="true" aria-controls="universities_collapse">
-                    <h3>{{_("Add/Edit Universities")}}</h3>
-                </a>
-            </div>
-        </div>
+    </div>
 </div>
-
 {% endblock %}
 
 {% block js %}
