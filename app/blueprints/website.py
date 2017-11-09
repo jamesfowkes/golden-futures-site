@@ -77,8 +77,9 @@ def logout():
 @flask_login.login_required
 def render_dashboard():
     pending_changes = PendingChanges.all()
-
-    return render_template('dashboard.tpl', pending=pending_changes)
+    categories = [(category.category_id, category.category_name) for category in Category.all()]
+    categories = sorted(categories, key=lambda c: c[1])
+    return render_template('dashboard.tpl', pending=pending_changes, categories=categories)
 
 @website.route("/settings", methods=['GET'])
 @flask_login.login_required
