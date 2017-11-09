@@ -37,7 +37,6 @@ $( document ).ready(function() {
         category_intro: $("#category_intro").val(),
         category_careers: $("#category_careers").val()
       }, function(data) {
-        alert(data.result);
       });
       return false;
   });

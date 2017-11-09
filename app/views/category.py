@@ -25,7 +25,9 @@ def create_category():
         language = request.args["language"]
 
     logger.info("Creating category {} in language {}".format(category_name, language))
-    category = CategoryPending.create(category_name, language)
+    category = CategoryPending.addition(category_name, language)
+    category.set_intro(category_intro)
+    category.set_careers(category_careers)
     return json.dumps(category.json())
 
 @app.route("/<language>/category/delete", methods=['POST'])
