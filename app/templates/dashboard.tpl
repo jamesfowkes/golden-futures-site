@@ -1,88 +1,6 @@
 {% extends "layout.tpl" %}
 
-{% macro approve(type, id) -%}
-    <button type="button" approveid="{{id}}" class="approve-{{type}} btn btn-outline-success btn-sm">{{_("Approve")}}</button>
-{%- endmacro %}
-
-{% macro reject(type, id) -%}
-    <button type="button" rejectid="{{id}}" class="reject-{{type}} btn btn-outline-danger btn-sm">{{_("Reject")}}</button>
-{%- endmacro %}
-
-{% macro render_pending_additions(additions) -%}
-    <div id="additions">
-        <h4>{{_("Additions")}}</h4>
-        {% for addition in additions["category"] %}
-            <div class="pending">
-                <p>{{_("New Category")}}: {{addition}}</p>
-                <p>{{_("Introduction")}}: {{ addition.category_intro }}</p>
-                <p>{{_("Careers")}}: {{ addition.category_careers }}</p>
-                {{approve("category", addition.pending_id)}} {{reject("category", addition.pending_id)}}
-            </div>
-        {% endfor %}
-    </div>
-{%- endmacro %}
-
-{% macro render_pending_edits(edits) -%}
-    <div id="edits">
-        <h4>{{_("Edits")}}</h4>
-        {% for edit in edits["category"] %}
-            <div class="pending">
-                <p>{{_("Edit Category")}}: {{edit}}</p>
-                <p>{{_("Introduction")}}: {{edit.category_intro}}</p>
-                <p>{{_("Careers")}}: {{ edit.category_careers }}</p>
-                {{approve("category", edit.pending_id)}} {{reject("category", edit.pending_id)}}
-        </div>
-        {% endfor %}
-    </div>
-
-{%- endmacro %}
-
-{% macro render_pending_deletions(deletions) -%}
-    <div id="deletions">
-        <h4>{{_("Deletions")}}</h4>
-        {% for deletion in deletions["category"] %}
-            <div class="pending">
-                <p>{{_("Remove Category")}}: {{deletion}}</p>
-                {{approve("category", deletion.pending_id)}} {{reject("category", deletion.pending_id)}}
-            </div>
-        {% endfor %}
-    </div>
-{%- endmacro %}
-
-{% macro render_pending_changes() -%}
-<div id="pending_changes" role="tablist">
-    <div class="card plain">
-        <div class="card-title" role="tab" id="approval_heading">
-            <a data-toggle="collapse" data-parent="#pending_changes" href="#approval_collapse" aria-expanded="true" aria-controls="approval_collapse">
-                <h3>{{_("Waiting for Approval")}}</h3>
-            </a>
-            <div id="approval_collapse" class="collapse show">
-            {{ render_pending_additions(pending.additions) }}
-            {{ render_pending_edits(pending.edits) }}
-            {{ render_pending_deletions(pending.deletions) }}
-            </div>
-        </div>
-    </div>
-</div>
-{%- endmacro %}
-
-{% macro render_add_new_category_form() -%}
-<form>
-    <div id="form_add_category" class="form-group" action="{{url_for('create_category')}}"">
-        <h4>{{ _("Category Details") }}</h4>
-        <label for="category_name" class="sr-only">{{ _("Category Name") }}</label>
-        <input class="form-control" type="text" id="category_name" name="category_name" placeholder="Category Name" lang="{{g.lang}}" required>
-        <label for="category_intro" class="sr-only">{{ _("Category Introduction") }}</label>
-        <input class="form-control" type="text" id="category_intro" name="category_intro" placeholder="Category Introduction" lang="{{g.lang}}" required>
-        <label for="category_careers" class="sr-only">{{ _("Category Careers") }}</label>
-        <input class="form-control" type="text" id="category_careers" name="category_careers" placeholder="Category Careers" lang="{{g.lang}}" required>
-        <button id="add_category" class="btn btn-default btn-block" type="button">{{_("Submit New Category")}}</button>
-    </div>
-</form>
-{%- endmacro %}
-
-{% macro render_categories() -%}
-{%- endmacro %}
+{% import 'dashboard.macro' as dashboard_macro with context%}
 
 {% block content %}
 <div class="container">
@@ -90,7 +8,7 @@
     
     {% if current_user.is_admin() %}
     <div>
-        {{ render_pending_changes() }}
+        {{ dashboard_macro.render_pending_changes() }}
     </div>
     {% endif %}
     <div class="row">
@@ -106,7 +24,7 @@
                     </div>
                     <div id="add_category_collapse" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
                         <div class="card-block">
-                            {{ render_add_new_category_form() }}
+                            {{ dashboard_macro.render_add_new_category_form() }}
                         </div>
                     </div>
                 </div>
@@ -138,7 +56,9 @@
                         </h3>
                     </div>
                     <div id="edit_category_collapse" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-
+                        {% for id, name in categories %}
+                        {{ dashboard_macro.render_edit_category(id, name) }}
+                        {% endfor %}
                     </div>
                 </div>
 
