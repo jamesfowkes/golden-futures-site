@@ -3,7 +3,7 @@ import json
 
 from flask import request, redirect, jsonify, url_for, Response, abort
 import flask_login
-from flask.ext.babel import gettext
+from flask_babel import gettext
 
 from app.models.category import CategoryPending
 
