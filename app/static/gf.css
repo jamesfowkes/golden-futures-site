@@ -67,3 +67,10 @@ form#login button {
 	background-color: #efa83d;
 	color: #000000;
 }
+
+div.pending {
+	background-color: #efa83d;
+	border-radius: 5px;
+	padding:1em;
+	margin-bottom: 1em;
+}

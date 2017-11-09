@@ -12,7 +12,12 @@
     <div id="additions">
         <h4>{{_("Additions")}}</h4>
         {% for addition in additions["category"] %}
-            <span>{{_("New Category")}}: <strong>{{addition}}</strong> {{approve("category", addition.pending_id)}} {{reject("category", addition.pending_id)}}</span>
+            <div class="pending">
+                <p>{{_("New Category")}}: <strong>{{addition}}</strong></p>
+                <p>{{_("Introduction")}}: {{ addition.category_intro }}</p>
+                <p>{{_("Careers")}}: {{ addition.category_careers }}</p>
+                {{approve("category", addition.pending_id)}} {{reject("category", addition.pending_id)}}
+            </div>
         {% endfor %}
     </div>
 {%- endmacro %}
@@ -21,7 +26,11 @@
     <div id="edits">
         <h4>{{_("Edits")}}</h4>
         {% for edit in edits["category"] %}
-            <span>{{_("Edit Category")}}: <strong>{{edit}}</strong> {{approve("category", edit.pending_id)}} {{reject("category", edit.pending_id)}}</span>
+            <div class="pending">
+            <p>{{_("Edit Category")}}: <strong>{{edit}}</strong>
+            <p>{{_("Introduction")}}: {{edit.category_intro}}</p>
+            <p>{{_("Careers")}}: {{ edit.category_careers }}</p>
+            {{approve("category", edit.pending_id)}} {{reject("category", edit.pending_id)}}</div>
         {% endfor %}
     </div>
 
@@ -31,7 +40,7 @@
     <div id="deletions">
         <h4>{{_("Deletions")}}</h4>
         {% for deletion in deletions["category"] %}
-            <span>{{_("Remove Category")}}: <strong>{{deletion}}</strong> {{approve("category", deletion.pending_id)}} {{reject("category", deletion.pending_id)}}</span>
+            <div class="pending">{{_("Remove Category")}}: <strong>{{deletion}}</strong> {{approve("category", deletion.pending_id)}} {{reject("category", deletion.pending_id)}}</div>
         {% endfor %}
     </div>
 {%- endmacro %}

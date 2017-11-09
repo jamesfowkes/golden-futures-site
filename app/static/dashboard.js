@@ -1,6 +1,6 @@
 function show_or_hide_approval_divs()
 {
-  if ($("div#additions > span").length == 0)
+  if ($("div#additions > div.pending").length == 0)
   {
     $("div#additions").hide();
   }
@@ -9,7 +9,7 @@ function show_or_hide_approval_divs()
     $("div#additions").show();
   }
 
-  if ($("div#edits > span").length == 0)
+  if ($("div#edits > div.pending").length == 0)
   {
     $("div#edits").hide();
   }
@@ -18,7 +18,7 @@ function show_or_hide_approval_divs()
     $("div#edits").show();
   }
 
-if ($("div#deletions > span").length == 0)
+if ($("div#deletions > div.pending").length == 0)
   {
     $("div#deletions").hide();
   }
