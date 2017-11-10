@@ -13,7 +13,7 @@ from sqlalchemy_i18n.utils import get_current_locale
 import app
 from app.database import db
 
-from app.models.base_model import BaseModelTranslateable, DeclarativeBase, PendingChangeBase
+from app.models.base_model import BaseModelTranslateable, DeclarativeBase, PendingChangeBase, DbIntegrityException
 
 from app.models.category_course_map import category_course_map_table
 from app.models.category_course_map import category_course_pending_map_table
@@ -135,8 +135,11 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
     def __init__(self, category_name, language, pending_type):
         self.pending_type = pending_type
         CategoryBase.__init__(self, category_name, language)
-        db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except sa.exc.IntegrityError:
+            raise DbIntegrityException()
 
     def _delete(self):
         for lang, translation in self.translations:

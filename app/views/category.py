@@ -5,6 +5,7 @@ from flask import request, redirect, jsonify, url_for, Response, abort
 import flask_login
 from flask_babel import gettext
 
+from app.models.base_model import DbIntegrityException
 from app.models.category import CategoryPending
 
 from app import app
@@ -26,20 +27,33 @@ def create_category():
         language = request.args["language"]
 
     logger.info("Creating category {} in language {}".format(category_name, language))
-    category = CategoryPending.addition(category_name, language)
-    category.set_intro(category_intro)
-    category.set_careers(category_careers)
+    try:
+        category = CategoryPending.addition(category_name, language)
+        category.set_intro(category_intro)
+        category.set_careers(category_careers)
 
-    data = {
-        "entries": [
-            gettext("New Category") +": " + category.category_name,
-            gettext("Introduction") +": " + category.category_intro,
-            gettext("Careers") +": " + category.category_careers
-        ],
-        "pending_id": category.pending_id,
-        "approve_text": gettext("Approve"),
-        "reject_text": gettext("Reject")
-    }
+        data = {
+            "success": True,
+            "category_name": category.category_name,
+            "entries": [
+                gettext("New Category") +": " + category.category_name,
+                gettext("Introduction") +": " + category.category_intro,
+                gettext("Careers") +": " + category.category_careers
+            ],
+            "pending_id": category.pending_id
+        }
+    except DbIntegrityException:
+        data = {
+            "success": False,
+            "err": gettext("This category already exists!")
+        }
+    except Exception as e:
+        data = {
+            "success": False,
+            "err": gettext("An unknown error occured")
+        }
+        logger.error(e)
+        raise
     return jsonify(data)
 
 @app.route("/<language>/category/delete", methods=['POST'])

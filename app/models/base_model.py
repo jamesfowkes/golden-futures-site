@@ -9,6 +9,9 @@ DeclarativeBase = declarative_base()
 
 logger = logging.getLogger(__name__)
 
+class DbIntegrityException(Exception):
+    pass
+    
 class __Deleteable__:
     def delete(self):
         db.session.delete(self)

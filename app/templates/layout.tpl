@@ -14,6 +14,7 @@
     
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        $L = {{ g.translations|tojson|safe }}
     </script>
 </head>
 

@@ -77,3 +77,7 @@ def init_app(app):
     babel.init_app(app)
     sqlalchemy_utils.i18n.get_locale = get_locale
     sqlalchemy_i18n.make_translatable(options={'locales': app.config["SUPPORTED_LOCALES"]})
+
+    app.translations = {
+        "add_success": gettext("added successfully")
+    }
