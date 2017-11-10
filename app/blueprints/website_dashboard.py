@@ -28,9 +28,8 @@ def render_pending_changes():
 @flask_login.login_required
 def render_edit_category_dashboard(id):
     g.ep_data["id"] = id
-    categories = [(category.category_id, category.category_name) for category in Category.all()]
-    categories = sorted(categories, key=lambda c: c[1])
-    return render_template('dashboard.categories.tpl', categories=categories)
+    category = Category.get_single(category_id=id)
+    return render_template('dashboard.category.edit.tpl', category=category)
 
 @dashboard.route("/dashboard/categories", methods=['GET'])
 @flask_login.login_required

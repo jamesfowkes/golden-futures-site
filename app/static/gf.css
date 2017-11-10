@@ -59,7 +59,7 @@ h1.inline-heading, h2.inline-heading, h3.inline-heading, h4.inline-heading {
     outline: none;
 }
 
-form input.form-control {
+form input.form-control, form textarea.form-control {
 	margin-bottom: 1em;
 }
 

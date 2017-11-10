@@ -1,0 +1,42 @@
+{% macro category_name_input(default="") -%}
+    <label for="category_name" class="sr-only">{{ _("Category Name") }}</label>
+    <input class="form-control" type="text" id="category_name" name="category_name" placeholder="{{_("Category Name")}}" lang="{{g.lang}}" value="{{default}}" required>
+{%- endmacro %}
+
+{% macro category_intro_input(default="") -%}
+    <label for="category_intro" class="sr-only">{{ _("Category Introduction") }}</label>
+    <textarea rows="4" class="form-control" type="text" id="category_intro" name="category_intro" placeholder="{{_("Category Introduction")}}" lang="{{g.lang}}" required>{{default}}</textarea>
+{%- endmacro %}
+
+{% macro category_careers_input(default="") -%}
+    <label for="category_careers" class="sr-only">{{ _("Category Careers") }}</label>
+    <textarea rows="4" class="form-control" type="text" id="category_careers" name="category_careers" placeholder="{{_("Category Careers")}}" lang="{{g.lang}}"required>{{default}}</textarea>
+{%- endmacro %}
+
+{% macro render_edit_new_category_form(category) -%}
+<form>
+    <div id="form_add_category" class="form-group" action="{{url_for('create_category')}}"">
+        <h4>{{ _("Category Details") }}</h4>
+        {{ category_intro_input(category.category_intro) }}
+        {{ category_careers_input(category.category_careers) }}
+    </div>
+</form>
+{%- endmacro %}
+
+{% macro render_add_new_category_form() -%}
+<form>
+    <div id="form_add_category" class="form-group" action="{{url_for('create_category')}}"">
+        <h4>{{ _("Category Details") }}</h4>
+        {{ category_name_input() }}
+        {{ category_intro_input() }}
+        {{ category_careers_input() }}
+        <button id="add_category" class="btn btn-default btn-block" type="button">{{_("Submit New Category")}}</button>
+    </div>
+</form>
+{%- endmacro %}
+
+{% macro render_edit_category_link(id, name) -%}
+    <div class="edit_category">
+        <a href="{{url_for('dashboard.render_edit_category_dashboard', id=id)}}" class="edit_category" id='{{id}}'>{{name}}</a>
+    </div>
+{%- endmacro %}

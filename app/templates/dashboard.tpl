@@ -8,20 +8,20 @@
     
     {% if current_user.is_admin() %}
     <div>
-        <a href="{{ url_for('website.render_pending_changes') }}">{{_("See pending changes")}}</a>
+        <a href="{{ url_for('dashboard.render_pending_changes') }}">{{_("See pending changes")}}</a>
     </div>
     {% endif %}
     <div>
-        <a href="{{ url_for('website.render_categories_dashboard') }}">{{_("Manage categories")}}</a>
+        <a href="{{ url_for('dashboard.render_categories_dashboard') }}">{{_("Manage categories")}}</a>
     </div>
     <div>
-        <a href="{{ url_for('website.render_courses_dashboard') }}">{{_("Manage courses")}}</a>
+        <a href="{{ url_for('dashboard.render_courses_dashboard') }}">{{_("Manage courses")}}</a>
     </div>
     <div>
-        <a href="{{ url_for('website.render_universities_dashboard') }}">{{_("Manage universities")}}</a>
+        <a href="{{ url_for('dashboard.render_universities_dashboard') }}">{{_("Manage universities")}}</a>
     </div>
     <div>
-        <a href="{{ url_for('website.render_universities_dashboard') }}">{{_("Manage universities")}}</a>
+        <a href="{{ url_for('dashboard.render_universities_dashboard') }}">{{_("Manage universities")}}</a>
     </div>
 </div>
 {% endblock %}
