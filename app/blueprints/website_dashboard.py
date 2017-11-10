@@ -1,5 +1,7 @@
 import logging
 
+from collections import defaultdict, OrderedDict
+
 from flask import Blueprint, g, render_template, request, redirect, url_for
 import flask_login
 
@@ -30,7 +32,14 @@ def render_pending_changes():
 def render_edit_category_dashboard(id):
     g.ep_data["id"] = id
     category = Category.get_single(category_id=id)
-    return render_template('dashboard.category.edit.tpl', category=category)
+    courses = sorted(Course.all(), key=lambda c: c.course_name)
+    alphabetised_courses = defaultdict(list)
+    for course in courses:
+        first_letter = course.course_name[0]
+        alphabetised_courses[first_letter].append(course)
+
+    sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
+    return render_template('dashboard.category.edit.tpl', category=category, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
 
 @dashboard.route("/dashboard/categories", methods=['GET'])
 @flask_login.login_required

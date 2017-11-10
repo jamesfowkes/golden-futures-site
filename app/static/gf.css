@@ -78,3 +78,11 @@ div.pending {
 	padding:1em;
 	margin-bottom: 1em;
 }
+
+label input {
+	margin-right: 0.5em;
+}
+
+label.form-check-label {
+	padding-bottom: 1em;
+}

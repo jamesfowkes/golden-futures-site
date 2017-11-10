@@ -104,6 +104,9 @@ class CategoryBase():
         db.session.add(self)
         db.session.commit()
 
+    def has_course(self, course):
+        return course.course_id in [course.course_id for course in self.courses]
+        
 @total_ordering
 class Category(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 

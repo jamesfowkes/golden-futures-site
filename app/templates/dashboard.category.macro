@@ -40,3 +40,61 @@
         <a href="{{url_for('dashboard.render_edit_category_dashboard', id=id)}}" class="edit_category" id='{{id}}'>{{name}}</a>
     </div>
 {%- endmacro %}
+
+{% macro render_course_checkbox(course, checked) -%}
+    <label for="course_check_{{course.course_id}}" class="form-check-label">
+    {% if checked %}
+    <input for="course_check_{{course.course_id}}" type="checkbox" class="form-check-input" checked>{{course.course_name}}</input>
+    {% else %}
+    <input for="course_check_{{course.course_id}}" type="checkbox" class="form-check-input">{{course.course_name}}</input>
+    {% endif %}
+    </label>
+{%- endmacro %}
+
+{% macro render_course_selector(category, all_courses, alphabetised_courses) -%}
+    
+    <div class="card plain">
+        <div class="card-title">
+            <h4>{{_("Current Selection")}}</h4>
+        </div>
+        <div class="card-block">
+            <div class="container">
+                {% for course in all_courses if category.has_course(course) %}
+
+                    {% if loop.index0 % 4  == 0 or loop.first %}
+                    <div class="row">
+                    {% endif %}    
+
+                    <div class="col-sm-3">{{ render_course_checkbox(course, True) }}</div>
+
+                    {% if loop.index % 4  == 0 or loop.last %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% for first_letter, courses in alphabetised_courses.items() %}
+        <div class="card plain">
+            <div class="card-title">
+                <h4>{{first_letter}}</h4>
+            </div>
+            <div class="card-block">
+                <div class="container">
+                {% for course in courses if not category.has_course(course) %}
+                    {% if loop.index0 % 4  == 0 or loop.first %}
+                    <div class="row">
+                    {% endif %}    
+                    
+                    <div class="col-sm-3">{{ render_course_checkbox(course, False) }}</div>
+                    
+                    {% if loop.index % 4  == 0 or loop.last %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+        </div>
+    {% endfor %}
+{%- endmacro %}
