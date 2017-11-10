@@ -6,6 +6,7 @@ import flask_login
 from app.models.university import University
 from app.models.category import Category
 from app.models.course import Course
+from app.models.pending_changes import PendingChanges
 
 from app.blueprints import common
 
@@ -56,4 +57,3 @@ def init_app(app):
     dashboard.before_request(common.init_request)
     dashboard.add_app_template_filter(common.language_name)
     app.register_blueprint(dashboard)
-    
