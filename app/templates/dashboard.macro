@@ -1,6 +1,6 @@
 {% macro dashboard_heading(heading_text) -%}
     <h2 class="inline-heading">{{ heading_text }}</h2>
-    <span class="pull-right"><a href='{{url_for("website.render_dashboard")}}'>{{_("Back to dashboard")}}</a></span>
+    <span class="pull-right"><a href='{{url_for("dashboard.render_dashboard")}}'>{{_("Back to dashboard")}}</a></span>
 {%- endmacro %}
 
 {% macro approve(type, id) -%}

@@ -19,7 +19,7 @@
 
 {% macro render_edit_category(id, name) -%}
     <div class="edit_category">
-        <a href="#" class="edit_category" id='{{id}}'>{{name}}</a>
+        <a href="{{url_for('dashboard.render_edit_category_dashboard', id=id)}}" class="edit_category" id='{{id}}'>{{name}}</a>
     </div>
 {%- endmacro %}
 

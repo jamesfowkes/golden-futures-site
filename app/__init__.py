@@ -35,5 +35,9 @@ from app.views import tuition_fee
 from app.views import scholarship
 
 # Initialise blueprints after the views have been imported to correctly register endpoints
+from app.blueprints import common
 from app.blueprints import website
+from app.blueprints import website_dashboard
+
 website.init_app(app)
+website_dashboard.init_app(app)

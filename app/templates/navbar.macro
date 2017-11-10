@@ -21,7 +21,7 @@
                 {{ current_user.given_name }}<span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
-                <li><a href="{{url_for('website.render_dashboard')}}">{{_("Dashboard")}}</a></li>
+                <li><a href="{{url_for('dashboard.render_dashboard')}}">{{_("Dashboard")}}</a></li>
                 <li><a href="{{url_for('website.render_user_settings')}}">{{_("My Settings")}}</a></li>
                 <li><a href="{{url_for('website.logout')}}">{{_("Logout")}}</a></li>
             </ul>
