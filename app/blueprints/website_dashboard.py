@@ -27,11 +27,11 @@ def render_pending_changes():
     pending_changes = PendingChanges.all()
     return render_template('dashboard.pending.tpl', pending=pending_changes)
 
-@dashboard.route("/dashboard/categories/edit/<id>", methods=['GET'])
+@dashboard.route("/dashboard/categories/edit/<category_id>", methods=['GET'])
 @flask_login.login_required
-def render_edit_category_dashboard(id):
-    g.ep_data["id"] = id
-    category = Category.get_single(category_id=id)
+def render_edit_category_dashboard(category_id):
+    g.ep_data["category_id"] = category_id
+    category = Category.get_single(category_id=category_id)
     courses = sorted(Course.all(), key=lambda c: c.course_name)
     alphabetised_courses = defaultdict(list)
     for course in courses:

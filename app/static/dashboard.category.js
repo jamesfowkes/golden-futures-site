@@ -1,15 +1,10 @@
-function add_category_to_list()
-{
-  $("div#catgories_list")
-}
-
 $( document ).ready(function() {
   $("#add_category").click(function(event) {
       $("p.success").remove();
       $("p.fail").remove();
       $.post($SCRIPT_ROOT + '/category/create', {
         category_name: $("#category_name").val(),
-        language: $("#category_name").attr("lang"),
+        language: $pagelang,
         category_intro: $("#category_intro").val(),
         category_careers: $("#category_careers").val()
       }, function(data) {

@@ -1,12 +1,14 @@
 import logging
 import json
 
+from textwrap import shorten
 from flask import request, redirect, jsonify, url_for, Response, abort
 import flask_login
 from flask_babel import gettext
 
 from app.models.base_model import DbIntegrityException
-from app.models.category import CategoryPending
+from app.models.category import Category, CategoryPending
+from app.models.course import Course, CoursePending
 
 from app import app
 
@@ -56,18 +58,55 @@ def create_category():
         raise
     return jsonify(data)
 
-@app.route("/<language>/category/delete", methods=['POST'])
+@app.route("/category/edit/<category_id>", methods=['POST'])
 @flask_login.login_required
-def delete_category(language):
+def edit_category(category_id):
     if request.method == 'POST':
-        category = CategoryPending.get_single(category_name=request.form["category_name"], language=language)
+        category_name = request.form["category_name"]
+        category_intro = request.form["category_intro"]
+        category_careers = request.form["category_careers"]
+        courses = request.form.getlist("category_courses[]")
+
+        category = CategoryPending.get_single(category_id=category_id)
+        
+        if category is None:
+            category = CategoryPending.edit(Category.get_single(category_id=category_id))
+
+        logger.info("Saving pendings edits to category id %s", category_id)
+        logger.info("New name: %s", category_name)
+        logger.info("Intro: %s", shorten(category_intro, width=40, placeholder="..."))
+        logger.info("Careers: %s", shorten(category_careers, width=40, placeholder="..."))
+        logger.info("Courses: %s", ", ".join(courses))
+        
+        category.category_name = category_name
+        category.category_intro = category_intro
+        category_careers = category_careers
+
+        for course in category.courses:
+            course.delete()
+        for course in[Course.get_single(course_id=int(course_id)) for course_id in courses]:
+            category.add_course(course)
+
+        return jsonify({
+            "success": True,
+            "redirect": url_for("dashboard.render_edit_category_dashboard", category_id=category_id)
+        })
+
+    return jsonify({"success":False})
+
+@app.route("/category/delete", methods=['POST'])
+@flask_login.login_required
+def delete_category():
+    if request.method == 'POST':
+        category = CategoryPending.get_single(category_name=request.form["category_name"], language=request.form["language"])
         if len(category.courses):
             abort(409)
 
         category.delete()
 
         return Response(200)
-        
+
+
 @app.route("/category/pending/approve", methods=['POST'])
 @flask_login.login_required
 def approve_pending_change():
@@ -85,3 +124,4 @@ def reject_pending_change():
         logger.info("Rejecting pending change '%s' to category %s", category_pending.pending_type, category_pending.category_name)
         category_pending.reject()
         return jsonify(result=True)
+

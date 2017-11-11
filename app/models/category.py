@@ -13,10 +13,10 @@ from sqlalchemy_i18n.utils import get_current_locale
 import app
 from app.database import db
 
-from app.models.base_model import BaseModelTranslateable, DeclarativeBase, PendingChangeBase, DbIntegrityException
+from app.models.base_model import BaseModel, BaseModelTranslateable, DeclarativeBase, PendingChangeBase, DbIntegrityException
 
 from app.models.category_course_map import category_course_map_table
-from app.models.category_course_map import category_course_pending_map_table
+from app.models.course import Course
 
 logger = logging.getLogger(__name__)
 
@@ -69,15 +69,6 @@ class CategoryBase():
 
         db.session.commit()
 
-    def add_course(self, course):
-        self.courses.append(course)
-        db.session.add(self)
-        db.session.commit()
-
-    def course_names(self):
-        names = [c.course_name for c in self.courses]
-        return sorted(names)
-
     @classmethod
     def create(cls, category_name, language):
         logger.info("Creating category %s (%s)", category_name, language)
@@ -106,7 +97,10 @@ class CategoryBase():
 
     def has_course(self, course):
         return course.course_id in [course.course_id for course in self.courses]
-        
+    
+    def course_count(self):
+        return len(self.courses)
+
 @total_ordering
 class Category(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
@@ -116,6 +110,15 @@ class Category(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBa
 
     category_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     courses = db.relationship('Course', secondary=category_course_map_table, back_populates="categories")
+
+    def add_course(self, course):
+        self.courses.append(course)
+        db.session.add(self)
+        db.session.commit()
+
+    def course_names(self):
+        names = [c.course_name for c in self.courses]
+        return sorted(names)
 
 class CategoryTranslation(translation_base(Category)):
     __tablename__ = 'CategoryTranslation'
@@ -133,7 +136,7 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
     category_id = db.Column(db.Integer, unique=True, nullable=True)
     pending_type = db.Column(db.String(6), nullable=False)
 
-    courses = db.relationship('CoursePending', secondary=category_course_pending_map_table, back_populates="categories")
+    courses = db.relationship('CategoryPendingCourses', back_populates="category")
 
     def __init__(self, category_name, language, pending_type):
         self.pending_type = pending_type
@@ -168,7 +171,18 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         self._delete()
 
     def reject(self):
+        for course in self.courses:
+            course.delete()
         self._delete()
+
+    def add_course(self, course):
+        self.courses.append(CategoryPendingCourses(category_id=self.category_id, course_id=course.course_id))
+        db.session.add(self)
+        db.session.commit()
+
+    def course_names(self):
+        names = [Course.get_single(course_id=c.course_id).course_name for c in self.courses]
+        return sorted(names)
 
     @classmethod
     def create_from(cls, existing_category, pending_type):
@@ -198,3 +212,10 @@ class CategoryPendingTranslation(translation_base(CategoryPending)):
     category_name = sa.Column(sa.Unicode(80), unique=True)
     category_intro = sa.Column(sa.Unicode())
     category_careers = sa.Column(sa.Unicode())
+
+class CategoryPendingCourses(BaseModel, DeclarativeBase):
+
+    __tablename__ = "CategoryPendingCourses"
+    category_id = db.Column(db.Integer, db.ForeignKey('CategoryPending.category_id'), nullable=False, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('Course.course_id'), nullable=False, primary_key=True)
+    category = db.relationship('CategoryPending', back_populates="courses")
