@@ -20,9 +20,6 @@
     <div>
         <a href="{{ url_for('dashboard.render_universities_dashboard') }}">{{_("Manage universities")}}</a>
     </div>
-    <div>
-        <a href="{{ url_for('dashboard.render_universities_dashboard') }}">{{_("Manage universities")}}</a>
-    </div>
 </div>
 {% endblock %}
 

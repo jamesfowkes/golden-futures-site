@@ -66,6 +66,7 @@ def edit_category(category_id):
         category_intro = request.form["category_intro"]
         category_careers = request.form["category_careers"]
         courses = request.form.getlist("category_courses[]")
+        language = request.form["language"]
 
         category = CategoryPending.get_single(category_id=category_id)
         
@@ -78,8 +79,8 @@ def edit_category(category_id):
         logger.info("Careers: %s", shorten(category_careers, width=40, placeholder="..."))
         logger.info("Courses: %s", ", ".join(courses))
         
-        category.category_name = category_name
-        category.category_intro = category_intro
+        category.set_name(category_name, language)
+        category.set_intro(category_intro, language)
         category_careers = category_careers
 
         for course in category.courses:

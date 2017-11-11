@@ -41,6 +41,14 @@ def render_edit_category_dashboard(category_id):
     sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
     return render_template('dashboard.category.edit.tpl', category=category, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
 
+@dashboard.route("/dashboard/courses/edit/<course_id>", methods=['GET'])
+@flask_login.login_required
+def render_edit_course_dashboard(course_id):
+    g.ep_data["course_id"] = course_id
+    course = Course.get_single(course_id=course_id)
+    courses = sorted(Course.all(), key=lambda c: c.course_name)
+    return render_template('dashboard.course.edit.tpl', course=course)
+
 @dashboard.route("/dashboard/categories", methods=['GET'])
 @flask_login.login_required
 def render_categories_dashboard():
