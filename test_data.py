@@ -597,8 +597,11 @@ users = [
 ]
 
 pending_additions = {
-    "category": [["Inhumanities", "Using the humanities for mischief and profit", "Investment Banker, Homeopath"]],
-    "course": ["Weird Spanish", "Zombish"]
+    "course": ["Weird Spanish", "Zombish"],
+    "category": [
+        ["Inhumanities", "Using the humanities for mischief and profit", "Investment Banker, Homeopath"],
+        ["Forbidden Medicine", "REDACTED", "Unemployed Surgeon", "Archaeology"]
+    ]
 }
 
 pending_edits = {
@@ -716,6 +719,8 @@ if __name__ == "__main__":
                     category = CategoryPending.addition(category_name=addition[0], language="en")
                     category.set_intro(addition[1], "en")
                     category.set_careers(addition[2], "en")
+                    if len(addition) == 4:
+                        category.add_course(courses[addition[3]])
 
                 for addition in pending_additions["course"]:
                     print("Addition of '{}' course".format(addition))
@@ -735,6 +740,7 @@ if __name__ == "__main__":
                     print("Deletion of '{}'".format(deletion[0]))
                     category = CategoryPending.deletion(categories[deletion[0]])
 
+        shutil.copy("app/debug.db", "app/debug.original.db")
         print("Finished creating test data")
 
     elif args["copy"]:

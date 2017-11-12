@@ -26,8 +26,12 @@
                     <h3 id="edit_category">{{_("Edit Categories")}}</h3>
                 </div>
                 <div id="catgories_list" aria-labelledby="edit_category">
-                    {% for id, name in categories %}
-                    {{ dashboard_category_macro.render_edit_category_link(id, name) }}
+                    {% for category in categories %}
+                        {% if category.is_pending() %}
+                            {{ dashboard_category_macro.render_edit_pending_category_link(category) }}
+                        {% else %}
+                            {{ dashboard_category_macro.render_edit_category_link(category) }}
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

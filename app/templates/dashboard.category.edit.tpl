@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container">
     {{ dashboard_macro.dashboard_heading(_("Manage Category: ") + category.category_name) }}
-    <form id="form_add_category" action="{{url_for('edit_category',category_id=category.category_id)}}" method="post">
+    <form id="form_add_category">
         <div class="form-group">
             <h4>{{ _("Category Details") }}</h4>
             <div class="form-group">

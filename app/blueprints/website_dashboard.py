@@ -53,6 +53,21 @@ def render_edit_category_dashboard(category_id):
     sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
     return render_template('dashboard.category.edit.tpl', category=category, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
 
+@dashboard.route("/dashboard/categories/editpending/<pending_id>", methods=['GET'])
+@flask_login.login_required
+def render_edit_pending_category_dashboard(pending_id):
+    g.ep_data["pending_id"] = pending_id
+    g.ep_data["api_endpoint"] = url_for("edit_pending_category", pending_id=pending_id)
+    category = CategoryPending.get_single(pending_id=pending_id)
+    courses = sorted(Course.all(), key=lambda c: c.course_name)
+    alphabetised_courses = defaultdict(list)
+    for course in courses:
+        first_letter = course.course_name[0]
+        alphabetised_courses[first_letter].append(course)
+
+    sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
+    return render_template('dashboard.category.edit.tpl', category=category, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
+
 @dashboard.route("/dashboard/courses/edit/<course_id>", methods=['GET'])
 @flask_login.login_required
 def render_edit_course_dashboard(course_id):
@@ -71,17 +86,21 @@ def render_edit_pending_course_dashboard(pending_id):
 @dashboard.route("/dashboard/categories", methods=['GET'])
 @flask_login.login_required
 def render_categories_dashboard():
-    categories = [(category.category_id, category.category_name) for category in Category.all()]
-    categories = sorted(categories, key=lambda c: c[1])
-    return render_template('dashboard.categories.tpl', categories=categories)
+    live_categories = Category.all()
+    pending_categories = CategoryPending.all()
+    all_categories = live_categories + pending_categories
+    all_categories = sorted(all_categories, key=lambda c: c.category_name[0])
+    return render_template('dashboard.categories.tpl', categories=all_categories)
     
 @dashboard.route("/dashboard/courses", methods=['GET'])
 @flask_login.login_required
 def render_courses_dashboard():
     live_courses = Course.all()
     pending_courses = CoursePending.all()
-    all_courses = [*live_courses, *pending_courses]
+    all_courses = live_courses + pending_courses
     all_courses = sorted(all_courses, key=lambda c: c.course_name[0])
+    for course in all_courses:
+        print(course.is_pending())
     return render_template('dashboard.courses.tpl', courses=all_courses)
 
 @dashboard.route("/dashboard/universities", methods=['GET'])

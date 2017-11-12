@@ -3,7 +3,7 @@ $( document ).ready(function() {
       course_ids = $("form#form_add_category input:checkbox:checked").map(function(){
         return $(this).val();
       }).get();
-      $.post($SCRIPT_ROOT + '/category/edit/' + $data["category_id"], {
+      $.post($SCRIPT_ROOT + $data["api_endpoint"], {
         language: $pagelang,
         category_name: $("#category_name").val(),
         category_intro: $("#category_intro").val(),

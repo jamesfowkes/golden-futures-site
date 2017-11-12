@@ -70,6 +70,9 @@ class CategoryBase():
 
         db.session.commit()
 
+    def is_pending(self):
+        return False
+        
     @classmethod
     def create(cls, category_name, language):
         logger.info("Creating category %s (%s)", category_name, language)
@@ -140,8 +143,9 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
     courses = db.relationship('CategoryPendingCourses', back_populates="category")
 
     def __init__(self, category_name, language, pending_type):
-        self.pending_type = pending_type
         CategoryBase.__init__(self, category_name, language)
+        self.pending_type = pending_type
+        
         try:
             db.session.add(self)
             db.session.commit()
@@ -158,15 +162,18 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         super(BaseModelTranslateable,self).delete()
 
     def approve(self):
-        if self.pending_type == "add":
-            logger.info("Adding category %s", self.translations["en"].category_name)
-            new_category = Category.create(self.translations["en"].category_name, "en")
-            new_category.set_intro(self.translations["en"].category_intro, "en")
-            new_category.set_careers(self.translations["en"].category_careers, "en")
-        elif self.pending_type == "edit":
-            category = Category.get(category_id=self.category_id).one();
-            logger.info("Editing category %s", category.translations["en"].category_name)
-            category.update(self)
+        if self.pending_type == "edit":
+            if self.category_id is None:
+                logger.info("Adding category %s", self.translations["en"].category_name)
+                new_category = Category.create(self.translations["en"].category_name, "en")
+                new_category.set_intro(self.translations["en"].category_intro, "en")
+                new_category.set_careers(self.translations["en"].category_careers, "en")
+                for course in self.courses:
+                    new_category.add_course(Course.get_single(course_id=course.course_id))
+            else:
+                category = Category.get(category_id=self.category_id).one();
+                logger.info("Editing category %s", category.translations["en"].category_name)
+                category.update(self)
         elif self.pending_type == "del":
             category = Category.get(category_id=self.category_id).one();
             logger.info("Deleting category %s", category.translations["en"].category_name)
@@ -188,11 +195,14 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         names = [Course.get_single(course_id=c.course_id).course_name for c in self.courses]
         return sorted(names)
 
+    def is_pending(self):
+        return True
+
     @classmethod
     def all_by_type(cls):
         all_changes = cls.all();
-        additions = [c for c in all_changes if c.pending_type == "add"]
-        edits = [c for c in all_changes if c.pending_type == "edit"]
+        additions = [c for c in all_changes if c.pending_type == "edit" and c.category_id is None]
+        edits = [c for c in all_changes if c.pending_type == "edit" and c.category_id is not None]
         dels = [c for c in all_changes if c.pending_type == "del"]
 
         return PendingChanges(additions, edits, dels)
@@ -205,7 +215,7 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
 
     @classmethod
     def addition(cls, category_name, language):
-        pending = cls(category_name, language, "add")
+        pending = cls(category_name, language, "edit")
         return pending
 
     @classmethod

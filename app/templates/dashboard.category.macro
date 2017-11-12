@@ -25,9 +25,16 @@
 </form>
 {%- endmacro %}
 
-{% macro render_edit_category_link(id, name) -%}
+{% macro render_edit_category_link(category) -%}
     <div class="edit_category">
-        <a href="{{url_for('dashboard.render_edit_category_dashboard', category_id=id)}}" class="edit_category" id='{{id}}'>{{name}}</a>
+        <a href="{{url_for('dashboard.render_edit_category_dashboard', category_id=category.category_id)}}" class="edit_category" id='{{id}}'>{{category.category_name}}</a>
+    </div>
+{%- endmacro %}
+
+{% macro render_edit_pending_category_link(category) -%}
+
+    <div class="edit_category">
+        <a href="{{url_for('dashboard.render_edit_pending_category_dashboard', pending_id=category.pending_id)}}" class="edit_category" id='{{id}}'>{{category.category_name}}</a>
     </div>
 {%- endmacro %}
 

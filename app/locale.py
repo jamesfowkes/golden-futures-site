@@ -26,7 +26,7 @@ def get_locale():
     # If the flask request global already has a language set, use that
     try:
         locale = g.lang
-        logger.info("Loaded language %s from flask global", locale)
+        #logger.info("Loaded language %s from flask global", locale)
         return locale
     except:
         pass

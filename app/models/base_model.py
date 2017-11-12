@@ -101,11 +101,11 @@ class PendingChangeBase():
 
     @classmethod
     def additions(cls):
-        return db.session.query(cls).filter(cls.pending_type=="add").all()
+        return db.session.query(cls).filter(cls.pending_type=="edit").filter(cls.category_id == None).all()
 
     @classmethod
     def edits(cls):
-        return db.session.query(cls).filter(cls.pending_type=="edit").all()
+        return db.session.query(cls).filter(cls.pending_type=="edit").filter(cls.category_id != None).all()
 
     @classmethod
     def deletions(cls):

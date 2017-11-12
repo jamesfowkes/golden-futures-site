@@ -27,7 +27,7 @@
                 </div>
                 <div id="catgories_list" aria-labelledby="edit_course">
                     {% for course in courses %}
-                        {% if course.is_pending %}
+                        {% if course.is_pending() %}
                             {{ dashboard_course_macro.render_edit_pending_course_link(course.pending_id, course.course_name) }}
                         {% else %}
                             {{ dashboard_course_macro.render_edit_course_link(course.course_id, course.course_name) }}

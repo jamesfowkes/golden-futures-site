@@ -57,7 +57,6 @@ def edit_pending_course(pending_id):
             "redirect": url_for('dashboard.render_courses_dashboard')
         })
 
-
 @app.route("/course/pending/approve", methods=['POST'])
 @flask_login.login_required
 def approve_pending_course_change():
