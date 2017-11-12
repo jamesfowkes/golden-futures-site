@@ -8,7 +8,13 @@
     
     {% if current_user.is_admin() %}
     <div>
-        <a href="{{ url_for('dashboard.render_pending_changes') }}">{{_("See pending changes")}}</a>
+        <a href="{{ url_for('dashboard.render_pending_category_changes') }}">{{_("See pending category changes")}}</a>
+    </div>
+    <div>
+        <a href="{{ url_for('dashboard.render_pending_course_changes') }}">{{_("See pending course changes")}}</a>
+    </div>
+    <div>
+        <a href="{{ url_for('dashboard.render_pending_university_changes') }}">{{_("See pending university changes")}}</a>
     </div>
     {% endif %}
     <div>

@@ -35,7 +35,7 @@ $( document ).ready(function() {
         type: "POST",
         url: $SCRIPT_ROOT + url,
         context: event.target,
-        data: {category_id: $(this).attr(data_attr)},
+        data: {data_id: $(this).attr(data_attr)},
         success: function(data) {
           if (data.result)
           {
@@ -50,6 +50,9 @@ $( document ).ready(function() {
 
   $(".approve-category").click(pending_changes_ajax_handler('/category/pending/approve', 'approveid'));
   $(".reject-category").click(pending_changes_ajax_handler('/category/pending/reject', 'rejectid'));
+
+  $(".approve-course").click(pending_changes_ajax_handler('/course/pending/approve', 'approveid'));
+  $(".reject-course").click(pending_changes_ajax_handler('/course/pending/reject', 'rejectid'));
 
   show_hide_approval_divs();
 });

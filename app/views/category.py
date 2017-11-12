@@ -81,7 +81,7 @@ def edit_category(category_id):
         
         category.set_name(category_name, language)
         category.set_intro(category_intro, language)
-        category_careers = category_careers
+        category.set_careers(category_careers, language)
 
         for course in category.courses:
             course.delete()
@@ -110,18 +110,18 @@ def delete_category():
 
 @app.route("/category/pending/approve", methods=['POST'])
 @flask_login.login_required
-def approve_pending_change():
+def approve_pending_category_change():
     if request.method == 'POST':
-        category_pending = CategoryPending.get_single(pending_id=request.form["category_id"])
+        category_pending = CategoryPending.get_single(pending_id=request.form["data_id"])
         logger.info("Approve pending change '%s' to category %s", category_pending.pending_type, category_pending.category_name)
         category_pending.approve()
         return jsonify(result=True)
 
 @app.route("/category/pending/reject", methods=['POST'])
 @flask_login.login_required
-def reject_pending_change():
+def reject_pending_category_change():
     if request.method == 'POST':
-        category_pending = CategoryPending.get_single(pending_id=request.form["category_id"])
+        category_pending = CategoryPending.get_single(pending_id=request.form["data_id"])
         logger.info("Rejecting pending change '%s' to category %s", category_pending.pending_type, category_pending.category_name)
         category_pending.reject()
         return jsonify(result=True)

@@ -6,8 +6,8 @@ from flask import Blueprint, g, render_template, request, redirect, url_for
 import flask_login
 
 from app.models.university import University
-from app.models.category import Category
-from app.models.course import Course
+from app.models.category import Category, CategoryPending
+from app.models.course import Course, CoursePending
 from app.models.pending_changes import PendingChanges
 
 from app.blueprints import common
@@ -21,9 +21,21 @@ dashboard = Blueprint('dashboard', __name__, template_folder='templates')
 def render_dashboard():
     return render_template('dashboard.tpl')
 
-@dashboard.route("/dashboard/pending", methods=['GET'])
+@dashboard.route("/dashboard/pending/categories", methods=['GET'])
 @flask_login.login_required
-def render_pending_changes():
+def render_pending_category_changes():
+    pending_changes = CategoryPending.all_by_type()
+    return render_template('dashboard.pending.categories.tpl', pending=pending_changes)
+
+@dashboard.route("/dashboard/pending/courses", methods=['GET'])
+@flask_login.login_required
+def render_pending_course_changes():
+    pending_changes = CoursePending.all_by_type()
+    return render_template('dashboard.pending.courses.tpl', pending=pending_changes)
+
+@dashboard.route("/dashboard/pending/universities", methods=['GET'])
+@flask_login.login_required
+def render_pending_university_changes():
     pending_changes = PendingChanges.all()
     return render_template('dashboard.pending.tpl', pending=pending_changes)
 

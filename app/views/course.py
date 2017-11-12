@@ -1,21 +1,29 @@
+import logging
 import json
 
-from flask import request, redirect, url_for, Response, abort, g
+from flask import request, redirect, url_for, Response, abort, g, jsonify
 import flask_login
 
 from app.models.course import Course, CoursePending
 
 from app import app
 
+logger = logging.getLogger(__name__)
+
 @app.route("/course/create", methods=['POST'])
 @flask_login.login_required
 def create_course():
     if request.method == 'POST':
         course_name = request.form["course_name"]
-        category_id = request.form["category_id"]
         language = request.form["language"]
-        course = CoursePending.create(course_name, language, category_id)
-        return json.dumps(course.json())
+        logger.info("Creating new pending course %s", course_name)
+        pending_course = CoursePending.addition(course_name, language)
+        return jsonify({
+            "success": True,
+            "data": pending_course.json(),
+            "redirect": url_for('dashboard.render_courses_dashboard')
+        })
+
 
 @app.route("/course/edit/<course_id>", methods=['POST'])
 @flask_login.login_required
@@ -27,7 +35,27 @@ def edit_course(course_id):
         course_to_edit = Course.get_single_by_id(course_id)
         pending_course = CoursePending.edit(course_to_edit)
         pending_course.translations["lang"].course_name = course_name
-        return json.dumps({
+        return jsonify({
             "success": True,
+            "data": pending_course.json(),
             "redirect": url_for('dashboard.render_courses_dashboard')
         })
+
+@app.route("/course/pending/approve", methods=['POST'])
+@flask_login.login_required
+def approve_pending_course_change():
+    if request.method == 'POST':
+        course_pending = CoursePending.get_single(pending_id=request.form["data_id"])
+        logger.info("Approve pending change '%s' to course %s", course_pending.pending_type, course_pending.course_name)
+        course_pending.approve()
+        return jsonify(result=True)
+
+@app.route("/course/pending/reject", methods=['POST'])
+@flask_login.login_required
+def reject_pending_course_change():
+    if request.method == 'POST':
+        course_pending = CoursePending.get_single(pending_id=request.form["data_id"])
+        logger.info("Rejecting pending change '%s' to course %s", course_pending.pending_type, course_pending.course_name)
+        course_pending.reject()
+        return jsonify(result=True)
+

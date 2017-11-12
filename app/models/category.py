@@ -17,6 +17,7 @@ from app.models.base_model import BaseModel, BaseModelTranslateable, Declarative
 
 from app.models.category_course_map import category_course_map_table
 from app.models.course import Course
+from app.models.pending_changes import PendingChanges
 
 logger = logging.getLogger(__name__)
 
@@ -151,6 +152,9 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         for lang, translation in self.translations:
             db.session.delete(translation)
 
+        for course in self.courses:
+            course.delete()
+
         super(BaseModelTranslateable,self).delete()
 
     def approve(self):
@@ -185,6 +189,15 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         return sorted(names)
 
     @classmethod
+    def all_by_type(cls):
+        all_changes = cls.all();
+        additions = [c for c in all_changes if c.pending_type == "add"]
+        edits = [c for c in all_changes if c.pending_type == "edit"]
+        dels = [c for c in all_changes if c.pending_type == "del"]
+
+        return PendingChanges(additions, edits, dels)
+
+    @classmethod
     def create_from(cls, existing_category, pending_type):
         new = cls("", "en", pending_type)
         new.update(existing_category)
@@ -216,6 +229,6 @@ class CategoryPendingTranslation(translation_base(CategoryPending)):
 class CategoryPendingCourses(BaseModel, DeclarativeBase):
 
     __tablename__ = "CategoryPendingCourses"
-    category_id = db.Column(db.Integer, db.ForeignKey('CategoryPending.category_id'), nullable=False, primary_key=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('CategoryPending.pending_id'), nullable=False, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('Course.course_id'), nullable=False, primary_key=True)
     category = db.relationship('CategoryPending', back_populates="courses")

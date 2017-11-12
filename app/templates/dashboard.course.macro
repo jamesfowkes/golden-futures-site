@@ -4,10 +4,10 @@
 {%- endmacro %}
 
 {% macro render_add_new_course_form() -%}
-<form id="form_add_course" action="{{url_for('create_course')}}">
+<form id="form_add_course">
     <div class="form-group">
         {{ course_name_input() }}
-        <button id="add_category" class="btn btn-default btn-block" type="button">{{_("Submit New Course")}}</button>
+        <button id="add_course" class="btn btn-default btn-block" type="button">{{_("Submit New Course")}}</button>
     </div>
 </form>
 {%- endmacro %}

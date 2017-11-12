@@ -18,6 +18,8 @@ from app.models.university_course_map import university_course_pending_map_table
 
 from app.models.category_course_map import category_course_map_table
 
+from app.models.pending_changes import PendingChanges
+
 logger = logging.getLogger(__name__)
 
 class CourseBase():
@@ -104,9 +106,11 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
     locale = 'en'
 
-    course_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    pending_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    course_id = db.Column(db.Integer, unique=True, nullable=True)
     universities = db.relationship('UniversityPending', secondary=university_course_pending_map_table, back_populates="courses")
-
+    pending_type = db.Column(db.String(6), nullable=False)
+    
     def __init__(self, course_name, language, pending_type):
         self.pending_type = pending_type
         CourseBase.__init__(self, course_name, language)
@@ -115,6 +119,60 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
             db.session.commit()
         except sa.exc.IntegrityError:
             raise DbIntegrityException()
+
+    def __repr__(self):
+        return "<ID: {}, Names: '{}', Type: {}>".format(
+            self.course_id,
+            ", ".join(["{} ({})".format(translation.course_name, lang) for lang, translation in self.translations.items()]),
+            self.pending_type
+        )
+
+    def _delete(self):
+        for lang, translation in self.translations:
+            db.session.delete(translation)
+
+        super(BaseModelTranslateable,self).delete()
+        
+    def json(self):
+        return {
+            "course_name": self.current_translation.course_name,
+            "pending": self.pending_type
+        }
+
+    def approve(self):
+        if self.pending_type == "add":
+            logger.info("Adding course %s", self.translations["en"].course_name)
+            new_course = Course.create(self.translations["en"].course_name, "en")
+            for lang, translation in self.translations.items():
+                new_course.translations[lang].course_name = translation.course_name
+            db.session.add(new_course)
+            db.session.commit()
+
+        elif self.pending_type == "edit":
+            course = Course.get(course_id=self.course_id).one();
+            logger.info("Editing course %s", course.translations["en"].course_name)
+            course.update(self)
+
+        elif self.pending_type == "del":
+            course = Course.get(course_id=self.course_id).one();
+            logger.info("Deleting course %s", course.translations["en"].course_name)
+            course.delete()
+
+        self._delete()
+
+    def reject(self):
+        for course in self.courses:
+            course.delete()
+        self._delete()
+
+    @classmethod
+    def all_by_type(cls):
+        all_changes = cls.all();
+        additions = [c for c in all_changes if c.pending_type == "add"]
+        edits = [c for c in all_changes if c.pending_type == "edit"]
+        dels = [c for c in all_changes if c.pending_type == "del"]
+
+        return PendingChanges(additions, edits, dels)
 
     @classmethod
     def create_from(cls, existing_course, pending_type):
@@ -147,3 +205,4 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
 class CoursePendingTranslation(translation_base(CoursePending)):
     __tablename__ = 'CoursePendingTranslation'
     course_name = sa.Column(sa.Unicode(80))
+    old_name = sa.Column(sa.Unicode(80))

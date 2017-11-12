@@ -27,7 +27,7 @@ from app import app
 from app.database import db
 from app.models.university import University
 from app.models.category import Category, CategoryPending
-from app.models.course import Course
+from app.models.course import Course, CoursePending
 from app.models.admission import Admission
 from app.models.scholarship import Scholarship
 from app.models.tuition_fee import TuitionFee
@@ -597,7 +597,8 @@ users = [
 ]
 
 pending_additions = {
-    "category": [["Inhumanities", "Using the humanities for mischief and profit", "Investment Banker, Homeopath"]]
+    "category": [["Inhumanities", "Using the humanities for mischief and profit", "Investment Banker, Homeopath"]],
+    "course": ["Weird Spanish", "Zombish"]
 }
 
 pending_edits = {
@@ -711,10 +712,14 @@ if __name__ == "__main__":
                 print("Adding pending additions")
 
                 for addition in pending_additions["category"]:
-                    print("Addition of '{}'".format(addition[0]))
+                    print("Addition of '{}' category".format(addition[0]))
                     category = CategoryPending.addition(category_name=addition[0], language="en")
                     category.set_intro(addition[1], "en")
                     category.set_careers(addition[2], "en")
+
+                for addition in pending_additions["course"]:
+                    print("Addition of '{}' course".format(addition))
+                    course = CoursePending.addition(course_name=addition, language="en")
 
                 print("Adding pending edits")
 

@@ -1,6 +1,8 @@
 {% macro dashboard_heading(heading_text) -%}
+    <div class="dashboard-heading">
     <h2 class="inline-heading">{{ heading_text }}</h2>
     <span class="pull-right"><a href='{{url_for("dashboard.render_dashboard")}}'>{{_("Back to dashboard")}}</a></span>
+    </div>
 {%- endmacro %}
 
 {% macro approve(type, id) -%}
@@ -9,51 +11,4 @@
 
 {% macro reject(type, id) -%}
     <button type="button" rejectid="{{id}}" class="reject-{{type}} btn btn-outline-danger btn-sm">{{_("Reject")}}</button>
-{%- endmacro %}
-
-{% macro render_pending_additions(additions) -%}
-    <div id="additions">
-        <h4>{{_("Additions")}}</h4>
-        {% for addition in additions["category"] %}
-            <div class="pending">
-                <p><strong>{{_("New Category")}}: {{addition}}</strong></p>
-                <p>{{_("Introduction")}}: {{ addition.category_intro }}</p>
-                <p>{{_("Careers")}}: {{ addition.category_careers }}</p>
-                {% if addition.course_count() %}
-                <p>{{_("Courses")}}: {{ addition.course_names() | join(", ") }}</p>
-                {% endif %}
-                {{approve("category", addition.pending_id)}} {{reject("category", addition.pending_id)}}
-            </div>
-        {% endfor %}
-    </div>
-{%- endmacro %}
-
-{% macro render_pending_edits(edits) -%}
-    <div id="edits">
-        <h4>{{_("Edits")}}</h4>
-        {% for edit in edits["category"] %}
-            <div class="pending">
-                <p><strong>{{_("Edit Category")}}: {{edit}}</strong></p>
-                <p>{{_("Introduction")}}: {{edit.category_intro}}</p>
-                <p>{{_("Careers")}}: {{ edit.category_careers }}</p>
-                {% if edit.course_count() %}
-                <p>{{_("Courses")}}: {{ edit.course_names() | join(", ") }}</p>
-                {% endif %}
-                {{approve("category", edit.pending_id)}} {{reject("category", edit.pending_id)}}
-        </div>
-        {% endfor %}
-    </div>
-
-{%- endmacro %}
-
-{% macro render_pending_deletions(deletions) -%}
-    <div id="deletions">
-        <h4>{{_("Deletions")}}</h4>
-        {% for deletion in deletions["category"] %}
-            <div class="pending">
-                <p><strong>{{_("Remove Category")}}: {{deletion}}</strong></p>
-                {{approve("category", deletion.pending_id)}} {{reject("category", deletion.pending_id)}}
-            </div>
-        {% endfor %}
-    </div>
 {%- endmacro %}

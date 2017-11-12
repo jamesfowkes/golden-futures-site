@@ -51,6 +51,10 @@ div.filter_controls {
 	padding-bottom: 1em;
 }
 
+div.dashboard-heading {
+	padding-bottom: 1em;	
+}
+
 h1.inline-heading, h2.inline-heading, h3.inline-heading, h4.inline-heading {
 	display: inline-block;
 }
