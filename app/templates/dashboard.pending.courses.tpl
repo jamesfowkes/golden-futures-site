@@ -9,6 +9,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-4">
+                {% if pending.additions | length %}
                 <h4>{{_("Additions")}}</h4>
                     {% for addition in pending.additions %}
                     <div class="pending">
@@ -16,6 +17,9 @@
                         {{dashboard_macro.approve("course", addition.pending_id)}} {{dashboard_macro.reject("course", addition.pending_id)}}
                     </div>
                     {% endfor %}
+                {% else %}
+                <h4>{{_("No pending additions")}}</h4>
+                {% endif %}
             </div>
             <div class="col-sm-4">
                 <h4>{{_("Edits")}}</h4>
