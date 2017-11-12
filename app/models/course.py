@@ -33,6 +33,9 @@ class CourseBase():
         else:
             self.current_translation.course_name = course_name
 
+        db.session.add(self)
+        db.session.commit()
+
     def __repr__(self):
         return "<ID: {}, Names: '{}', Categories: '{}'>".format(
             self.course_id,
@@ -84,6 +87,9 @@ class CourseBase():
 
         db.session.add(self)
         db.session.commit()
+
+    def is_pending(self):
+        return False
 
 @total_ordering
 class Course(CourseBase, Translatable, BaseModelTranslateable, DeclarativeBase):
@@ -164,6 +170,9 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
         for course in self.courses:
             course.delete()
         self._delete()
+
+    def is_pending(self):
+        return True
 
     @classmethod
     def all_by_type(cls):

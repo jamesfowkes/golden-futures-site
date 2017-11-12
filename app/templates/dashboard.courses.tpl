@@ -26,8 +26,12 @@
                     <h3 id="edit_course">{{_("Edit Courses")}}</h3>
                 </div>
                 <div id="catgories_list" aria-labelledby="edit_course">
-                    {% for id, name in courses %}
-                    {{ dashboard_course_macro.render_edit_course_link(id, name) }}
+                    {% for course in courses %}
+                        {% if course.is_pending %}
+                            {{ dashboard_course_macro.render_edit_pending_course_link(course.pending_id, course.course_name) }}
+                        {% else %}
+                            {{ dashboard_course_macro.render_edit_course_link(course.course_id, course.course_name) }}
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

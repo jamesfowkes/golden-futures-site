@@ -17,3 +17,9 @@
         <a href="{{url_for('dashboard.render_edit_course_dashboard', course_id=id)}}" class="edit_course" id='{{id}}'>{{name}}</a>
     </div>
 {%- endmacro %}
+
+{% macro render_edit_pending_course_link(id, name) -%}
+    <div class="edit_course">
+        <a href="{{url_for('dashboard.render_edit_pending_course_dashboard', pending_id=id)}}" class="edit_course" id='{{id}}'>{{name}}</a>
+    </div>
+{%- endmacro %}

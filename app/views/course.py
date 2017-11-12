@@ -34,12 +34,29 @@ def edit_course(course_id):
 
         course_to_edit = Course.get_single_by_id(course_id)
         pending_course = CoursePending.edit(course_to_edit)
-        pending_course.translations["lang"].course_name = course_name
+        pending_course.translations[language].course_name = course_name
         return jsonify({
             "success": True,
             "data": pending_course.json(),
             "redirect": url_for('dashboard.render_courses_dashboard')
         })
+
+@app.route("/course/editpending/<pending_id>", methods=['POST'])
+@flask_login.login_required
+def edit_pending_course(pending_id):
+    if request.method == 'POST':
+        course_name = request.form["course_name"]
+        language = request.form["language"]
+
+        course_pending = CoursePending.get(pending_id=pending_id).one()
+        logger.info("New name for '%s': '%s'", course_pending.course_name, course_name)
+        course_pending.set_name(course_name, language)
+        return jsonify({
+            "success": True,
+            "data": course_pending.json(),
+            "redirect": url_for('dashboard.render_courses_dashboard')
+        })
+
 
 @app.route("/course/pending/approve", methods=['POST'])
 @flask_login.login_required

@@ -6,7 +6,11 @@
 {% block content %}
 <div class="container">
     {{ dashboard_macro.dashboard_heading(_("Manage course: ") + course.course_name) }}
-    <form id="form_add_course" action="{{url_for('edit_course',course_id=course.course_id)}}" method="post">
+    {% if course.is_pending %}
+    <form id="form_add_course">
+    {% else %}
+    <form id="form_add_course">
+    {% endif %}
         <div class="form-group">
             <h4>{{ _("Course Details") }}</h4>
             <div class="form-group">
