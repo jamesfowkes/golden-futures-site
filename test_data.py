@@ -605,6 +605,7 @@ pending_additions = {
 }
 
 pending_edits = {
+    "course": [["Information Technology", "Information and Communication Technology"]],
     "category": [["Mathematics", "A degree in mathematics provides you with a broad range of skills in problem solving, logical reasoning and flexible thinking.", "teacher, actuary, operational researcher, statistician, professional nerd"]]   
 }
 
@@ -733,6 +734,11 @@ if __name__ == "__main__":
                     category = CategoryPending.edit(categories[edit[0]])
                     category.set_intro(edit[1], "en")
                     category.set_careers(edit[2], "en")
+
+                for edit in pending_edits["course"]:
+                    print("Edit of '{}'".format(edit[0]))
+                    course = CoursePending.edit(courses[edit[0]])
+                    course.set_name(edit[1], "en")
 
                 print("Adding pending deletions")
 

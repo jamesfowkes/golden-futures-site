@@ -62,16 +62,35 @@ def edit_pending_course(pending_id):
 def approve_pending_course_change():
     if request.method == 'POST':
         course_pending = CoursePending.get_single(pending_id=request.form["data_id"])
-        logger.info("Approve pending change '%s' to course %s", course_pending.pending_type, course_pending.course_name)
+        json = course_pending.json()
+
+        remaining_count = CoursePending.get_count(course_pending.pending_type) - 1
+
+        logger.info("Approve pending change '%s' to course %s (%d remaining)", course_pending.pending_type, course_pending.course_name, remaining_count)
+
         course_pending.approve()
-        return jsonify(result=True)
+
+        return jsonify({
+            "success" : True,
+            "data": json,
+            "remaining_count": remaining_count
+        })
 
 @app.route("/course/pending/reject", methods=['POST'])
 @flask_login.login_required
 def reject_pending_course_change():
     if request.method == 'POST':
         course_pending = CoursePending.get_single(pending_id=request.form["data_id"])
-        logger.info("Rejecting pending change '%s' to course %s", course_pending.pending_type, course_pending.course_name)
-        course_pending.reject()
-        return jsonify(result=True)
+        json = course_pending.json()
 
+        remaining_count = CoursePending.get_count(course_pending.pending_type) - 1
+                
+        logger.info("Rejecting pending change '%s' to course %s", course_pending.pending_type, course_pending.course_name)
+        
+        course_pending.reject()
+        
+        return jsonify({
+            "success" : True,
+            "data": json,
+            "remaining_count": remaining_count
+        })

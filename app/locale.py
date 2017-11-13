@@ -78,6 +78,10 @@ def init_app(app):
     sqlalchemy_utils.i18n.get_locale = get_locale
     sqlalchemy_i18n.make_translatable(options={'locales': app.config["SUPPORTED_LOCALES"]})
 
-    app.translations = {
-        "add_success": gettext("added successfully")
+def get_js_strings():
+    return {
+        "add_success": gettext("added successfully"),
+        "pending_add_heading": gettext("No pending additions"),
+        "pending_edit_heading": gettext("No pending edits"),
+        "pending_del_heading": gettext("No pending deletions"),
     }

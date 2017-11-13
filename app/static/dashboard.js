@@ -1,46 +1,20 @@
-function show_hide_approval_divs() {
-  var has_additions = $("div#additions > div.pending").length > 0;
-  var has_edits = $("div#edits > div.pending").length > 0;
-  var has_deletions = $("div#deletions > div.pending").length > 0;
-
-  if (has_additions) {
-    $("div#additions").show();
-  } else {
-    $("div#additions").hide();
-  }
-
-  if (has_edits) {
-    $("div#edits").show();
-  } else {
-    $("div#edits").hide();
-  }
-
-  if (has_deletions) {
-    $("div#deletions").show();
-  } else {
-    $("div#deletions").hide();
-  }
-
-  if (has_additions || has_edits || has_deletions) {
-    $("div#pending_changes").show();
-  } else {
-    $("div#pending_changes").hide();
-  }
-}
-
 $( document ).ready(function() {
   function pending_changes_ajax_handler(url, data_attr) {
     return function(event) {
+      parent_div = $(this).parent().parent()
       $.ajax({
         type: "POST",
         url: $SCRIPT_ROOT + url,
         context: event.target,
         data: {data_id: $(this).attr(data_attr)},
         success: function(data) {
-          if (data.result)
+          if (data.success)
           {
             $(this).parent().remove();
-            show_hide_approval_divs();
+            if (data.remaining_count == 0) {
+              heading = parent_div.find("h4.pending_heading")
+              heading.text($L[heading.attr("i18n_key")])
+            }
           }
           return false;
         }
@@ -53,6 +27,4 @@ $( document ).ready(function() {
 
   $(".approve-course").click(pending_changes_ajax_handler('/course/pending/approve', 'approveid'));
   $(".reject-course").click(pending_changes_ajax_handler('/course/pending/reject', 'rejectid'));
-
-  show_hide_approval_divs();
 });

@@ -6,7 +6,7 @@ from flask import g
 
 from app import app
 from app import session
-from app.locale import get_locale
+from app.locale import get_locale, get_js_strings
 
 logger = logging.getLogger(__name__)
 
@@ -28,4 +28,4 @@ def init_request():
     logger.info("Set request language %s", g.lang)
     session.set("lang", g.lang)
     g.ep_data = {}
-    g.translations = app.translations
+    g.translations = get_js_strings()

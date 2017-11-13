@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-sm-4">
                 {% if pending.additions | length %}
-                <h4>{{_("Additions")}}</h4>
+                <h4 class="pending_heading" i18n_key="pending_add_heading">{{_("Additions")}}</h4>
                     {% for addition in pending.additions %}
                     <div class="pending">
                         <p><strong>{{_("New Course")}}: {{addition.course_name}}</strong></p>
@@ -23,11 +23,11 @@
             </div>
             <div class="col-sm-4">
                 {% if pending.edits | length %}
-                    <h4>{{_("Edits")}}</h4>
-                    {% for edit in edits %}
+                    <h4 class="pending_heading" i18n_key="pending_edit_heading">{{_("Edits")}}</h4>
+                    {% for edit in pending.edits %}
                     <div class="pending">
                         <p><strong>{{_("Edit Course")}}</strong></p>
-                        <p>{{_("Old Name")}}: {{edit.old_name}}</p>
+                        <p>{{_("Old Name")}}: {{ edit.course.course_name }}</p>
                         <p>{{_("New Name")}}: {{ edit.course_name }}</p>
                         {{dashboard_macro.approve("course", edit.pending_id)}} {{dashboard_macro.reject("course", edit.pending_id)}}
                     </div>
@@ -38,7 +38,7 @@
             </div>
             <div class="col-sm-4">
                 {% if pending.deletions | length %}
-                    <h4>{{_("Deletions")}}</h4>
+                    <h4 class="pending_heading" i18n_key="pending_del_heading">{{_("Deletions")}}</h4>
                     {% for deletion in pending.deletions %}
                     <div class="pending">
                         <p><strong>{{_("New Course")}}: {{deletion.course_name}}</strong></p>

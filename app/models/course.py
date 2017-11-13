@@ -113,10 +113,12 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
     locale = 'en'
 
     pending_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    course_id = db.Column(db.Integer, unique=True, nullable=True)
-    universities = db.relationship('UniversityPending', secondary=university_course_pending_map_table, back_populates="courses")
+    course_id = db.Column(db.Integer, db.ForeignKey("Course.course_id"), unique=True, nullable=True)
     pending_type = db.Column(db.String(6), nullable=False)
     
+    universities = db.relationship('UniversityPending', secondary=university_course_pending_map_table, back_populates="courses")
+    course = db.relationship('Course', uselist=False)
+
     def __init__(self, course_name, language, pending_type):
         
         self.pending_type = pending_type
@@ -169,18 +171,27 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
         self._delete()
 
     def reject(self):
-        for course in self.courses:
-            course.delete()
         self._delete()
 
     def is_pending(self):
         return True
 
     @classmethod
+    def get_count(cls, pending_type):
+        if pending_type == "add":
+            return len(cls.all_by_type().additions)
+        elif pending_type == "edit":
+            return len(cls.all_by_type().edits)
+        elif pending_type == "del":
+            return len(cls.all_by_type().deletions)
+        elif pending_type == "all":
+            return len(cls.all_by_type())
+
+    @classmethod
     def all_by_type(cls):
         all_changes = cls.all();
-        additions = [c for c in all_changes if c.pending_type == "edit" and c.category_id is None]
-        edits = [c for c in all_changes if c.pending_type == "edit" and c.category_id is not None]
+        additions = [c for c in all_changes if c.pending_type == "add"]
+        edits = [c for c in all_changes if c.pending_type == "edit"]
         dels = [c for c in all_changes if c.pending_type == "del"]
 
         return PendingChanges(additions, edits, dels)
@@ -193,14 +204,13 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
 
     @classmethod
     def addition(cls, course_name, language):
-        pending = cls(course_name, language, "edit")
+        pending = cls(course_name, language, "add")
         return pending
 
     @classmethod
     def edit(cls, existing_course):
         try:
             pending = cls.create_from(existing_course, "edit")
-            pending.pending_type = "edit"
 
         except DbIntegrityException:
             pending = cls.get_single(course_id = existing_course.course_id)
@@ -210,7 +220,6 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
     @classmethod
     def deletion(cls, existing_course):
         pending = cls.create_from(existing_course, "del")
-        pending.pending_type = "del"
         return pending
 
 class CoursePendingTranslation(translation_base(CoursePending)):
