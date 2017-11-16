@@ -14,7 +14,6 @@ from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase, DbIntegrityException
 
 from app.models.university_course_map import university_course_map_table
-from app.models.university_course_map import university_course_pending_map_table
 
 from app.models.category_course_map import category_course_map_table
 
@@ -116,7 +115,6 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
     course_id = db.Column(db.Integer, db.ForeignKey("Course.course_id"), unique=True, nullable=True)
     pending_type = db.Column(db.String(6), nullable=False)
     
-    universities = db.relationship('UniversityPending', secondary=university_course_pending_map_table, back_populates="courses")
     course = db.relationship('Course', uselist=False)
 
     def __init__(self, course_name, language, pending_type):

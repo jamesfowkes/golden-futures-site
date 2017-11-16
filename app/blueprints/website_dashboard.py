@@ -8,6 +8,8 @@ import flask_login
 from app.models.university import University
 from app.models.category import Category, CategoryPending
 from app.models.course import Course, CoursePending
+from app.models.university import University, UniversityPending
+
 from app.models.pending_changes import PendingChanges
 
 from app.blueprints import common
@@ -36,8 +38,8 @@ def render_pending_course_changes():
 @dashboard.route("/dashboard/pending/universities", methods=['GET'])
 @flask_login.login_required
 def render_pending_university_changes():
-    pending_changes = PendingChanges.all()
-    return render_template('dashboard.pending.tpl', pending=pending_changes)
+    pending_changes = UniversityPending.all_by_type()
+    return render_template('dashboard.pending.universities.tpl', pending=pending_changes)
 
 @dashboard.route("/dashboard/categories/edit/<category_id>", methods=['GET'])
 @flask_login.login_required
