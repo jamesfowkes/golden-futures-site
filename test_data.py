@@ -610,7 +610,8 @@ pending_edits = {
 }
 
 pending_deletions = {
-    "category": [["Computing"]]
+    "category": ["Computing"],
+    "course": ["Graphic Design"]
 }
 
 def khmer(s):
@@ -743,8 +744,12 @@ if __name__ == "__main__":
                 print("Adding pending deletions")
 
                 for deletion in pending_deletions["category"]:
-                    print("Deletion of '{}'".format(deletion[0]))
-                    category = CategoryPending.deletion(categories[deletion[0]])
+                    print("Deletion of '{}'".format(deletion))
+                    category = CategoryPending.deletion(categories[deletion])
+
+                for deletion in pending_deletions["course"]:
+                    course = CoursePending.deletion(courses[deletion])
+
 
         shutil.copy("app/debug.db", "app/debug.original.db")
         print("Finished creating test data")

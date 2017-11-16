@@ -41,7 +41,7 @@
                     <h4 class="pending_heading" i18n_key="pending_del_heading">{{_("Deletions")}}</h4>
                     {% for deletion in pending.deletions %}
                     <div class="pending">
-                        <p><strong>{{_("New Course")}}: {{deletion.course_name}}</strong></p>
+                        <p><strong>{{_("Remove Course")}}: {{deletion.course_name}}</strong></p>
                         {{dashboard_macro.approve("course", deletion.pending_id)}} {{dashboard_macro.reject("course", deletion.pending_id)}}
                     </div>
                     {% endfor %}
