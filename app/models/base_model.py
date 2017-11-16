@@ -1,3 +1,5 @@
+import logging
+
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -5,12 +7,21 @@ from app.database import db
 
 DeclarativeBase = declarative_base()  
 
+logger = logging.getLogger(__name__)
+
+class DbIntegrityException(Exception):
+    pass
+    
 class __Deleteable__:
     def delete(self):
         db.session.delete(self)
         db.session.commit()
 
 class BaseModel(__Deleteable__):
+
+    @classmethod
+    def all(cls):
+        return db.session.query(cls).all()
         
     @classmethod
     def get(cls, **kwargs):
@@ -26,13 +37,50 @@ class BaseModel(__Deleteable__):
 class BaseModelTranslateable(__Deleteable__):
         
     @classmethod
+    def all(cls):
+        return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).all()
+        
+    @classmethod
     def get(cls, **kwargs):
         return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).filter_by(**kwargs)
 
     @classmethod
     def get_single_with_language(cls, language, **kwargs):
+        """
+        This should be as simple as
+        
+        return db.session.query(cls).options(
+                sqlalchemy.orm.joinedload(cls.translations[language])
+            ).filter_by(**kwargs).one()
+
+        but this returns all rows (not sure why), so have to manually go through the returned results
+        looking for kwargs matches
+        """
+
         try:
-            return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.translations[language])).filter_by(**kwargs).one()
+            #logger.info("Class: {}, lang: {}, params: {}".format(cls.__name__, language, kwargs))
+            all_results_for_language = db.session.query(cls).options(
+                sqlalchemy.orm.joinedload(cls.translations[language])).all()
+
+            #logger.info("Got {} results: ".format(len(all_results_for_language)))
+            for res in all_results_for_language:
+                logger.info(res)
+                match = True
+
+                for k,v in kwargs.items():
+                    try:
+                        attr = getattr(res.translations[language], k)
+                    except KeyError:
+                        attr = getattr(res, k)
+
+                    #logger.info(attr)
+                    #logger.info("%s: %s, %s", k, v, getattr(res, k))
+                    match = match and attr == v
+
+                if match:
+                    return res
+
+            return None
         except sqlalchemy.orm.exc.NoResultFound:
             return None            
 
@@ -48,3 +96,17 @@ class BaseModelTranslateable(__Deleteable__):
                 return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).filter_by(**kwargs).one()
             except sqlalchemy.orm.exc.NoResultFound:
                 return None
+
+class PendingChangeBase():
+
+    @classmethod
+    def additions(cls):
+        return db.session.query(cls).filter(cls.pending_type=="edit").filter(cls.category_id == None).all()
+
+    @classmethod
+    def edits(cls):
+        return db.session.query(cls).filter(cls.pending_type=="edit").filter(cls.category_id != None).all()
+
+    @classmethod
+    def deletions(cls):
+        return db.session.query(cls).filter(cls.pending_type=="del").all()

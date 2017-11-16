@@ -12,19 +12,16 @@ import app
 from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
-class Facility(Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "Facility"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
-    university = db.relationship('University', back_populates="facilities")
-
+class FacilityBase():
     def __init__(self, university_id, facility, language):
         self.university_id = university_id
-        self.translations[language].facility_string = facility
+        self.add_translation(facility, language)
+
+    def add_translation(self, facility, language=None):
+        if language:
+            self.translations[language].facility_string = facility
+        else:
+            self.current_translation.facility_string = facility
 
     @classmethod
     def create(cls, university_id, facility, language=None):
@@ -41,7 +38,32 @@ class Facility(Translatable, BaseModelTranslateable, DeclarativeBase):
             "facility": self.current_translation.facility_string
         }
 
+class Facility(FacilityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "Facility"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
+    university = db.relationship('University', back_populates="facilities")
+
 class FacilityTranslation(translation_base(Facility)):
     __tablename__ = 'FacilityTranslation'
+    facility_string = sa.Column(sa.Unicode(80))
+    unique_facility_constraint = sa.PrimaryKeyConstraint('id', 'facility_string', 'locale', name='ufc_1')
+
+class FacilityPending(FacilityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "FacilityPending"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
+    university = db.relationship('UniversityPending', back_populates="facilities")
+
+class FacilityPendingTranslation(translation_base(FacilityPending)):
+    __tablename__ = 'FacilityPendingTranslation'
     facility_string = sa.Column(sa.Unicode(80))
     unique_facility_constraint = sa.PrimaryKeyConstraint('id', 'facility_string', 'locale', name='ufc_1')

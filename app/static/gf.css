@@ -2,8 +2,91 @@ body {
     background-color: #ffb84d
 }
 
-.navbar-default {
+nav {
+	background-color: #efa83d;
 	margin-top: 1em;
-    background-color: #efa83d;
-    background-image: none;
+	border-radius: 5px;
+}
+
+ul.navbar-nav {
+	margin-left:1em;
+}
+
+.nav-item.active {
+	background-color: #ffb84d;
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+img.navbar-brand {
+	width:100px;
+}
+
+div#content {
+	margin-top: 1em;
+}
+
+div.card.plain {
+	margin-top: 1em;
+	padding-top: 1em;
+	padding-left: 1em;
+	padding-right: 1em;
+	background-color: #ffb84d;
+}
+
+div.card.plain>div.card-header {
+	background-color: inherit;
+}
+
+div#filtering button {
+	background-color: #efa83d;
+	color: #000000;
+}
+
+div#filtering label {
+	font-weight: bold;
+}
+
+div.filter_controls {
+	padding-bottom: 1em;
+}
+
+div.dashboard-heading {
+	padding-bottom: 1em;	
+}
+
+h1.inline-heading, h2.inline-heading, h3.inline-heading, h4.inline-heading {
+	display: inline-block;
+}
+
+.btn:focus {
+    outline: none;
+}
+
+form input.form-control, form textarea.form-control {
+	margin-bottom: 1em;
+}
+
+form button {
+	margin-bottom: 1em;
+}
+
+form#login button {
+	background-color: #efa83d;
+	color: #000000;
+}
+
+div.pending {
+	background-color: #efa83d;
+	border-radius: 5px;
+	padding:1em;
+	margin-bottom: 1em;
+}
+
+label input {
+	margin-right: 0.5em;
+}
+
+label.form-check-label {
+	padding-bottom: 1em;
 }

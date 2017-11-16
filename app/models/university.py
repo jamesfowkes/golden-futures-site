@@ -1,3 +1,5 @@
+import logging
+
 import json
 
 from flask import g
@@ -19,32 +21,35 @@ import app.models.admission
 import app.models.tuition_fee
 
 from app.models.university_course_map import university_course_map_table
+from app.models.university_course_map import university_course_pending_map_table
 
-class University(Translatable, BaseModelTranslateable, DeclarativeBase):
+logger = logging.getLogger(__name__)
 
-    __tablename__ = "University"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    university_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    courses = db.relationship('Course', secondary=university_course_map_table, back_populates="universities")
-    facilities = db.relationship("Facility", back_populates="university")
-    contact_details = db.relationship("ContactDetail", back_populates="university")
-    admissions = db.relationship("Admission", back_populates="university")
-    tuition_fees = db.relationship("TuitionFee", back_populates="university")
-    scholarships = db.relationship("Scholarship", back_populates="university")
-
+class UniversityBase():
     def __init__(self, university_name, language):
         self.translations[language].university_name = university_name
 
     def __repr__(self):
         return "<ID: '%d', Name: '%s'>" % (self.university_id, self.university_name)
 
+    def __eq__(self, other):
+        return self.current_translation.university_name == other.current_translation.university_name
+
+    def __ne__(self, other):
+        return self.current_translation.university_name != other.current_translation.university_name
+
+    def __lt__(self, other):
+        return self.current_translation.university_name < other.current_translation.university_name
+
     def json(self):
         return {"university_id": self.university_id, "university_name": self.current_translation.university_name, "language": get_current_locale(self)}
     
-    def add_translated_name(self, university_name):
-        self.current_translation.university_name = university_name
+    def add_translated_name(self, university_name, language=None):
+        logger.info("Adding translation %s (%s) to university %s", university_name, language, self.translations["en"].university_name)
+        if language:
+            self.translations[language].university_name = university_name
+        else:
+            self.current_translation.university_name = university_name
         db.session.commit()
         
     @classmethod
@@ -56,13 +61,76 @@ class University(Translatable, BaseModelTranslateable, DeclarativeBase):
 
     @classmethod
     def get_by_name(cls, university_name, language=None):
-        return cls.get_single(university_name=university_name, language=language)
+        return cls.get_single_with_language(language, university_name=university_name)
 
     @classmethod
     def get_single_by_id(cls, university_id):
         return cls.get_single(university_id=university_id)
 
+    def add_course(self, course):
+        self.courses.append(course)
+        db.session.add(self)
+        db.session.commit()
+
+    def course_names(self):
+        names = [c.course_name for c in self.courses]
+        return sorted(names)
+    
+    def categories(self):
+        categories = []
+        for course in self.courses:
+            categories.extend(course.categories)
+
+        return set(categories)
+
+    def courses_by_category(self):
+        category_course_map = {}
+        for category in self.categories():
+            category_course_map[category] = [course for course in category.courses if course in self.courses]
+
+        return category_course_map            
+
+    def maximum_fee(self):
+        return max([fee.tuition_fee_max for fee in self.tuition_fees])
+
+    def minimum_fee(self):
+        return min([fee.tuition_fee_min for fee in self.tuition_fees])
+
+class University(UniversityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "University"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    university_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    courses = db.relationship('Course', secondary=university_course_map_table, back_populates="universities")
+    facilities = db.relationship("Facility", back_populates="university")
+    contact_details = db.relationship("ContactDetail", back_populates="university")
+    admissions = db.relationship("Admission", back_populates="university")
+    tuition_fees = db.relationship("TuitionFee", back_populates="university")
+    scholarships = db.relationship("Scholarship", back_populates="university")
+        
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
+    university_name = sa.Column(sa.Unicode(80))
+    university_intro = sa.Column(sa.Unicode())
+
+class UniversityPending(UniversityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+    __tablename__ = "UniversityPending"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    university_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    courses = db.relationship('CoursePending', secondary=university_course_pending_map_table, back_populates="universities")
+    facilities = db.relationship("FacilityPending", back_populates="university")
+    contact_details = db.relationship("ContactDetailPending", back_populates="university")
+    admissions = db.relationship("AdmissionPending", back_populates="university")
+    tuition_fees = db.relationship("TuitionFeePending", back_populates="university")
+    scholarships = db.relationship("ScholarshipPending", back_populates="university")
+
+class UniversityPendingTranslation(translation_base(UniversityPending)):
+    __tablename__ = 'UniversityPendingTranslation'
     university_name = sa.Column(sa.Unicode(80))
     university_intro = sa.Column(sa.Unicode())

@@ -12,19 +12,16 @@ import app
 from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase
 
-class ContactDetail(Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "ContactDetail"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    contact_detail_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
-    university = db.relationship('University', back_populates="contact_details")
-
+class ContactDetailBase():
     def __init__(self, university_id, contact_detail, language):
         self.university_id = university_id
-        self.translations[language].contact_detail_string = contact_detail
+        self.add_translation(contact_detail, language)
+
+    def add_translation(self, contact_detail, language=None):
+        if language:
+            self.translations[language].contact_detail_string = contact_detail
+        else:
+            self.current_translation.contact_detail_string = contact_detail
 
     @classmethod
     def create(cls, university_id, contact_detail, language=None):
@@ -41,7 +38,33 @@ class ContactDetail(Translatable, BaseModelTranslateable, DeclarativeBase):
             "contact_detail": self.current_translation.contact_detail_string
         }
 
+
+class ContactDetail(ContactDetailBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "ContactDetail"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    contact_detail_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    university_id = db.Column(db.Integer, db.ForeignKey('University.university_id'))
+    university = db.relationship('University', back_populates="contact_details")
+
 class ContactDetailTranslation(translation_base(ContactDetail)):
     __tablename__ = 'ContactDetailTranslation'
+    contact_detail_string = sa.Column(sa.Unicode(80))
+    unique_contact_detail_constraint = sa.PrimaryKeyConstraint('id', 'contact_detail_string', 'locale', name='ufc_1')
+
+class ContactDetailPending(ContactDetailBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+    __tablename__ = "ContactDetailPending"
+    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    locale = 'en'
+
+    contact_detail_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
+    university = db.relationship('UniversityPending', back_populates="contact_details")
+
+class ContactDetailPendingTranslation(translation_base(ContactDetailPending)):
+    __tablename__ = 'ContactDetailPendingTranslation'
     contact_detail_string = sa.Column(sa.Unicode(80))
     unique_contact_detail_constraint = sa.PrimaryKeyConstraint('id', 'contact_detail_string', 'locale', name='ufc_1')

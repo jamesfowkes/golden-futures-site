@@ -28,8 +28,8 @@ And the category "Pet Care" should have the courses:
  | Advanced Hamster Training | en |
  | Yak Shaving | en |
 
-Scenario: A user wants to add a course with a name in a nonenglish langauge
-Given the standard user is logged in
+Scenario: A user wants to add a course with a name in a nonenglish language
+Given the french user is logged in
 And the language is "fr"
 And the category "Pet Care" exists
 When the user adds the course "Reptiles de base" to category "Pet Care"
@@ -43,7 +43,8 @@ And the category "Pet Care" should have the courses:
  | Reptiles de base | fr |
 
 Scenario: A user wants to add a translation to a course name
-Given the standard user is logged in
+Given the french user is logged in
+And the language is "en"
 And the category "Pet Care" exists
 And the course "Basic Reptiles" exists in category "Pet Care"
 And the language is "fr"

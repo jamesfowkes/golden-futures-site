@@ -1,0 +1,98 @@
+{% macro category_name_input(default="") -%}
+    <label for="category_name" class="sr-only">{{ _("Category Name") }}</label>
+    <input class="form-control" type="text" id="category_name" name="category_name" placeholder="{{_("Category Name")}}" value="{{default}}" required>
+{%- endmacro %}
+
+{% macro category_intro_input(default="") -%}
+    <label for="category_intro" class="sr-only">{{ _("Category Introduction") }}</label>
+    <textarea rows="4" class="form-control" type="text" id="category_intro" name="category_intro" placeholder="{{_("Category Introduction")}}" required>{{default}}</textarea>
+{%- endmacro %}
+
+{% macro category_careers_input(default="") -%}
+    <label for="category_careers" class="sr-only">{{ _("Category Careers") }}</label>
+    <textarea rows="4" class="form-control" type="text" id="category_careers" name="category_careers" placeholder="{{_("Category Careers")}}" required>{{default}}</textarea>
+{%- endmacro %}
+
+{% macro render_add_new_category_form() -%}
+<form id="form_add_category" action="{{url_for('create_category')}}">
+    <div class="form-group">
+        <h4>{{ _("Category Details") }}</h4>
+        {{ category_name_input() }}
+        {{ category_intro_input() }}
+        {{ category_careers_input() }}
+        <button id="add_category" class="btn btn-default btn-block" type="button">{{_("Submit New Category")}}</button>
+    </div>
+</form>
+{%- endmacro %}
+
+{% macro render_edit_category_link(category) -%}
+    <div class="edit_category">
+        <a href="{{url_for('dashboard.render_edit_category_dashboard', category_id=category.category_id)}}" class="edit_category" id='{{id}}'>{{category.category_name}}</a>
+    </div>
+{%- endmacro %}
+
+{% macro render_edit_pending_category_link(category) -%}
+
+    <div class="edit_category">
+        <a href="{{url_for('dashboard.render_edit_pending_category_dashboard', pending_id=category.pending_id)}}" class="edit_category" id='{{id}}'>{{category.category_name}}</a>
+    </div>
+{%- endmacro %}
+
+{% macro render_course_checkbox(course, checked) -%}
+    <label for="course_check_{{course.course_id}}" class="form-check-label">
+    {% if checked %}
+        <input name="courses" value="{{course.course_id}}" id="course_check_{{course.course_id}}" type="checkbox" class="form-check-input" checked></input>
+    {% else %}
+        <input name="courses" value="{{course.course_id}}" id="course_check_{{course.course_id}}" type="checkbox" class="form-check-input"></input>
+    {% endif %}
+    {{course.course_name}}
+    </label>
+{%- endmacro %}
+
+{% macro render_course_selector(category, all_courses, alphabetised_courses) -%}
+    
+    <div class="card plain">
+        <div class="card-title">
+            <h4>{{_("Current Selection")}}</h4>
+        </div>
+        <div class="card-block">
+            <div class="container">
+                {% for course in all_courses if category.has_course(course) %}
+
+                    {% if loop.index0 % 4  == 0 or loop.first %}
+                    <div class="row">
+                    {% endif %}    
+
+                    <div class="col-sm-3">{{ render_course_checkbox(course, True) }}</div>
+
+                    {% if loop.index % 4  == 0 or loop.last %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% for first_letter, courses in alphabetised_courses.items() %}
+        <div class="card plain">
+            <div class="card-title">
+                <h4>{{first_letter}}</h4>
+            </div>
+            <div class="card-block">
+                <div class="container">
+                {% for course in courses if not category.has_course(course) %}
+                    {% if loop.index0 % 4  == 0 or loop.first %}
+                    <div class="row">
+                    {% endif %}    
+                    
+                    <div class="col-sm-3">{{ render_course_checkbox(course, False) }}</div>
+                    
+                    {% if loop.index % 4  == 0 or loop.last %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+        </div>
+    {% endfor %}
+{%- endmacro %}

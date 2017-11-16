@@ -1,0 +1,14 @@
+{% macro dashboard_heading(heading_text) -%}
+    <div class="dashboard-heading">
+    <h2 class="inline-heading">{{ heading_text }}</h2>
+    <span class="pull-right"><a href='{{url_for("dashboard.render_dashboard")}}'>{{_("Back to dashboard")}}</a></span>
+    </div>
+{%- endmacro %}
+
+{% macro approve(type, id) -%}
+    <button type="button" approveid="{{id}}" class="approve-{{type}} btn btn-outline-success btn-sm">{{_("Approve")}}</button>
+{%- endmacro %}
+
+{% macro reject(type, id) -%}
+    <button type="button" rejectid="{{id}}" class="reject-{{type}} btn btn-outline-danger btn-sm">{{_("Reject")}}</button>
+{%- endmacro %}

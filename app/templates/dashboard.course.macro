@@ -1,0 +1,25 @@
+{% macro course_name_input(default="") -%}
+    <label for="course_name" class="sr-only">{{ _("Course Name") }}</label>
+    <input class="form-control" type="text" id="course_name" name="course_name" placeholder="{{_("Course Name")}}" value="{{default}}" required>
+{%- endmacro %}
+
+{% macro render_add_new_course_form() -%}
+<form id="form_add_course">
+    <div class="form-group">
+        {{ course_name_input() }}
+        <button id="add_course" class="btn btn-default btn-block" type="button">{{_("Submit New Course")}}</button>
+    </div>
+</form>
+{%- endmacro %}
+
+{% macro render_edit_course_link(id, name) -%}
+    <div class="edit_course">
+        <a href="{{url_for('dashboard.render_edit_course_dashboard', course_id=id)}}" class="edit_course" id='{{id}}'>{{name}}</a>
+    </div>
+{%- endmacro %}
+
+{% macro render_edit_pending_course_link(id, name) -%}
+    <div class="edit_course">
+        <a href="{{url_for('dashboard.render_edit_pending_course_dashboard', pending_id=id)}}" class="edit_course" id='{{id}}'>{{name}}</a>
+    </div>
+{%- endmacro %}

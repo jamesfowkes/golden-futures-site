@@ -1,40 +1,77 @@
 import logging
 
-from flask import Blueprint, g, render_template, request, redirect
+from flask import Blueprint, g, render_template, request, redirect, url_for
+import flask_login
+
+import jinja2
 
 from app import app
 from app.locale import get_locale
+from app import session
+
+from app.models.university import University
+from app.models.category import Category
+from app.models.course import Course
+
+from app.models.pending_changes import PendingChanges
+
+from app.blueprints import common
 
 logger = logging.getLogger(__name__)
 
-website = Blueprint('website', __name__, template_folder='templates', url_prefix='/<lang>')
-
-@website.url_defaults
-def add_language_code(endpoint, values):
-    values.setdefault('lang', g.lang)
-
-@website.url_value_preprocessor
-def pull_lang(endpoint, values):
-    requested_language = values.pop('lang')
-    logger.info("Requested: %s", requested_language)
-    if requested_language in app.config["SUPPORTED_LOCALES"]:
-        g.lang = requested_language
-    else:
-        g.lang = get_locale()
-        logger.info("%s not supported, using %s from get_locale", requested_language, g.lang)
+website = Blueprint('website', __name__, template_folder='templates')
 
 @website.route("/", methods=['GET'])
 def render_index():
-    return render_template('index.tpl')
+    g.active="index"
+    target_template = "index.tpl"
+    return render_template(target_template)
 
 @website.route("/universities", methods=['GET'])
 def render_universities():
-    return render_template('index.tpl')
+    g.active="universities"
+    all_universities = University.all()
+    all_categories = Category.all()
+    data = {
+        "universities": all_universities,
+        "categories": all_categories
+    }
+    return render_template('universities.index.tpl', data=data)
+
+@website.route("/university/<university_id>", methods=['GET'])
+def render_university(university_id):
+    g.active="universities"
+    g.ep_data["university_id"] = university_id
+    university = University.get_single_by_id(university_id)
+    return render_template('university.index.tpl', university=university)
 
 @website.route("/courses", methods=['GET'])
 def render_courses():
-    return render_template('index.tpl')
+    g.active="categories"
+    all_categories = Category.all()
+    return render_template('course.index.tpl', categories=all_categories)
+
+@website.route("/login", methods=['GET'])
+def render_login():
+    g.active="login"
+    return render_template('login.index.tpl')
+
+@website.route("/logout", methods=['GET'])
+def logout():
+    g.active="logout"
+    flask_login.logout_user()
+    return redirect(url_for("website.render_index"))
+
+@website.route("/settings", methods=['GET'])
+@flask_login.login_required
+def render_user_settings():
+    return render_template('user_settings.tpl')
 
 def init_app(app):
+    website.before_request(common.init_request)
+    website.add_app_template_filter(common.language_name)
+
+    app.jinja_env.trim_blocks = True
+    app.jinja_env.lstrip_blocks = True
     app.register_blueprint(website)
     
