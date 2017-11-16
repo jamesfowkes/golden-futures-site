@@ -87,21 +87,3 @@ class TuitionFeeTranslation(translation_base(TuitionFee)):
     currency = sa.Column(sa.Unicode(6))
     award = sa.Column(sa.Unicode(80))
     period = sa.Column(sa.Unicode(20))
-
-class TuitionFeePending(TuitionFeeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "TuitionFeePending"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    tuition_fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
-    university = db.relationship('UniversityPending', back_populates="tuition_fees")
-
-class TuitionFeePendingTranslation(translation_base(TuitionFeePending)):
-    __tablename__ = 'TuitionFeePendingTranslation'
-    tuition_fee_min = sa.Column(sa.Integer)
-    tuition_fee_max = sa.Column(sa.Integer)
-    currency = sa.Column(sa.Unicode(6))
-    award = sa.Column(sa.Unicode(80))
-    period = sa.Column(sa.Unicode(20))

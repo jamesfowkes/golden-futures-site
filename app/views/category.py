@@ -7,8 +7,10 @@ import flask_login
 from flask_babel import gettext
 
 from app.models.base_model import DbIntegrityException
-from app.models.category import Category, CategoryPending
-from app.models.course import Course, CoursePending
+from app.models.category import Category
+from app.models.course import Course
+
+from app.models.pending_models import CategoryPending, CoursePending
 
 from app import app
 

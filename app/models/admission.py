@@ -51,21 +51,7 @@ class Admission(AdmissionBase, Translatable, BaseModelTranslateable, Declarative
 
 
 class AdmissionTranslation(translation_base(Admission)):
+
     __tablename__ = 'AdmissionTranslation'
-    admission_string = sa.Column(sa.Unicode(80))
-    unique_admission_constraint = sa.PrimaryKeyConstraint('id', 'admission_string', 'locale', name='ufc_1')
-
-class AdmissionPending(AdmissionBase, Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "AdmissionPending"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    admission_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
-    university = db.relationship('UniversityPending', back_populates="admissions")
-
-class AdmissionPendingTranslation(translation_base(AdmissionPending)):
-    __tablename__ = 'AdmissionPendingTranslation'
     admission_string = sa.Column(sa.Unicode(80))
     unique_admission_constraint = sa.PrimaryKeyConstraint('id', 'admission_string', 'locale', name='ufc_1')

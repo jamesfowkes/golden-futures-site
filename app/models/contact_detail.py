@@ -53,18 +53,3 @@ class ContactDetailTranslation(translation_base(ContactDetail)):
     __tablename__ = 'ContactDetailTranslation'
     contact_detail_string = sa.Column(sa.Unicode(80))
     unique_contact_detail_constraint = sa.PrimaryKeyConstraint('id', 'contact_detail_string', 'locale', name='ufc_1')
-
-class ContactDetailPending(ContactDetailBase, Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "ContactDetailPending"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    contact_detail_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
-    university = db.relationship('UniversityPending', back_populates="contact_details")
-
-class ContactDetailPendingTranslation(translation_base(ContactDetailPending)):
-    __tablename__ = 'ContactDetailPendingTranslation'
-    contact_detail_string = sa.Column(sa.Unicode(80))
-    unique_contact_detail_constraint = sa.PrimaryKeyConstraint('id', 'contact_detail_string', 'locale', name='ufc_1')

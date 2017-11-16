@@ -21,7 +21,6 @@ import app.models.admission
 import app.models.tuition_fee
 
 from app.models.university_course_map import university_course_map_table
-from app.models.university_course_map import university_course_pending_map_table
 
 logger = logging.getLogger(__name__)
 
@@ -113,24 +112,5 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
         
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
-    university_name = sa.Column(sa.Unicode(80))
-    university_intro = sa.Column(sa.Unicode())
-
-class UniversityPending(UniversityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
-    __tablename__ = "UniversityPending"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    university_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-    courses = db.relationship('CoursePending', secondary=university_course_pending_map_table, back_populates="universities")
-    facilities = db.relationship("FacilityPending", back_populates="university")
-    contact_details = db.relationship("ContactDetailPending", back_populates="university")
-    admissions = db.relationship("AdmissionPending", back_populates="university")
-    tuition_fees = db.relationship("TuitionFeePending", back_populates="university")
-    scholarships = db.relationship("ScholarshipPending", back_populates="university")
-
-class UniversityPendingTranslation(translation_base(UniversityPending)):
-    __tablename__ = 'UniversityPendingTranslation'
     university_name = sa.Column(sa.Unicode(80))
     university_intro = sa.Column(sa.Unicode())

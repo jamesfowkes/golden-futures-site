@@ -52,18 +52,3 @@ class FacilityTranslation(translation_base(Facility)):
     __tablename__ = 'FacilityTranslation'
     facility_string = sa.Column(sa.Unicode(80))
     unique_facility_constraint = sa.PrimaryKeyConstraint('id', 'facility_string', 'locale', name='ufc_1')
-
-class FacilityPending(FacilityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
-
-    __tablename__ = "FacilityPending"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
-    locale = 'en'
-
-    facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
-    university = db.relationship('UniversityPending', back_populates="facilities")
-
-class FacilityPendingTranslation(translation_base(FacilityPending)):
-    __tablename__ = 'FacilityPendingTranslation'
-    facility_string = sa.Column(sa.Unicode(80))
-    unique_facility_constraint = sa.PrimaryKeyConstraint('id', 'facility_string', 'locale', name='ufc_1')
