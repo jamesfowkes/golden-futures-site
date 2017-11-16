@@ -13,7 +13,7 @@
                 <h4>{{_("Additions")}}</h4>
                     {% for addition in pending.additions %}
                     <div class="pending">
-                        
+                        <p><strong>{{_("New University")}}: {{addition.university_name}}</strong></p>
                     </div>
                     {% endfor %}
                 {% else %}

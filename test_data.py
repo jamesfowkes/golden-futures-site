@@ -25,7 +25,7 @@ os.environ["GF_CONFIG_CLASS"] = "config.DebugConfig"
 
 from app import app
 from app.database import db
-from app.models.university import University
+from app.models.university import University, UniversityPending
 from app.models.category import Category, CategoryPending
 from app.models.course import Course, CoursePending
 from app.models.admission import Admission
@@ -601,6 +601,48 @@ pending_additions = {
     "category": [
         ["Inhumanities", "Using the humanities for mischief and profit", "Investment Banker, Homeopath"],
         ["Forbidden Medicine", "REDACTED", "Unemployed Surgeon", "Archaeology"]
+    ],
+    "university": [
+        {
+            "name": "Limkokwing University of Creative Technology",
+            "admissions": [
+                "Senior High School Certificate/ Diploma or equivalent",
+                ("Foundation Year Certificate from University or another recognized institution. "
+                "Foundation years can be completed at the University, contact the University directly for more information."),
+                "Certificate of English Proficiency from a recognized institution or pass entrance examination."
+            ],
+            "contact_details": [
+                "www.limkokwing.edu.kh",
+                "023 995 733",
+                "No. 120-126, Street 1986"
+            ],
+            "tuition_fees": [
+                {
+                    "min": 1500,
+                    "max": 1500,
+                    "currency": "$",
+                    "award": "Foundation",
+                    "period": "year"
+                },
+                {
+                    "min": 1500,
+                    "max": 2000,
+                    "currency": "$",
+                    "award": "Bachelor Degree",
+                    "period": "year"
+                },
+                {
+                    "min": 90,
+                    "max": 90,
+                    "currency": "$",
+                    "award": "Application Fee",
+                    "period": ""
+                }
+            ],
+            "scholarships": [
+                "Contact the University for more information"
+            ]
+        }
     ]
 }
 
@@ -727,6 +769,10 @@ if __name__ == "__main__":
                 for addition in pending_additions["course"]:
                     print("Addition of '{}' course".format(addition))
                     course = CoursePending.addition(course_name=addition, language="en")
+
+                for addition in pending_additions["university"]:
+                    print("Addition of '{}' university".format(addition["name"]))
+                    university = UniversityPending.addition(university_name=addition["name"], language="en")
 
                 print("Adding pending edits")
 
