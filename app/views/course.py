@@ -64,7 +64,7 @@ def approve_pending_course_change():
         course_pending = CoursePending.get_single(pending_id=request.form["data_id"])
         json = course_pending.json()
 
-        remaining_count = CoursePending.get_count(course_pending.pending_type) - 1
+        remaining_count = CoursePending.get_similar_count(course_pending) - 1
 
         logger.info("Approve pending change '%s' to course %s (%d remaining)", course_pending.pending_type, course_pending.course_name, remaining_count)
 
@@ -83,7 +83,7 @@ def reject_pending_course_change():
         course_pending = CoursePending.get_single(pending_id=request.form["data_id"])
         json = course_pending.json()
 
-        remaining_count = CoursePending.get_count(course_pending.pending_type) - 1
+        remaining_count = CoursePending.get_similar_count(course_pending) - 1
                 
         logger.info("Rejecting pending change '%s' to course %s", course_pending.pending_type, course_pending.course_name)
         

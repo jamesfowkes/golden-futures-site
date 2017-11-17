@@ -148,7 +148,7 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
         }
 
     def approve(self):
-        if self.pending_type == "edit":
+        if self.pending_type == "add_edit":
             if self.course_id is None:
                 logger.info("Adding course %s", self.translations["en"].course_name)
                 new_course = Course.create(self.translations["en"].course_name, "en")
@@ -175,26 +175,6 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
         return True
 
     @classmethod
-    def get_count(cls, pending_type):
-        if pending_type == "add":
-            return len(cls.all_by_type().additions)
-        elif pending_type == "edit":
-            return len(cls.all_by_type().edits)
-        elif pending_type == "del":
-            return len(cls.all_by_type().deletions)
-        elif pending_type == "all":
-            return len(cls.all_by_type())
-
-    @classmethod
-    def all_by_type(cls):
-        all_changes = cls.all();
-        additions = [c for c in all_changes if c.pending_type == "add"]
-        edits = [c for c in all_changes if c.pending_type == "edit"]
-        dels = [c for c in all_changes if c.pending_type == "del"]
-
-        return PendingChanges(additions, edits, dels)
-
-    @classmethod
     def create_from(cls, existing_course, pending_type):
         new = cls("", "en", pending_type)
         new.update(existing_course)
@@ -202,13 +182,13 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
 
     @classmethod
     def addition(cls, course_name, language):
-        pending = cls(course_name, language, "add")
+        pending = cls(course_name, language, "add_edit")
         return pending
 
     @classmethod
     def edit(cls, existing_course):
         try:
-            pending = cls.create_from(existing_course, "edit")
+            pending = cls.create_from(existing_course, "add_edit")
 
         except DbIntegrityException:
             pending = cls.get_single(course_id = existing_course.course_id)

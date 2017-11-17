@@ -20,6 +20,8 @@ import app.models.contact_detail
 import app.models.admission
 import app.models.tuition_fee
 
+from app.models.course import Course
+
 from app.models.university_course_map import university_course_map_table
 
 from app.models.pending_changes import PendingChanges
@@ -52,6 +54,14 @@ class UniversityBase():
         else:
             self.current_translation.university_name = university_name
         db.session.commit()
+
+    def set_intro(self, intro, lang=None):
+        if lang:
+            self.translations[lang].university_intro = intro
+        else:
+            self.current_translation.university_intro = intro
+
+        db.session.commit()
         
     @classmethod
     def create(cls, university_name, language=None):
@@ -68,15 +78,16 @@ class UniversityBase():
     def get_single_by_id(cls, university_id):
         return cls.get_single(university_id=university_id)
 
-    def add_course(self, course):
-        self.courses.append(course)
-        db.session.add(self)
-        db.session.commit()
+    def maximum_fee(self):
+        return max([fee.tuition_fee_max for fee in self.tuition_fees])
+
+    def minimum_fee(self):
+        return min([fee.tuition_fee_min for fee in self.tuition_fees])
 
     def course_names(self):
         names = [c.course_name for c in self.courses]
         return sorted(names)
-    
+
     def categories(self):
         categories = []
         for course in self.courses:
@@ -89,13 +100,7 @@ class UniversityBase():
         for category in self.categories():
             category_course_map[category] = [course for course in category.courses if course in self.courses]
 
-        return category_course_map            
-
-    def maximum_fee(self):
-        return max([fee.tuition_fee_max for fee in self.tuition_fees])
-
-    def minimum_fee(self):
-        return min([fee.tuition_fee_min for fee in self.tuition_fees])
+        return category_course_map
 
 class University(UniversityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
@@ -112,6 +117,11 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
     tuition_fees = db.relationship("TuitionFee", back_populates="university")
     scholarships = db.relationship("Scholarship", back_populates="university")
         
+    def add_course(self, course):
+        self.courses.append(course)
+        db.session.add(self)
+        db.session.commit()
+
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
     university_name = sa.Column(sa.Unicode(80))
@@ -127,11 +137,11 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     university_id = db.Column(db.Integer, unique=True, nullable=True)
     pending_type = db.Column(db.String(6), nullable=False)
 
-    courses = db.relationship('UniversityPendingCourses', back_populates="university")
+    pending_courses = db.relationship('UniversityPendingCourses', back_populates="university")
     facilities = db.relationship("FacilityPending", back_populates="university")
     contact_details = db.relationship("ContactDetailPending", back_populates="university")
     admissions = db.relationship("AdmissionPending", back_populates="university")
-    tuition_fees = db.relationship("TuitionFeePending", back_populates="university")
+    tuition_fees = db.relationship("TuitionFeePending", back_populates="university", foreign_key="TuitionFeePending.university_id")
     scholarships = db.relationship("ScholarshipPending", back_populates="university")
 
     def __init__(self, university_name, language, pending_type):
@@ -144,6 +154,10 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         except sa.exc.IntegrityError:
             raise DbIntegrityException()
 
+    @property
+    def courses(self):
+        return [Course.get_single(course_id = c.course_id) for c in self.pending_courses]
+    
     def _delete(self):
         for lang, translation in self.translations:
             db.session.delete(translation)
@@ -154,7 +168,7 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         super(BaseModelTranslateable,self).delete()
 
     def approve(self):
-        if self.pending_type == "edit":
+        if self.pending_type == "add_edit":
             if self.university_id is None:
                 logger.info("Adding university %s", self.translations["en"].university_name)
                 new_university = University.create(self.translations["en"].university_name, "en")
@@ -187,17 +201,18 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         names = [Course.get_single(course_id=c.course_id).course_name for c in self.courses]
         return sorted(names)
 
+    def categories(self):
+        categories = []
+        for pending_course in self.courses:
+            categories.extend(Course.get_single(course_id=pending_course.course_id).categories)
+
+        return set(categories)
+
     def is_pending(self):
         return True
 
-    @classmethod
-    def all_by_type(cls):
-        all_changes = cls.all();
-        additions = [c for c in all_changes if c.pending_type == "edit" and c.university_id is None]
-        edits = [c for c in all_changes if c.pending_type == "edit" and c.university_id is not None]
-        dels = [c for c in all_changes if c.pending_type == "del"]
-
-        return PendingChanges(additions, edits, dels)
+    def is_addition(self):
+        return self.university_id is None
 
     @classmethod
     def create_from(cls, existing_university, pending_type):
@@ -207,13 +222,13 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
 
     @classmethod
     def addition(cls, university_name, language):
-        pending = cls(university_name, language, "edit")
+        pending = cls(university_name, language, "add_edit")
         return pending
 
     @classmethod
     def edit(cls, existing_university):
-        pending = cls.create_from(existing_university, "edit")
-        pending.pending_type = "edit"
+        pending = cls.create_from(existing_university, "add_edit")
+        pending.pending_type = "add_edit"
         return pending
 
     @classmethod
@@ -225,11 +240,11 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
 class UniversityPendingTranslation(translation_base(UniversityPending)):
     __tablename__ = 'UniversityPendingTranslation'
     university_name = sa.Column(sa.Unicode(80), unique=True)
-    univresity_intro = sa.Column(sa.Unicode())
+    university_intro = sa.Column(sa.Unicode())
 
 class UniversityPendingCourses(BaseModel, DeclarativeBase):
 
     __tablename__ = "UniversityPendingCourses"
     university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'), nullable=False, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('Course.course_id'), nullable=False, primary_key=True)
-    university = db.relationship('UniversityPending', back_populates="courses")
+    university = db.relationship('UniversityPending', back_populates="pending_courses")

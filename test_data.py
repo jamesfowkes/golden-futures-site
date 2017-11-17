@@ -30,7 +30,7 @@ from app.models.category import Category, CategoryPending
 from app.models.course import Course, CoursePending
 from app.models.admission import Admission
 from app.models.scholarship import Scholarship
-from app.models.tuition_fee import TuitionFee
+from app.models.tuition_fee import TuitionFee, TuitionFeePending
 from app.models.contact_detail import ContactDetail
 from app.models.facility import Facility
 from app.models.user import User
@@ -641,6 +641,9 @@ pending_additions = {
             ],
             "scholarships": [
                 "Contact the University for more information"
+            ],
+            "courses": [
+                "Accounting", "Architecture", "Product Design", "Information Technology"
             ]
         }
     ]
@@ -773,6 +776,16 @@ if __name__ == "__main__":
                 for addition in pending_additions["university"]:
                     print("Addition of '{}' university".format(addition["name"]))
                     university = UniversityPending.addition(university_name=addition["name"], language="en")
+                    for course in addition["courses"]:
+                        university.add_course(courses[course])
+
+                    for tuition_fee in addition["tuition_fees"]:
+                        new_tuition_fee = TuitionFeePending.create(
+                            university.pending,
+                            tuition_fee["min"], tuition_fee["max"], 
+                            tuition_fee["currency"], tuition_fee["period"],
+                            tuition_fee["award"], "en"
+                        )
 
                 print("Adding pending edits")
 
@@ -795,7 +808,6 @@ if __name__ == "__main__":
 
                 for deletion in pending_deletions["course"]:
                     course = CoursePending.deletion(courses[deletion])
-
 
         shutil.copy("app/debug.db", "app/debug.original.db")
         print("Finished creating test data")

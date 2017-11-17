@@ -5,6 +5,8 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from app.database import db
 
+from app.models.pending_changes import PendingChanges
+
 DeclarativeBase = declarative_base()  
 
 logger = logging.getLogger(__name__)
@@ -101,12 +103,35 @@ class PendingChangeBase():
 
     @classmethod
     def additions(cls):
-        return db.session.query(cls).filter(cls.pending_type=="edit").filter(cls.category_id == None).all()
+        return db.session.query(cls).filter(cls.pending_type=="add_edit").filter(cls.category_id == None).all()
 
     @classmethod
     def edits(cls):
-        return db.session.query(cls).filter(cls.pending_type=="edit").filter(cls.category_id != None).all()
+        return db.session.query(cls).filter(cls.pending_type=="add_edit").filter(cls.category_id != None).all()
 
     @classmethod
     def deletions(cls):
         return db.session.query(cls).filter(cls.pending_type=="del").all()
+
+    @classmethod
+    def all_by_type(cls):
+        all_changes = cls.all();
+        additions = [c for c in all_changes if c.pending_type == "add_edit" and c.is_addition()]
+        edits = [c for c in all_changes if c.pending_type == "add_edit" and not c.is_addition()]
+        dels = [c for c in all_changes if c.pending_type == "del"]
+
+        return PendingChanges(additions, edits, dels)
+
+    @classmethod
+    def get_similar_count(cls, similar_to_change):
+        all_pending_changes = cls.all_by_type()
+
+        if similar_to_change.pending_type == "add_edit":
+            if similar_to_change.is_addition():
+                return len(all_pending_changes.additions)
+            else:
+                return len(all_pending_changes.edits)
+        elif similar_to_change.pending_type == "del":
+            return len(all_pending_changes.deletions)
+        elif similar_to_change.pending_type == "all":
+            return len(all_pending_changes)

@@ -95,8 +95,13 @@ class TuitionFeePending(TuitionFeeBase, Translatable, BaseModelTranslateable, De
     locale = 'en'
 
     tuition_fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
-    university = db.relationship('UniversityPending', back_populates="tuition_fees")
+    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'), nullable=True)
+    pending_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'), nullable=True)
+
+    @classmethod
+    def addition(cls, university_or_pending_id, fee_min, fee_max, currency, award, period, for_pending, language):
+        base_tuition_fee = cls.create(university_or_pending_id, fee_min, fee_max, currency, period, award, language)
+
 
 class TuitionFeePendingTranslation(translation_base(TuitionFeePending)):
     __tablename__ = 'TuitionFeePendingTranslation'

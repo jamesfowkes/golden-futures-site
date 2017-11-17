@@ -162,7 +162,7 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         super(BaseModelTranslateable,self).delete()
 
     def approve(self):
-        if self.pending_type == "edit":
+        if self.pending_type == "add_edit":
             if self.category_id is None:
                 logger.info("Adding category %s", self.translations["en"].category_name)
                 new_category = Category.create(self.translations["en"].category_name, "en")
@@ -199,15 +199,6 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         return True
 
     @classmethod
-    def all_by_type(cls):
-        all_changes = cls.all();
-        additions = [c for c in all_changes if c.pending_type == "edit" and c.category_id is None]
-        edits = [c for c in all_changes if c.pending_type == "edit" and c.category_id is not None]
-        dels = [c for c in all_changes if c.pending_type == "del"]
-
-        return PendingChanges(additions, edits, dels)
-
-    @classmethod
     def create_from(cls, existing_category, pending_type):
         new = cls("", "en", pending_type)
         new.update(existing_category)
@@ -215,13 +206,13 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
 
     @classmethod
     def addition(cls, category_name, language):
-        pending = cls(category_name, language, "edit")
+        pending = cls(category_name, language, "add_edit")
         return pending
 
     @classmethod
     def edit(cls, existing_category):
-        pending = cls.create_from(existing_category, "edit")
-        pending.pending_type = "edit"
+        pending = cls.create_from(existing_category, "add_edit")
+        pending.pending_type = "add_edit"
         return pending
 
     @classmethod

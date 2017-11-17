@@ -27,4 +27,8 @@ $( document ).ready(function() {
 
   $(".approve-course").click(pending_changes_ajax_handler('/course/pending/approve', 'approveid'));
   $(".reject-course").click(pending_changes_ajax_handler('/course/pending/reject', 'rejectid'));
+
+  $(".approve-university").click(pending_changes_ajax_handler('/university/pending/approve', 'approveid'));
+  $(".reject-university").click(pending_changes_ajax_handler('/university/pending/reject', 'rejectid'));
+
 });

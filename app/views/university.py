@@ -1,11 +1,14 @@
+import logging
 import json
 
-from flask import request, redirect, url_for, Response, abort
+from flask import request, redirect, jsonify, url_for, Response, abort
 import flask_login
 
 from app.models.university import UniversityPending
 
 from app import app
+
+logger = logging.getLogger(__name__)
 
 @app.route("/university/create", methods=['POST'])
 @flask_login.login_required
@@ -28,3 +31,38 @@ def add_university_translation(university_id):
         )
         return json.dumps(university.json())
         
+@app.route("/university/pending/approve", methods=['POST'])
+@flask_login.login_required
+def approve_pending_university_change():
+    if request.method == 'POST':
+        university_pending = UniversityPending.get_single(pending_id=request.form["data_id"])
+        json = university_pending.json()
+
+        remaining_count = UniversityPending.get_similar_count(university_pending) - 1
+
+        logger.info("Approve pending change '%s' to university %s", university_pending.pending_type, university_pending.university_name)
+        university_pending.approve()
+
+        return jsonify({
+            "success" : True,
+            "data": json,
+            "remaining_count": remaining_count
+        })
+
+@app.route("/university/pending/reject", methods=['POST'])
+@flask_login.login_required
+def reject_pending_university_change():
+    if request.method == 'POST':
+        university_pending = UniversityPending.get_single(pending_id=request.form["data_id"])
+        json = university_pending.json()
+
+        remaining_count = UniversityPending.get_similar_count(university_pending) - 1
+
+        logger.info("Rejecting pending change '%s' to university %s", university_pending.pending_type, university_pending.university_name)
+        university_pending.reject()
+
+        return jsonify({
+            "success" : True,
+            "data": json,
+            "remaining_count": remaining_count
+        })

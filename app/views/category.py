@@ -149,7 +149,11 @@ def approve_pending_category_change():
         category_pending = CategoryPending.get_single(pending_id=request.form["data_id"])
         logger.info("Approve pending change '%s' to category %s", category_pending.pending_type, category_pending.category_name)
         category_pending.approve()
-        return jsonify(result=True)
+        return jsonify({
+            "success" : True,
+            "data": json,
+            "remaining_count": remaining_count
+        })
 
 @app.route("/category/pending/reject", methods=['POST'])
 @flask_login.login_required
