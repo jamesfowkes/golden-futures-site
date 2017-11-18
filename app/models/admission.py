@@ -62,8 +62,19 @@ class AdmissionPending(AdmissionBase, Translatable, BaseModelTranslateable, Decl
     locale = 'en'
 
     admission_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
+    pending_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="admissions")
+
+    def __init__(self, pending_id, admission_string, language):
+        self.pending_id = pending_id
+        self.translations[language].admission_string = admission_string
+        
+    @classmethod
+    def addition(cls, pending_id, admission_string, language):
+        admission_obj = cls(pending_id, admission_string, language)
+        db.session.add(admission_obj)
+        db.session.commit()
+        return admission_obj
 
 class AdmissionPendingTranslation(translation_base(AdmissionPending)):
     __tablename__ = 'AdmissionPendingTranslation'

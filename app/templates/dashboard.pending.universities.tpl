@@ -17,6 +17,13 @@
                         <p>{{_("Introduction")}}: {{addition.university_intro}}</p>
                         <p>{{_("Courses")}}: {{ addition.course_names | join(", ") }}</p>
                         <p>{{_("Fees")}}: {{ addition.tuition_fees | join(", ") }}</p>
+                        <p>{{_("Requirements")}}:
+                            <ul>
+                            {% for admission in addition.admissions %}
+                                <li>{{ admission.admission_string }}</li>
+                            {% endfor %}
+                            </ul>
+                        </p>
                     </div>
                     <div>
                         {{dashboard_macro.approve("university", addition.pending_id)}} {{dashboard_macro.reject("university", addition.pending_id)}} 

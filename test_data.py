@@ -28,7 +28,7 @@ from app.database import db
 from app.models.university import University, UniversityPending
 from app.models.category import Category, CategoryPending
 from app.models.course import Course, CoursePending
-from app.models.admission import Admission
+from app.models.admission import Admission, AdmissionPending
 from app.models.scholarship import Scholarship
 from app.models.tuition_fee import TuitionFee, TuitionFeePending
 from app.models.contact_detail import ContactDetail
@@ -780,12 +780,15 @@ if __name__ == "__main__":
                         university.add_course(courses[course])
 
                     for tuition_fee in addition["tuition_fees"]:
-                        new_tuition_fee = TuitionFeePending.create(
+                        TuitionFeePending.addition(
                             university.pending_id,
                             tuition_fee["min"], tuition_fee["max"], 
                             tuition_fee["currency"], tuition_fee["award"],
                             tuition_fee["period"], "en"
                         )
+
+                    for admission in addition["admissions"]:
+                        AdmissionPending.addition(university.pending_id, admission, "en")
 
                 print("Adding pending edits")
 
