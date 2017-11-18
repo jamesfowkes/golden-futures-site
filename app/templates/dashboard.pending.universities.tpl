@@ -15,9 +15,10 @@
                     <div class="pending">
                         <p><strong>{{_("New University")}}: {{addition.university_name}}</strong></p>
                         <p>{{_("Introduction")}}: {{addition.university_intro}}</p>
-                        <p>{{_("Courses")}}: {{ addition.course_names() | join(", ") }}</p>
+                        <p>{{_("Courses")}}: {{ addition.course_names | join(", ") }}</p>
                         <p>{{_("Fees")}}: {{ addition.tuition_fees | join(", ") }}</p>
                     </div>
+                    <div>
                         {{dashboard_macro.approve("university", addition.pending_id)}} {{dashboard_macro.reject("university", addition.pending_id)}} 
                     </div>
                     {% endfor %}

@@ -781,10 +781,10 @@ if __name__ == "__main__":
 
                     for tuition_fee in addition["tuition_fees"]:
                         new_tuition_fee = TuitionFeePending.create(
-                            university.pending,
+                            university.pending_id,
                             tuition_fee["min"], tuition_fee["max"], 
-                            tuition_fee["currency"], tuition_fee["period"],
-                            tuition_fee["award"], "en"
+                            tuition_fee["currency"], tuition_fee["award"],
+                            tuition_fee["period"], "en"
                         )
 
                 print("Adding pending edits")

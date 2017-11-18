@@ -137,11 +137,11 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     university_id = db.Column(db.Integer, unique=True, nullable=True)
     pending_type = db.Column(db.String(6), nullable=False)
 
-    pending_courses = db.relationship('UniversityPendingCourses', back_populates="university")
+    pending_courses = db.relationship('UniversityPendingCourse', back_populates="university")
     facilities = db.relationship("FacilityPending", back_populates="university")
     contact_details = db.relationship("ContactDetailPending", back_populates="university")
     admissions = db.relationship("AdmissionPending", back_populates="university")
-    tuition_fees = db.relationship("TuitionFeePending", back_populates="university", foreign_key="TuitionFeePending.university_id")
+    tuition_fees = db.relationship("TuitionFeePending", back_populates="university")
     scholarships = db.relationship("ScholarshipPending", back_populates="university")
 
     def __init__(self, university_name, language, pending_type):
@@ -193,12 +193,14 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         self._delete()
 
     def add_course(self, course):
-        self.courses.append(UniversityPendingCourses(university_id=self.university_id, course_id=course.course_id))
+        pending_course = UniversityPendingCourse(university_id=self.university_id, course_id=course.course_id)
+        self.pending_courses.append(pending_course)
         db.session.add(self)
         db.session.commit()
 
+    @property
     def course_names(self):
-        names = [Course.get_single(course_id=c.course_id).course_name for c in self.courses]
+        names = [c.course_name for c in self.pending_courses]
         return sorted(names)
 
     def categories(self):
@@ -242,9 +244,13 @@ class UniversityPendingTranslation(translation_base(UniversityPending)):
     university_name = sa.Column(sa.Unicode(80), unique=True)
     university_intro = sa.Column(sa.Unicode())
 
-class UniversityPendingCourses(BaseModel, DeclarativeBase):
+class UniversityPendingCourse(BaseModel, DeclarativeBase):
 
-    __tablename__ = "UniversityPendingCourses"
+    __tablename__ = "UniversityPendingCourse"
     university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'), nullable=False, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('Course.course_id'), nullable=False, primary_key=True)
     university = db.relationship('UniversityPending', back_populates="pending_courses")
+
+    @property
+    def course_name(self):
+        return Course.get_single(course_id=self.course_id).course_name
