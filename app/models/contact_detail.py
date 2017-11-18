@@ -61,8 +61,19 @@ class ContactDetailPending(ContactDetailBase, Translatable, BaseModelTranslateab
     locale = 'en'
 
     contact_detail_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
+    pending_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="contact_details")
+
+    def __init__(self, pending_id, contact_detail_string, language):
+        self.pending_id = pending_id
+        self.translations[language].contact_detail_string = contact_detail_string
+        
+    @classmethod
+    def addition(cls, pending_id, contact_detail_string, language):
+        admission_obj = cls(pending_id, contact_detail_string, language)
+        db.session.add(admission_obj)
+        db.session.commit()
+        return admission_obj
 
 class ContactDetailPendingTranslation(translation_base(ContactDetailPending)):
     __tablename__ = 'ContactDetailPendingTranslation'

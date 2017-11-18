@@ -14,15 +14,20 @@
                     {% for addition in pending.additions %}
                     <div class="pending">
                         <p><strong>{{_("New University")}}: {{addition.university_name}}</strong></p>
-                        <p>{{_("Introduction")}}: {{addition.university_intro}}</p>
-                        <p>{{_("Courses")}}: {{ addition.course_names | join(", ") }}</p>
-                        <p>{{_("Fees")}}: {{ addition.tuition_fees | join(", ") }}</p>
-                        <p>{{_("Admission")}}:
+                        <p><i>{{_("Introduction")}}:</i> {{addition.university_intro}}</p>
+                        <p><i>{{_("Courses")}}:</i> {{ addition.course_names | join(", ") }}</p>
+                        <p><i>{{_("Fees")}}:</i> {{ addition.tuition_fees | join(", ") }}</p>
+                        <p><i>{{_("Admission")}}:</i>
                             <ul>
                             {% for admission in addition.admissions %}
                                 <li>{{ admission.admission_string }}</li>
                             {% endfor %}
                             </ul>
+                        </p>
+                        <p><i>{{_("Contact Details")}}:</i><br/>
+                            {% for contact_detail in addition.contact_details %}
+                                {{ contact_detail.contact_detail_string }}<br/>
+                            {% endfor %}
                         </p>
                     </div>
                     <div>
