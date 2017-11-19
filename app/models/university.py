@@ -88,6 +88,10 @@ class UniversityBase():
         names = [c.course_name for c in self.courses]
         return sorted(names)
 
+    def facility_names(self):
+        names = [f.facility_string for f in self.facilities]
+        return sorted(names)
+
     def categories(self):
         categories = []
         for course in self.courses:

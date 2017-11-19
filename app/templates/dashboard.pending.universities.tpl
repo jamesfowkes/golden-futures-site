@@ -34,8 +34,8 @@
                                 {{ scholarship.scholarship_string }}<br/>
                             {% endfor %}
                         </p>
-                    </div>
-                    <div>
+                        <p><i>{{_("Facilities")}}:</i> {{ addition.facility_names() | join(", ") }}</p>
+                        </p>
                         {{dashboard_macro.approve("university", addition.pending_id)}} {{dashboard_macro.reject("university", addition.pending_id)}} 
                     </div>
                     {% endfor %}

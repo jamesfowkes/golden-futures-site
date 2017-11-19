@@ -60,8 +60,19 @@ class FacilityPending(FacilityBase, Translatable, BaseModelTranslateable, Declar
     locale = 'en'
 
     facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
+    pending_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="facilities")
+
+    def __init__(self, pending_id, facility_string, language):
+        self.pending_id = pending_id
+        self.translations[language].facility_string = facility_string
+
+    @classmethod
+    def addition(cls, pending_id, facility_string, language):
+        facility_obj = cls(pending_id, facility_string, language)
+        db.session.add(facility_obj)
+        db.session.commit()
+        return facility_obj
 
 class FacilityPendingTranslation(translation_base(FacilityPending)):
     __tablename__ = 'FacilityPendingTranslation'
