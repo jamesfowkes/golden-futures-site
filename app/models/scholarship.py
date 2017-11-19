@@ -60,8 +60,19 @@ class ScholarshipPending(ScholarshipBase, Translatable, BaseModelTranslateable, 
     locale = 'en'
 
     scholarship_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
+    pending_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="scholarships")
+
+    def __init__(self, pending_id, scholarship_string, language):
+        self.pending_id = pending_id
+        self.translations[language].scholarship_string = scholarship_string
+        
+    @classmethod
+    def addition(cls, pending_id, scholarship_string, language):
+        scholarship_obj = cls(pending_id, scholarship_string, language)
+        db.session.add(scholarship_obj)
+        db.session.commit()
+        return scholarship_obj
 
 class ScholarshipPendingTranslation(translation_base(ScholarshipPending)):
     __tablename__ = 'ScholarshipPendingTranslation'

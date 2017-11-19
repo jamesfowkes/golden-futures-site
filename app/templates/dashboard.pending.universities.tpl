@@ -29,6 +29,11 @@
                                 {{ contact_detail.contact_detail_string }}<br/>
                             {% endfor %}
                         </p>
+                        <p><i>{{_("Scholarships")}}:</i><br/>
+                            {% for scholarship in addition.scholarships %}
+                                {{ scholarship.scholarship_string }}<br/>
+                            {% endfor %}
+                        </p>
                     </div>
                     <div>
                         {{dashboard_macro.approve("university", addition.pending_id)}} {{dashboard_macro.reject("university", addition.pending_id)}} 

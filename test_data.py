@@ -29,7 +29,7 @@ from app.models.university import University, UniversityPending
 from app.models.category import Category, CategoryPending
 from app.models.course import Course, CoursePending
 from app.models.admission import Admission, AdmissionPending
-from app.models.scholarship import Scholarship
+from app.models.scholarship import Scholarship, ScholarshipPending
 from app.models.tuition_fee import TuitionFee, TuitionFeePending
 from app.models.contact_detail import ContactDetail, ContactDetailPending
 from app.models.facility import Facility
@@ -792,6 +792,9 @@ if __name__ == "__main__":
 
                     for contact_detail in addition["contact_details"]:
                         ContactDetailPending.addition(university.pending_id, contact_detail, "en")
+
+                    for scholarship in addition["scholarships"]:
+                        ScholarshipPending.addition(university.pending_id, scholarship, "en")
 
                 print("Adding pending edits")
 

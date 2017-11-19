@@ -108,7 +108,7 @@ class TuitionFeePending(TuitionFeeBase, Translatable, BaseModelTranslateable, De
 
     @classmethod
     def addition(cls, pending_id, fee_min, fee_max, currency, award, period, language):
-        tuition_fee_obj = cls(pending_id, fee_min, fee_max, currency, period, award, language)
+        tuition_fee_obj = cls(pending_id, fee_min, fee_max, currency, award, period, language)
         db.session.add(tuition_fee_obj)
         db.session.commit()
         return tuition_fee_obj
