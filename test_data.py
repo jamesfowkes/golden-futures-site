@@ -714,8 +714,18 @@ if __name__ == "__main__":
             print("Creating universities...")
             universities = {}
             for university in test_university_data:
-                universities[university] = University.create(university, "en")
-                universities[university].add_translated_name(khmer(university), "km")
+                universities[university] = University.create({
+                        "en": {
+                            "university_name": university,
+                            "university_intro": "This is the " + university
+                        },
+                        "km": {
+                            "university_name": khmer(university),
+                            "university_intro": khmer("This is the " + university)
+                        }
+                    }
+                )
+
 
             for university, uni_data in test_university_data.items():
 
@@ -724,34 +734,49 @@ if __name__ == "__main__":
                     universities[university].add_course(courses[course])
 
                 for admission in uni_data["admission"]:
-                    adm = Admission.create(universities[university].university_id, admission, "en")
-                    adm.add_translated_admission(khmer(admission), "km")
-
-                for tuition_fee in uni_data["tuition_fees"]:
-                    fee = TuitionFee.create(
-                        universities[university].university_id,
-                        tuition_fee["min"], tuition_fee["max"], 
-                        tuition_fee["currency"], tuition_fee["period"],
-                        tuition_fee["award"], "en"
+                    adm = Admission.create(universities[university].university_id, {
+                            "en": {"admission_string": admission},
+                            "km": {"admission_string": khmer(admission)}
+                        }
                     )
 
-                    fee.add_translation(int(float(tuition_fee["min"])/ 0.00025), "tuition_fee_min", "km")
-                    fee.add_translation(int(float(tuition_fee["max"])/ 0.00025), "tuition_fee_max", "km")
-                    fee.add_translation("៛", "currency", "km")
-                    fee.add_translation(khmer(tuition_fee["award"]), "award", "km")
-                    fee.add_translation(khmer(tuition_fee["period"]), "period", "km")
+                for tuition_fee in uni_data["tuition_fees"]:
+                    fee = TuitionFee.create(universities[university].university_id, {
+                            "en": {
+                                "tuition_fee_min": tuition_fee["min"],
+                                "tuition_fee_max": tuition_fee["max"], 
+                                "currency": tuition_fee["currency"],
+                                "period": tuition_fee["period"],
+                                "award": tuition_fee["award"]
+                            },
+                            "km": {                            
+                                "tuition_fee_min": int(float(tuition_fee["min"])/ 0.00025),
+                                "tuition_fee_max": int(float(tuition_fee["max"])/ 0.00025), 
+                                "currency": "៛",
+                                "period": khmer(tuition_fee["period"]),
+                                "award": khmer(tuition_fee["award"])
+                            }
+                        }
+                    )
 
                 for scholarship in uni_data["scholarships"]:
-                    sch = Scholarship.create(universities[university].university_id, scholarship, "en")
-                    sch.add_translation(khmer("scholarship"), "km")
+                    sch = Scholarship.create(universities[university].university_id, {
+                        "en": {"scholarship_string": scholarship},
+                        "km": {"scholarship_string": khmer(scholarship)}
+                    })
 
                 for contact_detail in uni_data["contact_details"]:
-                    det = ContactDetail.create(universities[university].university_id, contact_detail, "en")
-                    det.add_translation(khmer(contact_detail), "km")
+                    det = ContactDetail.create(universities[university].university_id, {
+                        "en": {"contact_detail_string": contact_detail},
+                        "km": {"contact_detail_string": khmer(contact_detail)}
+                    })
 
                 for facility in uni_data["facilities"]:
-                    fac = Facility.create(universities[university].university_id, facility, "en")
-                    fac.add_translation(khmer(facility), "km")
+                    fac = Facility.create(universities[university].university_id, {
+                            "en": {"facility_string": facility},
+                            "km": {"facility_string": khmer(facility)}
+                        }
+                    )
 
             print("Creating users")
 
@@ -776,17 +801,27 @@ if __name__ == "__main__":
 
                 for addition in pending_additions["university"]:
                     print("Addition of '{}' university".format(addition["name"]))
-                    university = UniversityPending.addition(university_name=addition["name"], language="en")
+                    university = UniversityPending.addition({
+                        "en": {
+                            "university_name": addition["name"],
+                            "university_intro": "This is the " + addition["name"]
+                        }
+                    })
+
                     for course in addition["courses"]:
                         university.add_course(courses[course])
 
                     for tuition_fee in addition["tuition_fees"]:
-                        TuitionFeePending.addition(
-                            university.pending_id,
-                            tuition_fee["min"], tuition_fee["max"], 
-                            tuition_fee["currency"], tuition_fee["award"],
-                            tuition_fee["period"], "en"
-                        )
+                        TuitionFeePending.addition(university.pending_id, {
+                            "en": {
+                                "tuition_fee_min": tuition_fee["min"],
+                                "tuition_fee_max": tuition_fee["max"], 
+                                "currency": tuition_fee["currency"],
+                                "period": tuition_fee["period"],
+                                "award": tuition_fee["award"]
+                            }
+                        })
+
 
                     for admission in addition["admissions"]:
                         AdmissionPending.addition(university.pending_id, admission, "en")
@@ -798,7 +833,12 @@ if __name__ == "__main__":
                         ScholarshipPending.addition(university.pending_id, scholarship, "en")
 
                     for facility in addition["facilities"]:
-                        FacilityPending.addition(university.pending_id, facility, "en")
+                        FacilityPending.addition(university.pending_id, {
+                            "en": {
+                                    "facility_string": facility,
+                                }
+                            }
+                        )
 
                 print("Adding pending edits")
 

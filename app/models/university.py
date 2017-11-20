@@ -13,12 +13,13 @@ from sqlalchemy_i18n.utils import get_current_locale
 import app
 from app.database import db
 
-from app.models.base_model import BaseModel, BaseModelTranslateable, DeclarativeBase, PendingChangeBase, DbIntegrityException
+from app.models.base_model import BaseModel, BaseModelTranslateable, DeclarativeBase, PendingChangeBase, DbIntegrityException, TranslationMixin, get_locales
 
-import app.models.facility
-import app.models.contact_detail
-import app.models.admission
-import app.models.tuition_fee
+from app.models.facility import Facility
+from app.models.contact_detail import ContactDetail
+from app.models.admission import Admission
+from app.models.tuition_fee import TuitionFee
+from app.models.scholarship import Scholarship
 
 from app.models.course import Course
 
@@ -29,8 +30,8 @@ from app.models.pending_changes import PendingChanges
 logger = logging.getLogger(__name__)
 
 class UniversityBase():
-    def __init__(self, university_name, language):
-        self.translations[language].university_name = university_name
+    def __init__(self, translations):
+        self.set_translations(translations)
 
     def __repr__(self):
         return "<ID: '%d', Name: '%s'>" % (self.university_id, self.university_name)
@@ -47,25 +48,23 @@ class UniversityBase():
     def json(self):
         return {"university_id": self.university_id, "university_name": self.current_translation.university_name, "language": get_current_locale(self)}
     
-    def add_translated_name(self, university_name, language=None):
-        logger.info("Adding translation %s (%s) to university %s", university_name, language, self.translations["en"].university_name)
-        if language:
-            self.translations[language].university_name = university_name
-        else:
-            self.current_translation.university_name = university_name
-        db.session.commit()
+    def set_translations(self, translations):
+        for language in get_locales(translations):
+            self.translations[language].university_name = translations[language]["university_name"]
+            self.translations[language].university_intro = translations[language]["university_intro"]
 
     def set_intro(self, intro, lang=None):
         if lang:
             self.translations[lang].university_intro = intro
         else:
             self.current_translation.university_intro = intro
-
+        
+        db.session.add(self)
         db.session.commit()
         
     @classmethod
-    def create(cls, university_name, language=None):
-        university = cls(university_name, language)
+    def create(cls, university_names):
+        university = cls(university_names)
         db.session.add(university)
         db.session.commit()
         return university
@@ -148,10 +147,10 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     tuition_fees = db.relationship("TuitionFeePending", back_populates="university")
     scholarships = db.relationship("ScholarshipPending", back_populates="university")
 
-    def __init__(self, university_name, language, pending_type):
-        UniversityBase.__init__(self, university_name, language)
+    def __init__(self, university_names, pending_type):
         self.pending_type = pending_type
-        
+        UniversityBase.__init__(self, university_names)
+                
         try:
             db.session.add(self)
             db.session.commit()
@@ -166,7 +165,10 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         for lang, translation in self.translations:
             db.session.delete(translation)
 
-        for course in self.courses:
+        for facility in self.facilities:
+            facility.delete()
+
+        for course in self.pending_courses:
             course.delete()
 
         super(BaseModelTranslateable,self).delete()
@@ -175,11 +177,27 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         if self.pending_type == "add_edit":
             if self.university_id is None:
                 logger.info("Adding university %s", self.translations["en"].university_name)
-                new_university = University.create(self.translations["en"].university_name, "en")
-                new_university.set_intro(self.translations["en"].university_intro, "en")
 
-                for course in self.courses:
-                    new_university.add_course(Course.get_single(course_id=course.course_id))
+                new_university = University.create(self.translations)
+
+                for facility in self.facilities:
+                    facility.approve(new_university.university_id)
+                    
+                for contact_detail in self.contact_details:
+                    contact_detail.approve(new_university.university_id)
+
+                for admission in self.admissions:
+                    admission.approve(new_university.university_id)
+
+                for tuition_fee in self.tuition_fees:
+                    tuition_fee.approve(new_university.university_id)
+
+                for scholarship in self.scholarships:
+                    scholarship.approve(new_university.university_id)
+
+                for course_to_add in self.pending_courses:
+                    new_university.courses.append(Course.get_single(course_id=course_to_add.course_id))
+
             else:
                 university = University.get(university_id=self.university_id).one();
                 logger.info("Editing university %s", university.translations["en"].university_name)
@@ -222,13 +240,13 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
 
     @classmethod
     def create_from(cls, existing_university, pending_type):
-        new = cls("", "en", pending_type)
+        new = cls({}, pending_type)
         new.update(existing_university)
         return new
 
     @classmethod
-    def addition(cls, university_name, language):
-        pending = cls(university_name, language, "add_edit")
+    def addition(cls, university_name):
+        pending = cls(university_name, "add_edit")
         return pending
 
     @classmethod
@@ -243,7 +261,7 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         pending.pending_type = "del"
         return pending
 
-class UniversityPendingTranslation(translation_base(UniversityPending)):
+class UniversityPendingTranslation(translation_base(UniversityPending), TranslationMixin):
     __tablename__ = 'UniversityPendingTranslation'
     university_name = sa.Column(sa.Unicode(80), unique=True)
     university_intro = sa.Column(sa.Unicode())

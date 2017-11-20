@@ -11,6 +11,12 @@ DeclarativeBase = declarative_base()
 
 logger = logging.getLogger(__name__)
 
+def get_locales(translations_obj_or_dict):
+    try:
+        return translations_obj_or_dict.manager.options['locales']
+    except AttributeError:
+        return translations_obj_or_dict.keys()
+
 class DbIntegrityException(Exception):
     pass
     
@@ -36,6 +42,11 @@ class BaseModel(__Deleteable__):
         except sqlalchemy.orm.exc.NoResultFound:
             return None
 
+class TranslationMixin:
+
+    def __getitem__(self, key):
+        return self.__getattribute__(key)
+        
 class BaseModelTranslateable(__Deleteable__):
         
     @classmethod

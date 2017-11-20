@@ -10,23 +10,21 @@ from sqlalchemy_i18n.utils import get_current_locale
 
 import app
 from app.database import db
-from app.models.base_model import BaseModelTranslateable, DeclarativeBase
+from app.models.base_model import BaseModelTranslateable, DeclarativeBase, TranslationMixin, get_locales
 
 class FacilityBase():
-    def __init__(self, university_id, facility, language):
+    def __init__(self, university_id, translations):
         self.university_id = university_id
-        self.add_translation(facility, language)
+        self.set_translations(translations)
 
-    def add_translation(self, facility, language=None):
-        if language:
-            self.translations[language].facility_string = facility
-        else:
-            self.current_translation.facility_string = facility
+    def set_translations(self, translations):
+        for language in get_locales(translations):
+            self.translations[language].facility_string = translations[language]["facility_string"]
 
     @classmethod
-    def create(cls, university_id, facility, language=None):
+    def create(cls, university_id, translations):
         university_id = int(university_id)
-        facility_obj = cls(university_id, facility, language)
+        facility_obj = cls(university_id, translations)
         db.session.add(facility_obj)
         db.session.commit()
         return facility_obj
@@ -59,22 +57,35 @@ class FacilityPending(FacilityBase, Translatable, BaseModelTranslateable, Declar
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
     locale = 'en'
 
-    facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    pending_facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey('Facility.facility_id'), nullable=True)
     pending_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="facilities")
+    pending_type = db.Column(db.String(6), nullable=False)
 
-    def __init__(self, pending_id, facility_string, language):
+    def __init__(self, pending_id, translations):
         self.pending_id = pending_id
-        self.translations[language].facility_string = facility_string
+        self.set_translations(translations)
+
+    def approve(self, university_id):
+        if self.pending_type == "add_edit":
+            if self.facility_id:
+                Facility.get_single(facility_id=self.facility_id).set_translations(self.translations)
+            else:
+                Facility.create(university_id, self.translations)
+
+        self.delete()
 
     @classmethod
-    def addition(cls, pending_id, facility_string, language):
-        facility_obj = cls(pending_id, facility_string, language)
+    def addition(cls, pending_id, translations):
+        facility_obj = cls(pending_id, translations)
+        facility_obj.pending_type = "add_edit"
+
         db.session.add(facility_obj)
         db.session.commit()
         return facility_obj
 
-class FacilityPendingTranslation(translation_base(FacilityPending)):
+class FacilityPendingTranslation(translation_base(FacilityPending), TranslationMixin):
     __tablename__ = 'FacilityPendingTranslation'
     facility_string = sa.Column(sa.Unicode(80))
     unique_facility_constraint = sa.PrimaryKeyConstraint('id', 'facility_string', 'locale', name='ufc_1')
