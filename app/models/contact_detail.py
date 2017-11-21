@@ -64,9 +64,9 @@ class ContactDetailPending(ContactDetailBase, Translatable, BaseModelTranslateab
     university = db.relationship('UniversityPending', back_populates="contact_details")
     pending_type = db.Column(db.String(6), nullable=False)
 
-    def __init__(self, pending_id, contact_detail_string, language):
+    def __init__(self, pending_id, translations):
         self.pending_id = pending_id
-        self.translations[language].contact_detail_string = contact_detail_string
+        self.set_translations(translations)
 
     def approve(self, university_id):
         if self.pending_type == "add_edit":
@@ -78,8 +78,8 @@ class ContactDetailPending(ContactDetailBase, Translatable, BaseModelTranslateab
         self.delete()
 
     @classmethod
-    def addition(cls, pending_id, contact_detail_string, language):
-        contact_detail_obj = cls(pending_id, contact_detail_string, language)
+    def addition(cls, pending_id, translations):
+        contact_detail_obj = cls(pending_id, translations)
         contact_detail_obj.pending_type = "add_edit"
         db.session.add(contact_detail_obj)
         db.session.commit()

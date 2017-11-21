@@ -48,7 +48,39 @@
                     <h4 class="pending_heading" i18n_key="pending_edit_heading">{{_("Edits")}}</h4>
                     {% for edit in pending.edits %}
                     <div class="pending">
+                        <p><strong>{{_("University")}}: {{edit.university.university_name}}</strong></p>
+                        {% if edit.university_name != edit.university.university_name %}
+                            <p><i>{{_("New Name")}}</i>: {{edit.university_name}}</p>
+                        {% endif %}
+                        {% if edit.pending_courses | length %}
+                            <p><i>{{_("New Courses")}}</i>: {{edit.course_names | join(", ")}}</p>
+                        {% endif %}
+                        {% if edit.facilities | length %}
+                            <p><i>{{_("New Facilities")}}</i>: {{edit.facility_names() | join(", ")}}</p>
+                        {% endif %}
+
+                        {% if edit.contact_details | length %}
+                            <p><i>{{_("Contact Details")}}:</i><br/>
+                                {% for contact_detail in edit.contact_details %}
+                                    {{ contact_detail.contact_detail_string }}<br/>
+                                {% endfor %}
+                            </p>
+                        {% endif %}
                         
+                        {% if edit.admissions | length %}
+                            <p><i>{{_("New Admission")}}:</i>
+                                <ul>
+                                {% for admission in addition.admissions %}
+                                    <li>{{ admission.admission_string }}</li>
+                                {% endfor %}
+                                </ul>
+                            </p>
+                        {% endif %}
+
+                        tuition_fees
+                        scholarships
+                        university
+                        {{dashboard_macro.approve("university", edit.pending_id)}} {{dashboard_macro.reject("university", edit.pending_id)}}
                     </div>
                     {% endfor %}
                 {% else %}

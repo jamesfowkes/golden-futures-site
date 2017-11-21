@@ -37,6 +37,9 @@ from app.models.user import User
 
 from app.models.base_model import DeclarativeBase
 
+def khmer(s):
+    return "!" + s + "!"
+
 test_university_data = {
     "National Technical Training Institute": {
         "courses": [
@@ -58,10 +61,10 @@ test_university_data = {
         "scholarships": [
             "100% Scholarship to Senior and Junior Technical Students in Pedagogy.",
             "50% Scholarship to Female Students in Civil Engineering, Electrical Engineering, Electronic Engineering, Architecture, and IT.",
-            "Student ranked 1 st : 50% scholarship",
-            "Student ranked 2 nd : 30% scholarship",
-            "Student ranked 3 rd : 20% scholarship",
-            "Student ranked 4th and 5 th : 10% scholarship"
+            "Student ranked 1st : 50% scholarship",
+            "Student ranked 2nd : 30% scholarship",
+            "Student ranked 3rd : 20% scholarship",
+            "Student ranked 4th and 5th : 10% scholarship"
         ],
         "contact_details": [
             "www.ntti.edu.kh",
@@ -612,7 +615,7 @@ pending_additions = {
                 "Certificate of English Proficiency from a recognized institution or pass entrance examination."
             ],
             "contact_details": [
-                "www.limkokwing.edu.kh",
+                "www.limkokwing.edu.kh"
                 "023 995 733",
                 "No. 120-126, Street 1986"
             ],
@@ -652,16 +655,43 @@ pending_additions = {
 
 pending_edits = {
     "course": [["Information Technology", "Information and Communication Technology"]],
-    "category": [["Mathematics", "A degree in mathematics provides you with a broad range of skills in problem solving, logical reasoning and flexible thinking.", "teacher, actuary, operational researcher, statistician, professional nerd"]]   
+    "category": [["Mathematics", "A degree in mathematics provides you with a broad range of skills in problem solving, logical reasoning and flexible thinking.", "teacher, actuary, operational researcher, statistician, professional nerd"]],
+    "university": {
+        "National Technical Training Institute": {
+            "translations": {
+                "en": {
+                    "university_name": "New National Technical Training Institute",
+                    "university_intro": "This is the New National Technical Training Institute"
+                },
+                "km": {
+                    "university_name": khmer("New National Technical Training Institute"),
+                    "university_intro": khmer("This is the New National Technical Training Institute")
+                }
+            },
+            "facilities": [
+                {"en": {"facility_string": "Library"}, "km": {"facility_string": khmer("Library")}}
+            ],
+            "contact_details": [
+                {
+                    "en": {"contact_detail_string": "Russian Blvd, Sangkat Teukthla Khan Sensok"},
+                    "km": {"contact_detail_string": khmer("Russian Blvd, Sangkat Teukthla Khan Sensok")}
+                }
+            ],
+            "admissions": [
+                {
+                    "en": {"admission_string": "Russian Blvd, Sangkat Teukthla Khan Sensok"},
+                    "km": {"admission_string": khmer("Russian Blvd, Sangkat Teukthla Khan Sensok")}
+                }
+
+            ]
+        }
+    }
 }
 
 pending_deletions = {
     "category": ["Computing"],
     "course": ["Graphic Design"]
 }
-
-def khmer(s):
-    return "!" + s + "!"
 
 if __name__ == "__main__":
 
@@ -824,10 +854,16 @@ if __name__ == "__main__":
 
 
                     for admission in addition["admissions"]:
-                        AdmissionPending.addition(university.pending_id, admission, "en")
+                        AdmissionPending.addition(university.pending_id, {
+                            "en": {"admission_string": admission},
+                            "km": {"admission_string": khmer(admission)}
+                        })
 
                     for contact_detail in addition["contact_details"]:
-                        ContactDetailPending.addition(university.pending_id, contact_detail, "en")
+                        ContactDetailPending.addition(university.pending_id, {
+                            "en": {"contact_detail_string": contact_detail},
+                            "km": {"contact_detail_string": khmer(contact_detail)}
+                        })
 
                     for scholarship in addition["scholarships"]:
                         ScholarshipPending.addition(university.pending_id, scholarship, "en")
@@ -852,6 +888,20 @@ if __name__ == "__main__":
                     print("Edit of '{}'".format(edit[0]))
                     course = CoursePending.edit(courses[edit[0]])
                     course.set_name(edit[1], "en")
+
+                for name, edits in pending_edits["university"].items():
+                    print("Edit of '{}'".format(name))
+                    pending_uni = UniversityPending.edit(universities[name])
+                    pending_uni.set_translations(edits["translations"])
+
+                    for facility in edits["facilities"]:
+                        FacilityPending.addition(pending_uni.pending_id, facility)
+
+                    for contact_detail in edits["contact_details"]:
+                        ContactDetailPending.addition(pending_uni.pending_id, contact_detail)
+
+                    for admission in edits["admissions"]:
+                        AdmissionPending.addition(pending_uni.pending_id, admission)
 
                 print("Adding pending deletions")
 

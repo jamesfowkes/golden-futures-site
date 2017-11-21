@@ -85,6 +85,15 @@ class FacilityPending(FacilityBase, Translatable, BaseModelTranslateable, Declar
         db.session.commit()
         return facility_obj
 
+    @classmethod
+    def edit(cls, pending_id, facility_id, translations):
+        facility_obj = cls(pending_id, translations)
+        facility_obj.pending_type = "add_edit"
+        facility_obj.facility_id = facility_id
+        db.session.add(facility_obj)
+        db.session.commit()
+        return facility_obj
+
 class FacilityPendingTranslation(translation_base(FacilityPending), TranslationMixin):
     __tablename__ = 'FacilityPendingTranslation'
     facility_string = sa.Column(sa.Unicode(80))

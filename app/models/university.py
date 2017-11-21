@@ -61,21 +61,6 @@ class UniversityBase():
         
         db.session.add(self)
         db.session.commit()
-        
-    @classmethod
-    def create(cls, university_names):
-        university = cls(university_names)
-        db.session.add(university)
-        db.session.commit()
-        return university
-
-    @classmethod
-    def get_by_name(cls, university_name, language=None):
-        return cls.get_single_with_language(language, university_name=university_name)
-
-    @classmethod
-    def get_single_by_id(cls, university_id):
-        return cls.get_single(university_id=university_id)
 
     def maximum_fee(self):
         return max([fee.tuition_fee_max for fee in self.tuition_fees])
@@ -105,6 +90,21 @@ class UniversityBase():
 
         return category_course_map
 
+    @classmethod
+    def create(cls, university_names):
+        university = cls(university_names)
+        db.session.add(university)
+        db.session.commit()
+        return university
+
+    @classmethod
+    def get_by_name(cls, university_name, language=None):
+        return cls.get_single_with_language(language, university_name=university_name)
+
+    @classmethod
+    def get_single_by_id(cls, university_id):
+        return cls.get_single(university_id=university_id)
+
 class University(UniversityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "University"
@@ -119,7 +119,8 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
     admissions = db.relationship("Admission", back_populates="university")
     tuition_fees = db.relationship("TuitionFee", back_populates="university")
     scholarships = db.relationship("Scholarship", back_populates="university")
-        
+    pendingedit = db.relationship("UniversityPending", back_populates="university")
+    
     def add_course(self, course):
         self.courses.append(course)
         db.session.add(self)
@@ -137,7 +138,7 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     locale = 'en'
 
     pending_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, unique=True, nullable=True)
+    university_id = db.Column(db.Integer, db.ForeignKey("University.university_id"), unique=True, nullable=True)
     pending_type = db.Column(db.String(6), nullable=False)
 
     pending_courses = db.relationship('UniversityPendingCourse', back_populates="university")
@@ -146,9 +147,11 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     admissions = db.relationship("AdmissionPending", back_populates="university")
     tuition_fees = db.relationship("TuitionFeePending", back_populates="university")
     scholarships = db.relationship("ScholarshipPending", back_populates="university")
+    university = db.relationship("University", back_populates="pendingedit")
 
-    def __init__(self, university_names, pending_type):
+    def __init__(self, university_names, pending_type, university_id=None):
         self.pending_type = pending_type
+        self.university_id = university_id
         UniversityBase.__init__(self, university_names)
                 
         try:
@@ -240,25 +243,26 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
 
     @classmethod
     def create_from(cls, existing_university, pending_type):
-        new = cls({}, pending_type)
-        new.update(existing_university)
-        return new
+        new_university = cls({}, pending_type, existing_university.university_id)
+        db.session.add(new_university)
+        db.session.commit()
+        return new_university
 
     @classmethod
     def addition(cls, university_name):
         pending = cls(university_name, "add_edit")
+        db.session.add(pending)
+        db.session.commit()
         return pending
 
     @classmethod
     def edit(cls, existing_university):
         pending = cls.create_from(existing_university, "add_edit")
-        pending.pending_type = "add_edit"
         return pending
 
     @classmethod
     def deletion(cls, existing_university):
         pending = cls.create_from(existing_university, "del")
-        pending.pending_type = "del"
         return pending
 
 class UniversityPendingTranslation(translation_base(UniversityPending), TranslationMixin):
