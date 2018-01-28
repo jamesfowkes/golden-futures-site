@@ -195,6 +195,9 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         names = [Course.get_single(course_id=c.course_id).course_name for c in self.courses]
         return sorted(names)
 
+    def is_addition(self):
+        return self.category_id is None
+
     def is_pending(self):
         return True
 

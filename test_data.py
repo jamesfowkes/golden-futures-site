@@ -820,8 +820,11 @@ if __name__ == "__main__":
                 for addition in pending_additions["category"]:
                     print("Addition of '{}' category".format(addition[0]))
                     category = CategoryPending.addition(category_name=addition[0], language="en")
+                    category.set_name(khmer(addition[0]), "km")
                     category.set_intro(addition[1], "en")
+                    category.set_intro(khmer(addition[1]), "km")
                     category.set_careers(addition[2], "en")
+                    category.set_careers(khmer(addition[2]), "km")
                     if len(addition) == 4:
                         category.add_course(courses[addition[3]])
 
@@ -835,7 +838,11 @@ if __name__ == "__main__":
                         "en": {
                             "university_name": addition["name"],
                             "university_intro": "This is the " + addition["name"]
-                        }
+                        },
+                        "km": {
+                            "university_name": khmer(addition["name"]),
+                            "university_intro": "This is the " + khmer(addition["name"])
+                        },
                     })
 
                     for course in addition["courses"]:
@@ -849,6 +856,13 @@ if __name__ == "__main__":
                                 "currency": tuition_fee["currency"],
                                 "period": tuition_fee["period"],
                                 "award": tuition_fee["award"]
+                            },
+                            "km": {
+                                "tuition_fee_min": int(float(tuition_fee["min"])/ 0.00025),
+                                "tuition_fee_max": int(float(tuition_fee["max"])/ 0.00025),
+                                "currency": "៛",
+                                "period": khmer(tuition_fee["period"]),
+                                "award": khmer(tuition_fee["award"])
                             }
                         })
 

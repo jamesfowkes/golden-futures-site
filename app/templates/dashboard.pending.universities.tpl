@@ -70,7 +70,7 @@
                         {% if edit.admissions | length %}
                             <p><i>{{_("New Admission")}}:</i>
                                 <ul>
-                                {% for admission in addition.admissions %}
+                                {% for admission in edit.admissions %}
                                     <li>{{ admission.admission_string }}</li>
                                 {% endfor %}
                                 </ul>

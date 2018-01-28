@@ -11,7 +11,7 @@ from sqlalchemy_i18n import Translatable, translation_base
 
 import app
 from app.database import db
-from app.models.base_model import BaseModelTranslateable, DeclarativeBase, DbIntegrityException
+from app.models.base_model import PendingChangeBase, BaseModelTranslateable, DeclarativeBase, DbIntegrityException
 
 from app.models.university_course_map import university_course_map_table
 
@@ -105,7 +105,7 @@ class CourseTranslation(translation_base(Course)):
     __tablename__ = 'CourseTranslation'
     course_name = sa.Column(sa.Unicode(80))
 
-class CoursePending(CourseBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class CoursePending(CourseBase, PendingChangeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "CoursePending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
@@ -171,6 +171,9 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
     def reject(self):
         self._delete()
 
+    def is_addition(self):
+        return self.course_id is None
+        
     def is_pending(self):
         return True
 
