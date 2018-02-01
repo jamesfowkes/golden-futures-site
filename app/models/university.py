@@ -63,10 +63,10 @@ class UniversityBase():
         db.session.commit()
 
     def maximum_fee(self):
-        return max([fee.tuition_fee_max for fee in self.tuition_fees])
+        return max([fee.tuition_fee_max for fee in self.tuition_fees if fee.include_in_filter])
 
     def minimum_fee(self):
-        return min([fee.tuition_fee_min for fee in self.tuition_fees])
+        return min([fee.tuition_fee_min for fee in self.tuition_fees if fee.include_in_filter])
 
     def course_names(self):
         names = [c.course_name for c in self.courses]

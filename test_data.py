@@ -252,7 +252,8 @@ test_university_data = {
                 "max": 90,
                 "currency": "$",
                 "award": "Application Fee (non-refundable)",
-                "period": ""
+                "period": "",
+                "include_in_filter": False
             }
         ],
         "scholarships": [
@@ -771,13 +772,16 @@ if __name__ == "__main__":
                     )
 
                 for tuition_fee in uni_data["tuition_fees"]:
-                    fee = TuitionFee.create(universities[university].university_id, {
+                    fee = TuitionFee.create(
+                        universities[university].university_id, 
+                        tuition_fee.get("include_in_filter", True),
+                            {
                             "en": {
                                 "tuition_fee_min": tuition_fee["min"],
                                 "tuition_fee_max": tuition_fee["max"], 
                                 "currency": tuition_fee["currency"],
                                 "period": tuition_fee["period"],
-                                "award": tuition_fee["award"]
+                                "award": tuition_fee["award"],
                             },
                             "km": {                            
                                 "tuition_fee_min": int(float(tuition_fee["min"])/ 0.00025),

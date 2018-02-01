@@ -13,8 +13,9 @@ from app.models.base_model import BaseModelTranslateable, DeclarativeBase, Trans
 
 class TuitionFeeBase():
 
-    def __init__(self, university_id, translations):
+    def __init__(self, university_id, include_in_filter, translations):
         self.university_id = university_id
+        self.include_in_filter = include_in_filter
         self.set_translations(translations)
 
     def set_translations(self, translations):
@@ -26,9 +27,9 @@ class TuitionFeeBase():
             self.translations[language].period = translations[language]["period"]
 
     @classmethod
-    def create(cls, university_id, translations):
+    def create(cls, university_id, include_in_filter, translations):
         university_id = int(university_id)
-        tuition_fee_obj = cls(university_id, translations)
+        tuition_fee_obj = cls(university_id, include_in_filter, translations)
         db.session.add(tuition_fee_obj)
         db.session.commit()
         return tuition_fee_obj
@@ -82,6 +83,7 @@ class TuitionFeeTranslation(translation_base(TuitionFee)):
     currency = sa.Column(sa.Unicode(6))
     award = sa.Column(sa.Unicode(80))
     period = sa.Column(sa.Unicode(20))
+    include_in_filter = sa.Column(sa.Boolean, default=True)
 
 class TuitionFeePending(TuitionFeeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
