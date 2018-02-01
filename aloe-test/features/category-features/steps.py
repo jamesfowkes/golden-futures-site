@@ -45,8 +45,14 @@ def the_category_exists(step, category):
             db.session.rollback() # Category already pending
 
 @aloe.step(u'the following category details are returned:')
-def and_the_following_user_details_are_returned(step):
-    assert_equals(step.hashes, (json.loads(aloe.world.response.data.decode("utf-8")),))
+def and_the_following_category_details_are_returned(step):
+    response = json.loads(aloe.world.response.data.decode("utf-8"))
+    details = {
+        "category_name": response['category_name'],
+        "language": response['language'],
+    }
+
+    assert_equals(step.hashes, (details,))
 
 @aloe.step(u'the category \"([\w\d ]*)\" should exist in language \"([\w\d ]*)\"')
 def the_category_should_exist_in_language(step, category_name, language):

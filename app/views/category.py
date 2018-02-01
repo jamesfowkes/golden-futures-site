@@ -37,6 +37,7 @@ def create_category():
         data = {
             "success": True,
             "category_name": category.category_name,
+            "language": language,
             "entries": [
                 gettext("New Category") +": " + category.category_name,
                 gettext("Introduction") +": " + category.category_intro,
