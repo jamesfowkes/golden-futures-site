@@ -13,7 +13,7 @@ from app import app
 from app.database import db
 
 from app.models.user import User
-from app.models.category import CategoryPending
+from app.models.category import Category, CategoryPending
 
 @aloe.step(u"the user creates the category \"([\w\d ]*)\"")
 def the_user_creates_the_category(step, category_name):
@@ -40,7 +40,16 @@ def the_user_deletes_the_category(step, category_name):
 def the_category_exists(step, category):
     with app.app_context():
         try:
-            CategoryPending.create(category_name=category, language=aloe.world.language)
+            Category.create(category_name=category, language=aloe.world.language)
+        except sqlalchemy.exc.IntegrityError:
+            db.session.rollback() # Category already pending
+
+@aloe.step(u"the category \"([\w\d ]*)\" is pending for deletion")
+def the_category_is_pending_for_deletion(step, category_name):
+    with app.app_context():
+        try:
+            category = Category.get_single(category_name=category_name)
+            CategoryPending.deletion(category)
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # Category already pending
 
