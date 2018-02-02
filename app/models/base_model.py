@@ -2,6 +2,7 @@ import logging
 
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy_i18n.utils import get_current_locale
 
 from app.database import db
 
@@ -48,7 +49,10 @@ class TranslationMixin:
         return self.__getattribute__(key)
         
 class BaseModelTranslateable(__Deleteable__):
-        
+
+    def current_language(self):
+        return get_current_locale(self)
+
     @classmethod
     def all(cls):
         return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).all()

@@ -148,8 +148,14 @@ def delete_category():
 def approve_pending_category_change():
     if request.method == 'POST':
         category_pending = CategoryPending.get_single(pending_id=request.form["data_id"])
+        json = category_pending.json()
+
+        remaining_count = CategoryPending.get_similar_count(category_pending) - 1
+
         logger.info("Approve pending change '%s' to category %s", category_pending.pending_type, category_pending.category_name)
+
         category_pending.approve()
+        
         return jsonify({
             "success" : True,
             "data": json,

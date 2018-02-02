@@ -15,7 +15,7 @@ from app.database import db
 from app.models.user import User
 from app.models.category import Category, CategoryPending
 
-@aloe.step(u"the user creates the category \"([\w\d ]*)\"")
+@aloe.step(u"the user sets the category \"([\w\d ]*)\" as pending for creation")
 def the_user_creates_the_category(step, category_name):
     with app.test_request_context():
         aloe.world.response = aloe.world.app.post(
@@ -25,6 +25,35 @@ def the_user_creates_the_category(step, category_name):
                 "category_intro": "Aloe test category introduction",
                 "category_careers":  "Behaviour Driven Development",
                 "language": aloe.world.language
+            }
+        )
+
+@aloe.step(u"the category \"([\w\d ]*)\" should be pending for creation(?: in language \"([\w\d ]*)\")?")
+def the_category_should_be_pending_for_creation(step, category_name, language):
+    language = language or "en"
+    with app.app_context():
+        category = CategoryPending.get_single(category_name=category_name)
+        assert_equals(category_name, category.category_name)
+        assert_equals("add_edit", category.pending_type)
+        assert_equals(None, category.category_id)
+        assert_equals(language, category.current_language())
+
+@aloe.step(u"the category \"([\w\d ]*)\" is pending for creation")
+def the_category_is_pending_for_creation(step, category):
+    with app.app_context():
+        try:
+            CategoryPending.addition(category, aloe.world.language)
+        except sqlalchemy.exc.IntegrityError:
+            db.session.rollback() # Category already pending
+
+@aloe.step(u"the user accepts the creation of category \"([\w\d ]*)\"")
+def the_user_accepts_the_creation_of_category(step, category_name):
+       with app.test_request_context():
+        category = CategoryPending.get_single(category_name=category_name)
+        aloe.world.response = aloe.world.app.post(
+            "/category/pending/approve",
+            data={
+                "data_id": category.pending_id
             }
         )
 
@@ -57,8 +86,8 @@ def the_category_is_pending_for_deletion(step, category_name):
 def and_the_following_category_details_are_returned(step):
     response = json.loads(aloe.world.response.data.decode("utf-8"))
     details = {
-        "category_name": response['category_name'],
-        "language": response['language'],
+        "category_name": response['data']['category_name'],
+        "language": response['data']['language'],
     }
 
     assert_equals(step.hashes, (details,))
@@ -66,7 +95,7 @@ def and_the_following_category_details_are_returned(step):
 @aloe.step(u'the category \"([\w\d ]*)\" should exist in language \"([\w\d ]*)\"')
 def the_category_should_exist_in_language(step, category_name, language):
     with app.app_context():
-        category = CategoryPending.get_single(category_name=category_name, language=language)
+        category = Category.get_single(category_name=category_name, language=language)
         assert_equals(category.translations[language].category_name, category_name)
         
 @aloe.step(u'the category \"([\w\d ]*)\" should not exist')

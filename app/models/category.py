@@ -215,13 +215,11 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
     @classmethod
     def edit(cls, existing_category):
         pending = cls.create_from(existing_category, "add_edit")
-        pending.pending_type = "add_edit"
         return pending
 
     @classmethod
     def deletion(cls, existing_category):
         pending = cls.create_from(existing_category, "del")
-        pending.pending_type = "del"
         return pending
 
 class CategoryPendingTranslation(translation_base(CategoryPending)):
