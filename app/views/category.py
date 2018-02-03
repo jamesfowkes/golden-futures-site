@@ -59,7 +59,7 @@ def create_category():
         raise
     return jsonify(data)
 
-@app.route("/category/edit/<category_id>", methods=['POST'])
+@app.route("/category/edit/<int:category_id>", methods=['POST'])
 @flask_login.login_required
 def edit_category(category_id):
     if request.method == 'POST':
@@ -68,11 +68,15 @@ def edit_category(category_id):
         category_careers = request.form["category_careers"]
         courses = request.form.getlist("category_courses[]")
         language = request.form["language"]
-
+        
         category = CategoryPending.get_single(category_id=category_id)
         
         if category is None:
-            category = CategoryPending.edit(Category.get_single(category_id=category_id))
+            existing_category = Category.get_single(category_id=category_id)
+            if existing_category is None:
+                logger.info("Category id %d does not exist", category_id)                
+                abort(400)
+            category = CategoryPending.edit(existing_category)
 
         logger.info("Saving pendings edits to category id %s", category_id)
         logger.info("New name: %s", category_name)
@@ -134,8 +138,10 @@ def edit_pending_category(pending_id):
 @flask_login.login_required
 def delete_category():
     if request.method == 'POST':
+        
         category = Category.get_single(category_name=request.form["category_name"], language=request.form["language"])
         if len(category.courses):
+            logger.info("Delete request denied: category has courses")
             abort(409)
 
         CategoryPending.deletion(category)

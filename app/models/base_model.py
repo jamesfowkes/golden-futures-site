@@ -81,7 +81,7 @@ class BaseModelTranslateable(__Deleteable__):
 
             #logger.info("Got {} results: ".format(len(all_results_for_language)))
             for res in all_results_for_language:
-                logger.info(res)
+                #logger.info(res)
                 match = True
 
                 for k,v in kwargs.items():

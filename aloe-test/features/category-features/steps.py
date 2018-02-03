@@ -14,6 +14,7 @@ from app.database import db
 
 from app.models.user import User
 from app.models.category import Category, CategoryPending
+from app.models.course import Course
 
 @aloe.step(u"the user sets the category \"([\w\d ]*)\" as pending for creation")
 def the_user_sets_the_category_as_pending_for_creation(step, category_name):
@@ -48,7 +49,7 @@ def the_category_is_pending_for_creation(step, category):
 
 @aloe.step(u"the user accepts the creation of category \"([\w\d ]*)\"")
 def the_user_accepts_the_creation_of_category(step, category_name):
-       with app.test_request_context():
+    with app.test_request_context():
         pending_category = CategoryPending.get_single(category_name=category_name)
         aloe.world.response = aloe.world.app.post(
             "/category/pending/approve",

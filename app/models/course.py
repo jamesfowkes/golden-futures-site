@@ -23,16 +23,15 @@ logger = logging.getLogger(__name__)
 
 class CourseBase():
 
-    def __init__(self, course_name, language=None):
-        self.set_name(course_name, language)
+    def __init__(self, course_name, language):
+        logger.info("Creating base course %s (%s)", course_name, language)
+        self.translations[language].course_name = course_name
 
     def set_name(self, course_name, language=None):
         if language:
             self.translations[language].course_name = course_name
         else:
             self.current_translation.course_name = course_name
-
-        db.session.add(self)
         db.session.commit()
 
     def __repr__(self):
@@ -54,7 +53,8 @@ class CourseBase():
     def json(self):
         return {
             "course_name": self.course_name,
-            "category_name": ", ".join([c.category_name for c in self.categories])
+            "category_names": [c.category_name for c in self.categories],
+            "language": self.current_language
         }
 
     def university_names(self):
@@ -119,9 +119,9 @@ class CoursePending(CourseBase, PendingChangeBase, Translatable, BaseModelTransl
 
     def __init__(self, course_name, language, pending_type):
         
-        self.pending_type = pending_type
         CourseBase.__init__(self, course_name, language)
-        
+        self.pending_type = pending_type
+
         try:
             db.session.add(self)
             db.session.commit()
@@ -143,8 +143,11 @@ class CoursePending(CourseBase, PendingChangeBase, Translatable, BaseModelTransl
         
     def json(self):
         return {
-            "course_name": self.current_translation.course_name,
-            "pending": self.pending_type
+            "course_name": self.course_name,
+            "category_names": [],
+            "language": self.current_language(),
+            "pending_type": self.pending_type,
+            "pending_id": self.pending_id
         }
 
     def approve(self):

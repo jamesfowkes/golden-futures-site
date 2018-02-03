@@ -22,6 +22,7 @@ from app.models.pending_changes import PendingChanges
 logger = logging.getLogger(__name__)
 
 class CategoryBase():
+
     def __init__(self, category_name, language):
         logger.info("Creating base category %s (%s)", category_name, language)
         self.translations[language].category_name = category_name
@@ -116,6 +117,7 @@ class Category(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBa
     courses = db.relationship('Course', secondary=category_course_map_table, back_populates="categories")
 
     def add_course(self, course):
+        logger.info("Adding course %s to category %s", course.translations["en"].course_name, self.translations["en"].category_name)
         self.courses.append(course)
         db.session.add(self)
         db.session.commit()
@@ -123,6 +125,9 @@ class Category(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBa
     def course_names(self):
         names = [c.course_name for c in self.courses]
         return sorted(names)
+
+    def course_ids(self):
+        return [c.course_id for c in self.courses]
 
 class CategoryTranslation(translation_base(Category)):
     __tablename__ = 'CategoryTranslation'
@@ -143,6 +148,7 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
     courses = db.relationship('CategoryPendingCourses', back_populates="category")
 
     def __init__(self, category_name, language, pending_type):
+        
         CategoryBase.__init__(self, category_name, language)
         self.pending_type = pending_type
         
@@ -214,6 +220,9 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
 
     @classmethod
     def edit(cls, existing_category):
+        if existing_category is None:
+            raise Exception("existing_category cannot be None for editing")
+
         pending = cls.create_from(existing_category, "add_edit")
         return pending
 
