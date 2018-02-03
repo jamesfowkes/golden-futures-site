@@ -134,11 +134,11 @@ def edit_pending_category(pending_id):
 @flask_login.login_required
 def delete_category():
     if request.method == 'POST':
-        category = CategoryPending.get_single(category_name=request.form["category_name"], language=request.form["language"])
+        category = Category.get_single(category_name=request.form["category_name"], language=request.form["language"])
         if len(category.courses):
             abort(409)
 
-        category.delete()
+        CategoryPending.deletion(category)
 
         return Response(200)
 

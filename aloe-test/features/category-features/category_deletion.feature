@@ -19,6 +19,6 @@ Scenario: A user wants to delete a category with courses
 Given the standard user is logged in
 And the category "Pet Care" exists
 And the course "Advanced Hamster Training" exists in category "Pet Care"
-And the user deletes the category "Pet Care"
+And the user sets the category "Pet Care" as pending for deletion
 Then I should get a '409' response
 And the category "Pet Care" should exist in language "en"

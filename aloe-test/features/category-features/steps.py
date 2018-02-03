@@ -16,7 +16,7 @@ from app.models.user import User
 from app.models.category import Category, CategoryPending
 
 @aloe.step(u"the user sets the category \"([\w\d ]*)\" as pending for creation")
-def the_user_creates_the_category(step, category_name):
+def the_user_sets_the_category_as_pending_for_creation(step, category_name):
     with app.test_request_context():
         aloe.world.response = aloe.world.app.post(
             "/category/create",
@@ -32,11 +32,11 @@ def the_user_creates_the_category(step, category_name):
 def the_category_should_be_pending_for_creation(step, category_name, language):
     language = language or "en"
     with app.app_context():
-        category = CategoryPending.get_single(category_name=category_name)
-        assert_equals(category_name, category.category_name)
-        assert_equals("add_edit", category.pending_type)
-        assert_equals(None, category.category_id)
-        assert_equals(language, category.current_language())
+        pending_category = CategoryPending.get_single(category_name=category_name)
+        assert_equals(category_name, pending_category.category_name)
+        assert_equals("add_edit", pending_category.pending_type)
+        assert_equals(None, pending_category.category_id)
+        assert_equals(language, pending_category.current_language())
 
 @aloe.step(u"the category \"([\w\d ]*)\" is pending for creation")
 def the_category_is_pending_for_creation(step, category):
@@ -49,21 +49,44 @@ def the_category_is_pending_for_creation(step, category):
 @aloe.step(u"the user accepts the creation of category \"([\w\d ]*)\"")
 def the_user_accepts_the_creation_of_category(step, category_name):
        with app.test_request_context():
-        category = CategoryPending.get_single(category_name=category_name)
+        pending_category = CategoryPending.get_single(category_name=category_name)
         aloe.world.response = aloe.world.app.post(
             "/category/pending/approve",
             data={
-                "data_id": category.pending_id
+                "data_id": pending_category.pending_id
+            }
+        )
+
+@aloe.step(u"the user sets the category \"([\w\d ]*)\" as pending for deletion")
+def the_user_sets_the_category_as_pending_for_deletion(step, category_name):
+    with app.test_request_context():
+        aloe.world.response = aloe.world.app.post(
+            "/category/delete", 
+            data={
+                "category_name":category_name,
+                "language": aloe.world.language
             }
         )
 
 @aloe.step(u"the user deletes the category \"([\w\d ]*)\"")
 def the_user_deletes_the_category(step, category_name):
     with app.test_request_context():
+        pending_category = CategoryPending.get_single(category_name=category_name)
         aloe.world.response = aloe.world.app.post(
-            "/" + aloe.world.language + '/category/delete', 
-            data={'category_name':category_name}
+            "/category/pending/approve",
+            data={
+                'data_id':pending_category.pending_id
+            }
         )
+
+@aloe.step(u"the category \"([\w\d ]*)\" should be pending for deletion")
+def the_category_should_be_pending_for_deletion(step, category_name):
+    with app.app_context():
+        pending_category = CategoryPending.get_single(category_name=category_name)
+        category = Category.get_single(category_name=category_name)
+        assert_equals(category_name, pending_category.category_name)
+        assert_equals("del", pending_category.pending_type)
+        assert_equals(pending_category.category_id, category.category_id)
 
 @aloe.step(u"the category \"([\w\d ]*)\" exists")
 def the_category_exists(step, category):
