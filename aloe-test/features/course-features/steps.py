@@ -41,9 +41,6 @@ def the_course_exists_in_category(step, course, category_name):
         if course is None:
             course = Course.create(course_name=course, language=aloe.world.language)
         
-        #except sqlalchemy.exc.IntegrityError:
-        #    db.session.rollback() # Course already in the system
-        
         category.add_course(course)       
 
 @aloe.step(u'the course \"([\w\d ]*)\" should exist')
