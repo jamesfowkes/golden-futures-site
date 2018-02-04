@@ -47,8 +47,8 @@ def the_category_is_pending_for_creation(step, category):
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # Category already pending
 
-@aloe.step(u"the user accepts the creation of category \"([\w\d ]*)\"")
-def the_user_accepts_the_creation_of_category(step, category_name):
+@aloe.step(u"the user accepts pending changes to category \"([\w\d ]*)\"")
+def the_user_accepts_pending_changes_to_category(step, category_name):
     with app.test_request_context():
         pending_category = CategoryPending.get_single(category_name=category_name)
         aloe.world.response = aloe.world.app.post(
@@ -97,6 +97,12 @@ def the_category_exists(step, category):
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # Category already pending
 
+@aloe.step(u"the category \"([\w\d ]*)\" has \"([\w\d ]*)\" translation \"([\w\d ]*)\"")
+def the_category_exists(step, category, language, translation):
+    with app.app_context():
+        category = Category.get_single(category_name=category, language=aloe.world.language)
+        category.set_name(translation, language)
+
 @aloe.step(u"the category \"([\w\d ]*)\" is pending for deletion")
 def the_category_is_pending_for_deletion(step, category_name):
     with app.app_context():
@@ -131,7 +137,7 @@ def the_category_should_not_exist(step, category_name):
 @aloe.step(u'the category \"([\w\d ]*)\" should have the courses:')
 def the_category_should_have_the_courses(step, category_name):
     with app.app_context():
-        category = CategoryPending.get_single(category_name=category_name)
+        category = Category.get_single(category_name=category_name)
         
         expected_course_names = [course["course_name"] for course in step.hashes]
         expected_course_languages = [course["language"] for course in step.hashes]

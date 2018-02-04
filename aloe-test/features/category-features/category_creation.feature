@@ -9,7 +9,7 @@ And the category "Pet Care" should be pending for creation
 Scenario: A user accepts creation of a category
 Given the standard user is logged in
 And the category "Pet Care" is pending for creation
-And the user accepts the creation of category "Pet Care"
+And the user accepts pending changes to category "Pet Care"
 Then I should get a '200' response
 And the following category details are returned:
  | category_name | language |

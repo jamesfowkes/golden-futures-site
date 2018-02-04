@@ -34,7 +34,8 @@ def edit_course(course_id):
 
         course_to_edit = Course.get_single_by_id(course_id)
         pending_course = CoursePending.edit(course_to_edit)
-        pending_course.translations[language].course_name = course_name
+        pending_course.set_name(course_name, language)
+        
         return jsonify({
             "success": True,
             "data": pending_course.json(),

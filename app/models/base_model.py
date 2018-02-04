@@ -2,7 +2,7 @@ import logging
 
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy_i18n.utils import get_current_locale
+from sqlalchemy_i18n.utils import get_current_locale, all_translated_columns
 
 from app.database import db
 
@@ -52,6 +52,13 @@ class BaseModelTranslateable(__Deleteable__):
 
     def current_language(self):
         return get_current_locale(self)
+
+    def translateable_fields(self):
+        return [c.name for c in all_translated_columns(self)]
+
+    def all_translations(self, language = None):
+        fields = self.translateable_fields()
+        return {language: {c:self.translations[language].__getattribute__(c) for c in fields} for language, translations in self.translations.items()}
 
     @classmethod
     def all(cls):

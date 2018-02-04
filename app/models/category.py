@@ -45,6 +45,23 @@ class CategoryBase():
     def __lt__(self, other):
         return self.current_translation.category_name < other.current_translation.category_name
 
+    def update(self, other):
+        self.category_id = other.category_id
+        for lang in app.app.config["SUPPORTED_LOCALES"]:
+            self.translations[lang].category_name = other.translations[lang].category_name
+            self.translations[lang].category_intro = other.translations[lang].category_intro
+            self.translations[lang].category_careers = other.translations[lang].category_careers
+
+        if type(other) is CategoryPending:
+            courses = [Course.get_single(course_id = c.course_id) for c in other.courses]
+        elif type(other) is Category:
+            courses = other.courses
+
+        self.add_courses(courses)
+
+        db.session.add(self)
+        db.session.commit()
+
     def json(self):
         return {
             "category_name": self.current_translation.category_name,
@@ -90,15 +107,13 @@ class CategoryBase():
         new.update(existing_category)
         return new
 
-    def update(self, other):
-        self.category_id = other.category_id
-        for lang in app.app.config["SUPPORTED_LOCALES"]:
-            self.translations[lang].category_name = other.translations[lang].category_name
-            self.translations[lang].category_intro = other.translations[lang].category_intro
-            self.translations[lang].category_careers = other.translations[lang].category_careers
+    def remove_courses(self):
+        for course in self.courses:
+            course.delete()
 
-        db.session.add(self)
-        db.session.commit()
+    def add_courses(self, courses):
+        for c in courses:
+            self.add_course(c)
 
     def has_course(self, course):
         return course.course_id in [course.course_id for course in self.courses]
@@ -162,8 +177,7 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         for lang, translation in self.translations:
             db.session.delete(translation)
 
-        for course in self.courses:
-            course.delete()
+        self.remove_courses()
 
         super(BaseModelTranslateable,self).delete()
 
@@ -193,6 +207,7 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         self._delete()
 
     def add_course(self, course):
+        logger.info("Pending addition of %s to %s", course.translations["en"].course_name, self.translations["en"].category_name)
         self.courses.append(CategoryPendingCourses(category_id=self.category_id, course_id=course.course_id))
         db.session.add(self)
         db.session.commit()
