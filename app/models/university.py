@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 
 class UniversityBase():
     def __init__(self, translations):
+        logger.info("Creating university %s", translations["en"]["university_name"])
         self.set_translations(translations)
 
     def __repr__(self):
@@ -48,19 +49,17 @@ class UniversityBase():
     def json(self):
         return {"university_id": self.university_id, "university_name": self.current_translation.university_name, "language": get_current_locale(self)}
     
-    def set_translations(self, translations):
-        for language in get_locales(translations):
-            self.translations[language].university_name = translations[language]["university_name"]
-            self.translations[language].university_intro = translations[language]["university_intro"]
+    def set_translations(self, translation_dict_or_uni_obj):
+        try:
+            translations = translation_dict_or_uni_obj.all_translations()
+        except:
+            translations = translation_dict_or_uni_obj
 
-    def set_intro(self, intro, lang=None):
-        if lang:
-            self.translations[lang].university_intro = intro
-        else:
-            self.current_translation.university_intro = intro
-        
-        db.session.add(self)
-        db.session.commit()
+        for language in get_locales(translations):
+            if "university_name" in translations[language]:
+                self.translations[language].university_name = translations[language]["university_name"]
+            if "university_intro" in translations[language]:
+                self.translations[language].university_intro = translations[language]["university_intro"]
 
     def maximum_fee(self):
         return max([fee.tuition_fee_max for fee in self.tuition_fees if fee.include_in_filter])
@@ -91,10 +90,9 @@ class UniversityBase():
         return category_course_map
 
     @classmethod
-    def create(cls, university_names):
-        university = cls(university_names)
-        db.session.add(university)
-        db.session.commit()
+    def create(cls, translations):
+        university = cls(translations)
+        university.save()
         return university
 
     @classmethod
@@ -123,8 +121,7 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
     
     def add_course(self, course):
         self.courses.append(course)
-        db.session.add(self)
-        db.session.commit()
+        self.save()
 
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
@@ -149,14 +146,13 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     scholarships = db.relationship("ScholarshipPending", back_populates="university")
     university = db.relationship("University", back_populates="pendingedit")
 
-    def __init__(self, university_names, pending_type, university_id=None):
+    def __init__(self, translations, pending_type, university_id=None):
         self.pending_type = pending_type
         self.university_id = university_id
-        UniversityBase.__init__(self, university_names)
+        UniversityBase.__init__(self, translations)
                 
         try:
-            db.session.add(self)
-            db.session.commit()
+            self.save()
         except sa.exc.IntegrityError:
             raise DbIntegrityException()
 
@@ -181,7 +177,7 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
             if self.university_id is None:
                 logger.info("Adding university %s", self.translations["en"].university_name)
 
-                new_university = University.create(self.translations)
+                new_university = University.create(self.all_translations())
 
                 for facility in self.facilities:
                     facility.approve(new_university.university_id)
@@ -204,7 +200,9 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
             else:
                 university = University.get(university_id=self.university_id).one();
                 logger.info("Editing university %s", university.translations["en"].university_name)
-                university.update(self)
+                university.set_translations(self)
+                university.save()
+
         elif self.pending_type == "del":
             university = University.get(university_id=self.university_id).one();
             logger.info("Deleting university %s", university.translations["en"].university_name)
@@ -220,8 +218,7 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     def add_course(self, course):
         pending_course = UniversityPendingCourse(university_id=self.university_id, course_id=course.course_id)
         self.pending_courses.append(pending_course)
-        db.session.add(self)
-        db.session.commit()
+        self.save()
 
     @property
     def course_names(self):
@@ -243,16 +240,14 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
 
     @classmethod
     def create_from(cls, existing_university, pending_type):
-        new_university = cls({}, pending_type, existing_university.university_id)
-        db.session.add(new_university)
-        db.session.commit()
+        new_university = cls(existing_university.all_translations(), pending_type, existing_university.university_id)
+        new_university.save()
         return new_university
 
     @classmethod
     def addition(cls, university_name):
         pending = cls(university_name, "add_edit")
-        db.session.add(pending)
-        db.session.commit()
+        pending.save()
         return pending
 
     @classmethod

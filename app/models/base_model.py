@@ -43,6 +43,10 @@ class BaseModel(__Deleteable__):
         except sqlalchemy.orm.exc.NoResultFound:
             return None
 
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
 class TranslationMixin:
 
     def __getitem__(self, key):
@@ -120,6 +124,10 @@ class BaseModelTranslateable(__Deleteable__):
                 return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).filter_by(**kwargs).one()
             except sqlalchemy.orm.exc.NoResultFound:
                 return None
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
 class PendingChangeBase():
 

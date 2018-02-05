@@ -4,7 +4,7 @@ import json
 from flask import request, redirect, jsonify, url_for, Response, abort
 import flask_login
 
-from app.models.university import UniversityPending
+from app.models.university import University, UniversityPending
 
 from app import app
 
@@ -14,9 +14,8 @@ logger = logging.getLogger(__name__)
 @flask_login.login_required
 def create_university():
     if request.method == 'POST':
-        university = UniversityPending.create(
-            request.form["university_name"],
-            request.form["language"]
+        university = UniversityPending.addition(
+            {request.form["language"]: {"university_name": request.form["university_name"]}}
         )
         return json.dumps(university.json())
 
@@ -24,12 +23,17 @@ def create_university():
 @flask_login.login_required
 def add_university_translation(university_id):
     if request.method == 'POST':
-        university = UniversityPending.get_single_by_id(int(university_id))
-        university.add_translated_name(
-            request.form["university_name"],
-            request.form["language"]
+        pending_university = UniversityPending.get_single_by_id(int(university_id))
+        
+        if pending_university is None:
+            university = University.get_single_by_id(int(university_id))
+            pending_university = UniversityPending.edit(university)
+
+        pending_university.set_translations(
+            {request.form["language"]: {"university_name": request.form["university_name"]}}
         )
-        return json.dumps(university.json())
+
+        return json.dumps(pending_university.json())
         
 @app.route("/university/pending/approve", methods=['POST'])
 @flask_login.login_required

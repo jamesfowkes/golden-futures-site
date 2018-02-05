@@ -19,7 +19,8 @@ class AdmissionBase():
 
     def set_translations(self, translations):
         for language in get_locales(translations):
-            self.translations[language].admission_string = translations[language]["admission_string"]
+            if "admission_string" in translations[language]:
+                self.translations[language].admission_string = translations[language]["admission_string"]
 
     @classmethod
     def create(cls, university_id, translations):
@@ -59,12 +60,12 @@ class AdmissionPending(AdmissionBase, Translatable, BaseModelTranslateable, Decl
 
     pending_admission_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     admission_id = db.Column(db.Integer, db.ForeignKey('Admission.admission_id'), nullable=True)
-    pending_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
+    pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="admissions")
     pending_type = db.Column(db.String(6), nullable=False)
 
-    def __init__(self, pending_id, translations):
-        self.pending_id = pending_id
+    def __init__(self, pending_uni_id, translations):
+        self.pending_uni_id = pending_uni_id
         self.set_translations(translations)
 
     def approve(self, university_id):
@@ -77,8 +78,8 @@ class AdmissionPending(AdmissionBase, Translatable, BaseModelTranslateable, Decl
         self.delete()
 
     @classmethod
-    def addition(cls, pending_id, translations):
-        admission_obj = cls(pending_id, translations)
+    def addition(cls, pending_uni_id, translations):
+        admission_obj = cls(pending_uni_id, translations)
         admission_obj.pending_type = "add_edit"
         db.session.add(admission_obj)
         db.session.commit()
