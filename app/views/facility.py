@@ -14,7 +14,7 @@ from app.locale import get_locale
 def create_facility():
     if request.method == 'POST':
         facility = FacilityPending.addition(
-        	request.form["university_id"],
-        	{request.form["language"]: {"facility_string": request.form["facility"]}}
+            request.form["university_id"],
+            {request.form["language"]: {"facility_string": request.form["facility"]}}
         )
         return json.dumps(facility.json())
