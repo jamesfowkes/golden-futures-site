@@ -29,12 +29,6 @@ def the_user_pends_creation_of_admission(step, admission, university_name):
             }
         )
 
-@aloe.step(u'the following admissions are returned:')
-def the_following_admission_details_are_returned(step):
-    returned_json = json.loads(aloe.world.response.data.decode("utf-8"))["data"]
-    returned_json.pop("admission_id")
-    assert_equals(step.hashes[0], returned_json)
-
 @aloe.step(u'And the admission \"([\w\d ]*)\" should be pending for creation at \"([\w\d ]*)\"')
 def the_admission_should_be_pending_for_creation(step, admission, university_name):
     with app.app_context():

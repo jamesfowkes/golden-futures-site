@@ -1,6 +1,6 @@
 Feature: Contact details can be added to a university
 
-Scenario: A user wants to pend creating a set of contac tdetails and approve it
+Scenario: A user wants to pend creating a set of contact details and approve it
 Given the standard user is logged in
 And the university "University of Life" exists
 And the university "University of Life" is pending for edit

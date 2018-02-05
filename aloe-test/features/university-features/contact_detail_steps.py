@@ -29,12 +29,6 @@ def the_user_pends_creation_of_contact_detail(step, contact_detail, university_n
             }
         )
 
-@aloe.step(u'the following contact details are returned:')
-def the_following_contact_detail_details_are_returned(step):
-    returned_json = json.loads(aloe.world.response.data.decode("utf-8"))
-    returned_json.pop("contact_detail_id")
-    assert_equals(step.hashes[0], returned_json)
-
 @aloe.step(u'And the contact detail \"([\w\d ]*)\" should be pending for creation at \"([\w\d ]*)\"')
 def the_contact_detail_should_be_pending_for_creation(step, contact_detail, university_name):
     with app.app_context():
