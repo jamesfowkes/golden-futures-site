@@ -85,6 +85,15 @@ class ContactDetailPending(ContactDetailBase, Translatable, BaseModelTranslateab
         db.session.commit()
         return contact_detail_obj
 
+    @classmethod
+    def deletion(cls, contact_detail):
+        contact_detail_obj = cls(contact_detail.university.university_id, {})
+        contact_detail_obj.pending_type = "del"
+        contact_detail_obj.contact_detail_id = contact_detail.contact_detail_id
+        db.session.add(contact_detail_obj)
+        db.session.commit()
+        return contact_detail_obj
+
 class ContactDetailPendingTranslation(translation_base(ContactDetailPending), TranslationMixin):
     __tablename__ = 'ContactDetailPendingTranslation'
     contact_detail_string = sa.Column(sa.Unicode(80))

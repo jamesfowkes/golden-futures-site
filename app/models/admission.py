@@ -81,8 +81,15 @@ class AdmissionPending(AdmissionBase, Translatable, BaseModelTranslateable, Decl
     def addition(cls, pending_uni_id, translations):
         admission_obj = cls(pending_uni_id, translations)
         admission_obj.pending_type = "add_edit"
-        db.session.add(admission_obj)
-        db.session.commit()
+        admission_obj.save()
+        return admission_obj
+
+    @classmethod
+    def deletion(cls, admission):
+        admission_obj = cls(admission.university.university_id, {})
+        admission_obj.pending_type = "del"
+        admission_obj.admission_id = admission.admission_id
+        admission_obj.save()
         return admission_obj
 
 class AdmissionPendingTranslation(translation_base(AdmissionPending), TranslationMixin):

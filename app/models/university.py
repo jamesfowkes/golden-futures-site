@@ -119,6 +119,18 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
     scholarships = db.relationship("Scholarship", back_populates="university")
     pendingedit = db.relationship("UniversityPending", back_populates="university")
     
+    def get_contact_detail(self, contact_detail_string):
+        for contact_detail in self.contact_details:
+            if contact_detail.contact_detail_string == contact_detail_string:
+                return contact_detail
+        return None
+
+    def get_admission(self, admission_string):
+        for admission in self.admissions:
+            if admission.admission_string == admission_string:
+                return admission
+        return None
+
     def add_course(self, course):
         self.courses.append(course)
         self.save()
@@ -218,6 +230,11 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     def add_course(self, course):
         pending_course = UniversityPendingCourse(university_id=self.university_id, course_id=course.course_id)
         self.pending_courses.append(pending_course)
+        self.save()
+
+    def remove_course(self, course):
+        pending_course = UniversityPendingCourse.get(university_id=self.university_id, course_id=course.course_id)
+        pending_course.delete()
         self.save()
 
     @property

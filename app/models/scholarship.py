@@ -59,13 +59,13 @@ class ScholarshipPending(ScholarshipBase, Translatable, BaseModelTranslateable, 
 
     pending_scholarship_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     scholarship_id = db.Column(db.Integer, db.ForeignKey('Scholarship.scholarship_id'), nullable=True)
-    pending_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
+    pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="scholarships")
     pending_type = db.Column(db.String(6), nullable=False)
 
-    def __init__(self, pending_id, scholarship_string, language):
-        self.pending_id = pending_id
-        self.translations[language].scholarship_string = scholarship_string
+    def __init__(self, pending_uni_id, translations):
+        self.pending_uni_id = pending_uni_id
+        self.set_translations(translations)
 
     def approve(self, university_id):
         if self.pending_type == "add_edit":
@@ -77,11 +77,18 @@ class ScholarshipPending(ScholarshipBase, Translatable, BaseModelTranslateable, 
         self.delete()
 
     @classmethod
-    def addition(cls, pending_id, scholarship_string, language):
-        scholarship_obj = cls(pending_id, scholarship_string, language)
+    def addition(cls, pending_uni_id, translations):
+        scholarship_obj = cls(pending_uni_id, translations)
         scholarship_obj.pending_type = "add_edit"
-        db.session.add(scholarship_obj)
-        db.session.commit()
+        scholarship_obj.save()
+        return scholarship_obj
+
+    @classmethod
+    def deletion(cls, scholarship):
+        scholarship_obj = cls(scholarship.university.university_id, {})
+        scholarship_obj.pending_type = "del"
+        scholarship_obj.scholarship_id = scholarship.scholarship_id
+        scholarship_obj.save()
         return scholarship_obj
 
 class ScholarshipPendingTranslation(translation_base(ScholarshipPending), TranslationMixin):

@@ -1,7 +1,8 @@
 """ test_data.py
 
 Usage:
-    test_data.py create [--add_pending]
+    test_data.py create_baseline
+    test_data.py create_pending
     test_data.py copy
     test_data.py make_original
 
@@ -25,20 +26,70 @@ os.environ["GF_CONFIG_CLASS"] = "config.DebugConfig"
 
 from app import app
 from app.database import db
-from app.models.university import University, UniversityPending
-from app.models.category import Category, CategoryPending
-from app.models.course import Course, CoursePending
-from app.models.admission import Admission, AdmissionPending
-from app.models.scholarship import Scholarship, ScholarshipPending
-from app.models.tuition_fee import TuitionFee, TuitionFeePending
-from app.models.contact_detail import ContactDetail, ContactDetailPending
-from app.models.facility import Facility, FacilityPending
+from app.models.university import University, UniversityPending, UniversityPendingTranslation, UniversityPendingCourse
+from app.models.category import Category, CategoryPending, CategoryPendingTranslation, CategoryPendingCourses
+from app.models.course import Course, CoursePending, CoursePendingTranslation
+from app.models.admission import Admission, AdmissionPending, AdmissionPendingTranslation
+from app.models.scholarship import Scholarship, ScholarshipPending, ScholarshipPendingTranslation
+from app.models.tuition_fee import TuitionFee, TuitionFeePending, TuitionFeePendingTranslation
+from app.models.contact_detail import ContactDetail, ContactDetailPending, ContactDetailPendingTranslation
+from app.models.facility import Facility, FacilityPending, FacilityPendingTranslation
 from app.models.user import User
 
 from app.models.base_model import DeclarativeBase
 
 def khmer(s):
     return "!" + s + "!"
+
+def drop_all_pending_tables():
+    CategoryPending.__table__.drop(bind=db.engine)
+    CategoryPending.__table__.create(bind=db.engine)
+    CoursePending.__table__.drop(bind=db.engine)
+    CoursePending.__table__.create(bind=db.engine)
+    UniversityPending.__table__.drop(bind=db.engine)
+    UniversityPending.__table__.create(bind=db.engine)
+    TuitionFeePending.__table__.drop(bind=db.engine)
+    TuitionFeePending.__table__.create(bind=db.engine)
+    AdmissionPending.__table__.drop(bind=db.engine)
+    AdmissionPending.__table__.create(bind=db.engine)
+    ContactDetailPending.__table__.drop(bind=db.engine)
+    ContactDetailPending.__table__.create(bind=db.engine)
+    FacilityPending.__table__.drop(bind=db.engine)
+    FacilityPending.__table__.create(bind=db.engine)
+    ScholarshipPending.__table__.drop(bind=db.engine)
+    ScholarshipPending.__table__.create(bind=db.engine)
+
+    CategoryPendingTranslation.__table__.drop(bind=db.engine)
+    CategoryPendingTranslation.__table__.create(bind=db.engine)
+    CoursePendingTranslation.__table__.drop(bind=db.engine)
+    CoursePendingTranslation.__table__.create(bind=db.engine)
+    UniversityPendingTranslation.__table__.drop(bind=db.engine)
+    UniversityPendingTranslation.__table__.create(bind=db.engine)
+    TuitionFeePendingTranslation.__table__.drop(bind=db.engine)
+    TuitionFeePendingTranslation.__table__.create(bind=db.engine)
+    AdmissionPendingTranslation.__table__.drop(bind=db.engine)
+    AdmissionPendingTranslation.__table__.create(bind=db.engine)
+    ContactDetailPendingTranslation.__table__.drop(bind=db.engine)
+    ContactDetailPendingTranslation.__table__.create(bind=db.engine)
+    FacilityPendingTranslation.__table__.drop(bind=db.engine)
+    FacilityPendingTranslation.__table__.create(bind=db.engine)
+    ScholarshipPendingTranslation.__table__.drop(bind=db.engine)
+    ScholarshipPendingTranslation.__table__.create(bind=db.engine)
+
+    CategoryPendingCourses.__table__.drop(bind=db.engine)
+    CategoryPendingCourses.__table__.create(bind=db.engine)
+
+    UniversityPendingCourse.__table__.drop(bind=db.engine)
+    UniversityPendingCourse.__table__.create(bind=db.engine)
+
+def load_courses_from_db(test_course_data):
+    return {course_name: Course.get_single(course_name=course_name, language="en") for course_name in test_course_data}
+
+def load_categories_from_db(test_category_data):
+    return {category_name: Category.get_single(category_name=category_name, language="en") for category_name in test_category_data}
+
+def load_universities_from_db(test_university_data):
+    return {university_name: University.get_single(university_name=university_name, language="en") for university_name in test_university_data}
 
 test_university_data = {
     "National Technical Training Institute": {
@@ -47,7 +98,7 @@ test_university_data = {
         ],
 
         "admission": [
-            "Bachelor Degree:BAC II Certificate, or High Diploma of Technical or Specialty, or Associate Degree."
+            "Bachelor Degree:BAC II Certificate, or High Diploma of Technical or Specialty"
         ],
         "tuition_fees": [
             {
@@ -71,7 +122,7 @@ test_university_data = {
             "info@ntti.edu.kh",
             "023 883 039"
         ],
-        "facilities": []
+        "facilities": ["Librarrry"]
     },
 
     "Asia Euro University": {
@@ -669,22 +720,66 @@ pending_edits = {
                     "university_intro": khmer("This is the New National Technical Training Institute")
                 }
             },
-            "facilities": [
+
+            "new_courses": ["Software Engineering"],
+            "deleted_courses": ["Architecture", "Information Technology"],
+
+            "deleted_facilities": [
+                "Librarrry"
+            ],
+
+            "new_facilities": [
                 {"en": {"facility_string": "Library"}, "km": {"facility_string": khmer("Library")}}
             ],
-            "contact_details": [
+            "deleted_facilities": [0],
+
+            "new_contact_details": [
                 {
                     "en": {"contact_detail_string": "Russian Blvd, Sangkat Teukthla Khan Sensok"},
                     "km": {"contact_detail_string": khmer("Russian Blvd, Sangkat Teukthla Khan Sensok")}
                 }
             ],
-            "admissions": [
-                {
-                    "en": {"admission_string": "Russian Blvd, Sangkat Teukthla Khan Sensok"},
-                    "km": {"admission_string": khmer("Russian Blvd, Sangkat Teukthla Khan Sensok")}
-                }
 
-            ]
+            "deleted_contact_details": [0],
+
+            "new_admissions": [
+                {
+                    "en": {"admission_string": "Bachelor Degree:BAC II Certificate, or High Diploma of Technical or Specialty, or Associate Degree."},
+                    "km": {"admission_string": khmer("Bachelor Degree:BAC II Certificate, or High Diploma of Technical or Specialty, or Associate Degree.")}
+                }
+            ],
+
+            "deleted_admissions": [0],
+
+            "new_tuition_fees": [
+                {
+                    "en": {
+                        "tuition_fee_min": 999,
+                        "tuition_fee_max": 999, 
+                        "currency": "$",
+                        "period": "year",
+                        "award": "Nobel Prize"
+                    },
+                    "km": {
+                        "tuition_fee_min": int(float(999)/ 0.00025),
+                        "tuition_fee_max": int(float(999)/ 0.00025), 
+                        "currency": "៛",
+                        "period": khmer("year"),
+                        "award": khmer("Nobel Prize")
+                    }
+                }
+            ],
+
+            "deleted_tuition_fees": [0],
+
+            "new_scholarships": [
+                {
+                    "en": {"scholarship_string": "100% Scholarship to anyone with more than seven legs."},
+                    "km": {"scholarship_string": khmer("100% Scholarship to anyone with more than seven legs.")},
+                }
+            ],
+
+            "deleted_scholarships": [0]
         }
     }
 }
@@ -698,13 +793,19 @@ if __name__ == "__main__":
 
     args = docopt.docopt(__doc__)
 
-    if args["create"]:
-        ## Build courses list from category data
-        test_course_data = []
-        for _, category_data in test_category_data.items():
-            test_course_data.extend(category_data["courses"])
+    ## Build courses list from category data
+    test_course_data = []
+    for _, category_data in test_category_data.items():
+        test_course_data.extend(category_data["courses"])
 
-        test_course_data = set(test_course_data)
+    test_course_data = set(test_course_data)
+
+    courses = {}
+    categories = {}
+    universities = {}
+
+    if args["create_baseline"]:
+
 
         print("Creating application context...", end=""); sys.stdout.flush()
         with app.app_context():
@@ -716,7 +817,7 @@ if __name__ == "__main__":
             print("done.")
             
             print("Creating courses...", end=""); sys.stdout.flush()
-            courses = {}
+            
             for course in test_course_data:
                 courses[course] = Course.create(course, "en")
                 courses[course].set_name(khmer(course), "km")
@@ -724,7 +825,7 @@ if __name__ == "__main__":
             print("done.")
 
             print("Creating categories...", end=""); sys.stdout.flush()
-            categories = {}
+            
             for category_name, category_data in test_category_data.items():
                 new_category = Category.create(category_name, "en")
                 categories[category_name] = new_category
@@ -743,7 +844,7 @@ if __name__ == "__main__":
 
             # Create universities and link to courses
             print("Creating universities...")
-            universities = {}
+            
             for university in test_university_data:
                 universities[university] = University.create({
                         "en": {
@@ -817,121 +918,166 @@ if __name__ == "__main__":
             for user in users:
                 user = User.create(*user)
 
-            if args["--add_pending"]:
+            shutil.copy("app/debug.db", "app/debug.original.db")
+            print("Finished creating test data")
 
-                print("Adding pending additions")
+    if args["create_pending"]:
 
-                for addition in pending_additions["category"]:
-                    print("Addition of '{}' category".format(addition[0]))
-                    category = CategoryPending.addition(category_name=addition[0], language="en")
-                    category.set_name(khmer(addition[0]), "km")
-                    category.set_intro(addition[1], "en")
-                    category.set_intro(khmer(addition[1]), "km")
-                    category.set_careers(addition[2], "en")
-                    category.set_careers(khmer(addition[2]), "km")
-                    if len(addition) == 4:
-                        category.add_course(courses[addition[3]])
+        print("Creating application context...", end=""); sys.stdout.flush()
+        with app.app_context():
+            print("Done")
 
-                for addition in pending_additions["course"]:
-                    print("Addition of '{}' course".format(addition))
-                    course = CoursePending.addition(course_name=addition, language="en")
+            drop_all_pending_tables()
 
-                for addition in pending_additions["university"]:
-                    print("Addition of '{}' university".format(addition["name"]))
-                    university = UniversityPending.addition({
+            courses = load_courses_from_db(test_course_data)
+            categories = load_categories_from_db(test_category_data.keys())
+            universities = load_universities_from_db(test_university_data.keys())
+
+            print("Adding pending additions")
+
+            for addition in pending_additions["category"]:
+                print("Addition of '{}' category".format(addition[0]))
+                category = CategoryPending.addition(category_name=addition[0], language="en")
+                category.set_name(khmer(addition[0]), "km")
+                category.set_intro(addition[1], "en")
+                category.set_intro(khmer(addition[1]), "km")
+                category.set_careers(addition[2], "en")
+                category.set_careers(khmer(addition[2]), "km")
+                if len(addition) == 4:
+                    category.add_course(courses[addition[3]])
+
+            for addition in pending_additions["course"]:
+                print("Addition of '{}' course".format(addition))
+                course = CoursePending.addition(course_name=addition, language="en")
+
+            for addition in pending_additions["university"]:
+                print("Addition of '{}' university".format(addition["name"]))
+                university = UniversityPending.addition({
+                    "en": {
+                        "university_name": addition["name"],
+                        "university_intro": "This is the " + addition["name"]
+                    },
+                    "km": {
+                        "university_name": khmer(addition["name"]),
+                        "university_intro": "This is the " + khmer(addition["name"])
+                    },
+                })
+
+                for course in addition["courses"]:
+                    university.add_course(courses[course])
+
+                for tuition_fee in addition["tuition_fees"]:
+                    TuitionFeePending.addition(university.pending_id, {
                         "en": {
-                            "university_name": addition["name"],
-                            "university_intro": "This is the " + addition["name"]
+                            "tuition_fee_min": tuition_fee["min"],
+                            "tuition_fee_max": tuition_fee["max"], 
+                            "currency": tuition_fee["currency"],
+                            "period": tuition_fee["period"],
+                            "award": tuition_fee["award"]
                         },
                         "km": {
-                            "university_name": khmer(addition["name"]),
-                            "university_intro": "This is the " + khmer(addition["name"])
-                        },
+                            "tuition_fee_min": int(float(tuition_fee["min"])/ 0.00025),
+                            "tuition_fee_max": int(float(tuition_fee["max"])/ 0.00025),
+                            "currency": "៛",
+                            "period": khmer(tuition_fee["period"]),
+                            "award": khmer(tuition_fee["award"])
+                        }
                     })
 
-                    for course in addition["courses"]:
-                        university.add_course(courses[course])
 
-                    for tuition_fee in addition["tuition_fees"]:
-                        TuitionFeePending.addition(university.pending_id, {
-                            "en": {
-                                "tuition_fee_min": tuition_fee["min"],
-                                "tuition_fee_max": tuition_fee["max"], 
-                                "currency": tuition_fee["currency"],
-                                "period": tuition_fee["period"],
-                                "award": tuition_fee["award"]
-                            },
-                            "km": {
-                                "tuition_fee_min": int(float(tuition_fee["min"])/ 0.00025),
-                                "tuition_fee_max": int(float(tuition_fee["max"])/ 0.00025),
-                                "currency": "៛",
-                                "period": khmer(tuition_fee["period"]),
-                                "award": khmer(tuition_fee["award"])
+                for admission in addition["admissions"]:
+                    AdmissionPending.addition(university.pending_id, {
+                        "en": {"admission_string": admission},
+                        "km": {"admission_string": khmer(admission)}
+                    })
+
+                for contact_detail in addition["contact_details"]:
+                    ContactDetailPending.addition(university.pending_id, {
+                        "en": {"contact_detail_string": contact_detail},
+                        "km": {"contact_detail_string": khmer(contact_detail)}
+                    })
+
+                for scholarship in addition["scholarships"]:
+                    ScholarshipPending.addition(university.pending_id, {
+                        "en": {"scholarship_string": scholarship},
+                        "km": {"scholarship_string": khmer(scholarship)}
+                    })
+
+                for facility in addition["facilities"]:
+                    FacilityPending.addition(university.pending_id, {
+                        "en": {
+                                "facility_string": facility,
                             }
-                        })
+                        }
+                    )
 
+            print("Adding pending edits")
 
-                    for admission in addition["admissions"]:
-                        AdmissionPending.addition(university.pending_id, {
-                            "en": {"admission_string": admission},
-                            "km": {"admission_string": khmer(admission)}
-                        })
+            for edit in pending_edits["category"]:
+                print("Edit of '{}'".format(edit[0]))
+                category = CategoryPending.edit(categories[edit[0]])
+                category.set_intro(edit[1], "en")
+                category.set_careers(edit[2], "en")
 
-                    for contact_detail in addition["contact_details"]:
-                        ContactDetailPending.addition(university.pending_id, {
-                            "en": {"contact_detail_string": contact_detail},
-                            "km": {"contact_detail_string": khmer(contact_detail)}
-                        })
+            for edit in pending_edits["course"]:
+                print("Edit of '{}'".format(edit[0]))
+                course = CoursePending.edit(courses[edit[0]])
+                course.set_name(edit[1], "en")
 
-                    for scholarship in addition["scholarships"]:
-                        ScholarshipPending.addition(university.pending_id, scholarship, "en")
+            for name, edits in pending_edits["university"].items():
+                print("Edit of '{}'".format(name))
+                pending_uni = UniversityPending.edit(universities[name])
+                pending_uni.set_translations(edits["translations"])
 
-                    for facility in addition["facilities"]:
-                        FacilityPending.addition(university.pending_id, {
-                            "en": {
-                                    "facility_string": facility,
-                                }
-                            }
-                        )
+                for new_course in edits["new_courses"]:
+                    pending_uni.add_course(courses[new_course])
 
-                print("Adding pending edits")
+                for deleted_course in edits["deleted_courses"]:
+                    pending_uni.remove_course(courses[new_course])
 
-                for edit in pending_edits["category"]:
-                    print("Edit of '{}'".format(edit[0]))
-                    category = CategoryPending.edit(categories[edit[0]])
-                    category.set_intro(edit[1], "en")
-                    category.set_careers(edit[2], "en")
+                for new_contact_detail in edits["new_contact_details"]:
+                    ContactDetailPending.addition(pending_uni.pending_id, new_contact_detail)
 
-                for edit in pending_edits["course"]:
-                    print("Edit of '{}'".format(edit[0]))
-                    course = CoursePending.edit(courses[edit[0]])
-                    course.set_name(edit[1], "en")
+                for deleted_contact_detail_idx in edits["deleted_contact_details"]:
+                    contact_detail = universities[name].contact_details[deleted_contact_detail_idx]
+                    ContactDetailPending.deletion(contact_detail)
 
-                for name, edits in pending_edits["university"].items():
-                    print("Edit of '{}'".format(name))
-                    pending_uni = UniversityPending.edit(universities[name])
-                    pending_uni.set_translations(edits["translations"])
+                for admission in edits["new_admissions"]:
+                    AdmissionPending.addition(pending_uni.pending_id, admission)
 
-                    for facility in edits["facilities"]:
-                        FacilityPending.addition(pending_uni.pending_id, facility)
+                for admission_idx in edits["deleted_admissions"]:
+                    admission = universities[name].admissions[admission_idx]
+                    AdmissionPending.deletion(admission)
 
-                    for contact_detail in edits["contact_details"]:
-                        ContactDetailPending.addition(pending_uni.pending_id, contact_detail)
+                for tuition_fee in edits["new_tuition_fees"]:
+                    TuitionFeePending.addition(pending_uni.pending_id, tuition_fee)
 
-                    for admission in edits["admissions"]:
-                        AdmissionPending.addition(pending_uni.pending_id, admission)
+                for tuition_fee_idx in edits["deleted_tuition_fees"]:
+                    tuition_fee = universities[name].tuition_fees[tuition_fee_idx]
+                    TuitionFeePending.deletion(tuition_fee)
 
-                print("Adding pending deletions")
+                for scholarship in edits["new_scholarships"]:
+                    ScholarshipPending.addition(pending_uni.pending_id, scholarship)
 
-                for deletion in pending_deletions["category"]:
-                    print("Deletion of '{}'".format(deletion))
-                    category = CategoryPending.deletion(categories[deletion])
+                for scholarship_idx in edits["deleted_scholarships"]:
+                    scholarship = universities[name].scholarships[scholarship_idx]
+                    ScholarshipPending.deletion(scholarship)
 
-                for deletion in pending_deletions["course"]:
-                    course = CoursePending.deletion(courses[deletion])
+                for facility in edits["new_facilities"]:
+                    FacilityPending.addition(pending_uni.pending_id, facility)
 
-        shutil.copy("app/debug.db", "app/debug.original.db")
-        print("Finished creating test data")
+                for facility_idx in edits["deleted_facilities"]:
+                    facility = universities[name].facilities[facility_idx]
+                    FacilityPending.deletion(facility)
+
+            print("Adding pending deletions")
+
+            for deletion in pending_deletions["category"]:
+                print("Deletion of '{}'".format(deletion))
+                category = CategoryPending.deletion(categories[deletion])
+
+            for deletion in pending_deletions["course"]:
+                course = CoursePending.deletion(courses[deletion])
 
     elif args["copy"]:
         shutil.copy("app/debug.original.db", "app/debug.db")

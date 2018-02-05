@@ -114,11 +114,16 @@ class TuitionFeePending(TuitionFeeBase, Translatable, BaseModelTranslateable, De
     def addition(cls, pending_id, translations):
         tuition_fee_obj = cls(pending_id, translations)
         tuition_fee_obj.pending_type = "add_edit"
-        
-        db.session.add(tuition_fee_obj)
-        db.session.commit()
+        tuition_fee_obj.save()
         return tuition_fee_obj
 
+    @classmethod
+    def deletion(cls, tuition_fee):
+        tuition_fee_obj = cls(tuition_fee.university.university_id, {})
+        tuition_fee_obj.pending_type = "del"
+        tuition_fee_obj.tuition_fee_id = tuition_fee.tuition_fee_id
+        tuition_fee_obj.save()
+        return tuition_fee_obj
 
 class TuitionFeePendingTranslation(translation_base(TuitionFeePending), TranslationMixin):
     __tablename__ = 'TuitionFeePendingTranslation'

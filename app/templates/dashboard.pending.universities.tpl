@@ -16,14 +16,19 @@
                         <p><strong>{{_("New University")}}: {{addition.university_name}}</strong></p>
                         <p><i>{{_("Introduction")}}:</i> {{addition.university_intro}}</p>
                         <p><i>{{_("Courses")}}:</i> {{ addition.course_names | join(", ") }}</p>
-                        <p><i>{{_("Fees")}}:</i> {{ addition.tuition_fees | join(", ") }}</p>
-                        <p><i>{{_("Admission")}}:</i>
-                            <ul>
-                            {% for admission in addition.admissions %}
-                                <li>{{ admission.admission_string }}</li>
+                        <p><i>{{_("Fees")}}:</i></p>
+                        <ul>
+                            {% for fee in addition.tuition_fees %}
+                                <li>{{ fee }}</li>
                             {% endfor %}
-                            </ul>
-                        </p>
+                        </ul>
+
+                        <p><i>{{_("Admission")}}:</i></p>
+                        <ul>
+                        {% for admission in addition.admissions %}
+                            <li>{{ admission.admission_string }}</li>
+                        {% endfor %}
+                        </ul>
                         <p><i>{{_("Contact Details")}}:</i><br/>
                             {% for contact_detail in addition.contact_details %}
                                 {{ contact_detail.contact_detail_string }}<br/>
@@ -49,37 +54,58 @@
                     {% for edit in pending.edits %}
                     <div class="pending">
                         <p><strong>{{_("University")}}: {{edit.university.university_name}}</strong></p>
+
                         {% if edit.university_name != edit.university.university_name %}
-                            <p><i>{{_("New Name")}}</i>: {{edit.university_name}}</p>
+                            <p><i>{{_("Name")}}</i>: {{edit.university_name}}</p>
                         {% endif %}
+
+                        {% if edit.university_intro != edit.university.university_intro %}
+                            <p><i>{{_("Introduction")}}</i>: {{edit.university_intro}}</p>
+                        {% endif %}
+
                         {% if edit.pending_courses | length %}
-                            <p><i>{{_("New Courses")}}</i>: {{edit.course_names | join(", ")}}</p>
+                            <p><i>{{_("Courses")}}</i>: {{edit.course_names | join(", ")}}</p>
                         {% endif %}
-                        {% if edit.facilities | length %}
-                            <p><i>{{_("New Facilities")}}</i>: {{edit.facility_names() | join(", ")}}</p>
+
+                        {% if edit.tuition_fees | length %}
+                            <p><i>{{_("Fees")}}:</i></p>
+                            <ul>
+                            {% for fee in edit.tuition_fees %}
+                                <li>{{ fee }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {% if edit.admissions | length %}
+                            <p><i>{{_("Admissions")}}:</i></p>
+                            <ul>
+                            {% for admission in edit.admissions %}
+                                <li>{{ admission.admission_string }}</li>
+                            {% endfor %}
+                            </ul>
                         {% endif %}
 
                         {% if edit.contact_details | length %}
-                            <p><i>{{_("Contact Details")}}:</i><br/>
-                                {% for contact_detail in edit.contact_details %}
-                                    {{ contact_detail.contact_detail_string }}<br/>
-                                {% endfor %}
-                            </p>
-                        {% endif %}
-                        
-                        {% if edit.admissions | length %}
-                            <p><i>{{_("New Admission")}}:</i>
-                                <ul>
-                                {% for admission in edit.admissions %}
-                                    <li>{{ admission.admission_string }}</li>
-                                {% endfor %}
-                                </ul>
+                            <p><i>{{_("Contact Details")}}:</i>
+                            {% for contact_detail in edit.contact_details %}
+                                {{ contact_detail.contact_detail_string }}<br/>
+                            {% endfor %}
                             </p>
                         {% endif %}
 
-                        tuition_fees
-                        scholarships
-                        university
+                        {% if edit.scholarships | length %}
+                            <p><i>{{_("Scholarships")}}:</i></p>
+                            <ul>
+                            {% for scholarship in edit.scholarships %}
+                                <li>{{ scholarship.scholarship_string }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %} 
+
+                        {% if edit.facilities | length %}
+                            <p><i>{{_("Facilities")}}</i>: {{edit.facility_names() | join(", ")}}</p>
+                        {% endif %}
+
                         {{dashboard_macro.approve("university", edit.pending_id)}} {{dashboard_macro.reject("university", edit.pending_id)}}
                     </div>
                     {% endfor %}

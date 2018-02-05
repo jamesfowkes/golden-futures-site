@@ -59,12 +59,12 @@ class FacilityPending(FacilityBase, Translatable, BaseModelTranslateable, Declar
 
     pending_facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     facility_id = db.Column(db.Integer, db.ForeignKey('Facility.facility_id'), nullable=True)
-    pending_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
+    pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="facilities")
     pending_type = db.Column(db.String(6), nullable=False)
 
-    def __init__(self, pending_id, translations):
-        self.pending_id = pending_id
+    def __init__(self, pending_uni_id, translations):
+        self.pending_uni_id = pending_uni_id
         self.set_translations(translations)
 
     def approve(self, university_id):
@@ -77,21 +77,18 @@ class FacilityPending(FacilityBase, Translatable, BaseModelTranslateable, Declar
         self.delete()
 
     @classmethod
-    def addition(cls, pending_id, translations):
-        facility_obj = cls(pending_id, translations)
+    def addition(cls, pending_uni_id, translations):
+        facility_obj = cls(pending_uni_id, translations)
         facility_obj.pending_type = "add_edit"
-
-        db.session.add(facility_obj)
-        db.session.commit()
+        facility_obj.save()
         return facility_obj
 
     @classmethod
-    def edit(cls, pending_id, facility_id, translations):
-        facility_obj = cls(pending_id, translations)
-        facility_obj.pending_type = "add_edit"
-        facility_obj.facility_id = facility_id
-        db.session.add(facility_obj)
-        db.session.commit()
+    def deletion(cls, facility):
+        facility_obj = cls(facility.university.university_id, {})
+        facility_obj.pending_type = "del"
+        facility_obj.facility_id = facility.facility_id
+        facility_obj.save()
         return facility_obj
 
 class FacilityPendingTranslation(translation_base(FacilityPending), TranslationMixin):
