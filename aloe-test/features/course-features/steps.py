@@ -102,7 +102,7 @@ def the_course_is_pending_to_be_added_to_category(step, course_name, category_na
 @aloe.step(u'the course \"([\w\d ]*)\" should be pending to be added to category \"([\w\d ]*)\"')
 def the_course_should_be_pending_to_be_added_to_category(step, course_name, category_name):
     with app.app_context():
-        pending_category = CategoryPending.get_single(category_name=category_name)
+        pending_category = CategoryPending.get_single(category_name=category_name, language=aloe.world.language)
         assert(course_name in pending_category.course_names())
 
 @aloe.step(u'the following course details are returned:')
