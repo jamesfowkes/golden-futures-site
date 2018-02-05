@@ -10,6 +10,7 @@ from sqlalchemy_i18n import Translatable, translation_base
 import app
 from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase, TranslationMixin, get_locales
+from app.models.pending_changes import pending_university_detail
 
 class TuitionFeeBase():
 
@@ -85,7 +86,7 @@ class TuitionFeeTranslation(translation_base(TuitionFee)):
     period = sa.Column(sa.Unicode(20))
     include_in_filter = sa.Column(sa.Boolean, default=True)
 
-class TuitionFeePending(TuitionFeeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class TuitionFeePending(pending_university_detail(TuitionFee, "tuition_fee_id"), TuitionFeeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "TuitionFeePending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
@@ -93,37 +94,9 @@ class TuitionFeePending(TuitionFeeBase, Translatable, BaseModelTranslateable, De
 
     pending_tuition_fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tuition_fee_id = db.Column(db.Integer, db.ForeignKey('TuitionFee.tuition_fee_id'), nullable=True)
-    pending_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
+    pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship("UniversityPending", back_populates="tuition_fees")
     pending_type = db.Column(db.String(6), nullable=False)
-
-    def __init__(self, pending_id, translations):
-        self.pending_id = pending_id
-        self.set_translations(translations)
-
-    def approve(self, university_id):
-        if self.pending_type == "add_edit":
-            if self.tuition_fee_id:
-                TuitionFee.get_single(tuition_fee_id=self.tuition_fee_id).update(self)
-            else:
-                TuitionFee.create(university_id, self.translations)
-
-        self.delete()
-
-    @classmethod
-    def addition(cls, pending_id, translations):
-        tuition_fee_obj = cls(pending_id, translations)
-        tuition_fee_obj.pending_type = "add_edit"
-        tuition_fee_obj.save()
-        return tuition_fee_obj
-
-    @classmethod
-    def deletion(cls, tuition_fee):
-        tuition_fee_obj = cls(tuition_fee.university.university_id, {})
-        tuition_fee_obj.pending_type = "del"
-        tuition_fee_obj.tuition_fee_id = tuition_fee.tuition_fee_id
-        tuition_fee_obj.save()
-        return tuition_fee_obj
 
 class TuitionFeePendingTranslation(translation_base(TuitionFeePending), TranslationMixin):
     __tablename__ = 'TuitionFeePendingTranslation'

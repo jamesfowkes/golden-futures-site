@@ -41,46 +41,21 @@ from app.models.base_model import DeclarativeBase
 def khmer(s):
     return "!" + s + "!"
 
+PENDING_TABLES = [CategoryPending, CoursePending, UniversityPending, TuitionFeePending, AdmissionPending,
+    ContactDetailPending, FacilityPending, ScholarshipPending, CategoryPendingTranslation, CoursePendingTranslation,
+    UniversityPendingTranslation, TuitionFeePendingTranslation, AdmissionPendingTranslation, 
+    ContactDetailPendingTranslation, FacilityPendingTranslation, ScholarshipPendingTranslation,
+    CategoryPendingCourses, UniversityPendingCourse]
+    
 def drop_all_pending_tables():
-    CategoryPending.__table__.drop(bind=db.engine)
-    CategoryPending.__table__.create(bind=db.engine)
-    CoursePending.__table__.drop(bind=db.engine)
-    CoursePending.__table__.create(bind=db.engine)
-    UniversityPending.__table__.drop(bind=db.engine)
-    UniversityPending.__table__.create(bind=db.engine)
-    TuitionFeePending.__table__.drop(bind=db.engine)
-    TuitionFeePending.__table__.create(bind=db.engine)
-    AdmissionPending.__table__.drop(bind=db.engine)
-    AdmissionPending.__table__.create(bind=db.engine)
-    ContactDetailPending.__table__.drop(bind=db.engine)
-    ContactDetailPending.__table__.create(bind=db.engine)
-    FacilityPending.__table__.drop(bind=db.engine)
-    FacilityPending.__table__.create(bind=db.engine)
-    ScholarshipPending.__table__.drop(bind=db.engine)
-    ScholarshipPending.__table__.create(bind=db.engine)
+    
+    for table in PENDING_TABLES:
+        try:
+            table.__table__.drop(bind=db.engine)
+        except:
+            pass
 
-    CategoryPendingTranslation.__table__.drop(bind=db.engine)
-    CategoryPendingTranslation.__table__.create(bind=db.engine)
-    CoursePendingTranslation.__table__.drop(bind=db.engine)
-    CoursePendingTranslation.__table__.create(bind=db.engine)
-    UniversityPendingTranslation.__table__.drop(bind=db.engine)
-    UniversityPendingTranslation.__table__.create(bind=db.engine)
-    TuitionFeePendingTranslation.__table__.drop(bind=db.engine)
-    TuitionFeePendingTranslation.__table__.create(bind=db.engine)
-    AdmissionPendingTranslation.__table__.drop(bind=db.engine)
-    AdmissionPendingTranslation.__table__.create(bind=db.engine)
-    ContactDetailPendingTranslation.__table__.drop(bind=db.engine)
-    ContactDetailPendingTranslation.__table__.create(bind=db.engine)
-    FacilityPendingTranslation.__table__.drop(bind=db.engine)
-    FacilityPendingTranslation.__table__.create(bind=db.engine)
-    ScholarshipPendingTranslation.__table__.drop(bind=db.engine)
-    ScholarshipPendingTranslation.__table__.create(bind=db.engine)
-
-    CategoryPendingCourses.__table__.drop(bind=db.engine)
-    CategoryPendingCourses.__table__.create(bind=db.engine)
-
-    UniversityPendingCourse.__table__.drop(bind=db.engine)
-    UniversityPendingCourse.__table__.create(bind=db.engine)
+        table.__table__.create(bind=db.engine)
 
 def load_courses_from_db(test_course_data):
     return {course_name: Course.get_single(course_name=course_name, language="en") for course_name in test_course_data}

@@ -11,6 +11,7 @@ from sqlalchemy_i18n.utils import get_current_locale
 import app
 from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase, TranslationMixin, get_locales
+from app.models.pending_changes import pending_university_detail
 
 class FacilityBase():
     def __init__(self, university_id, translations):
@@ -51,7 +52,7 @@ class FacilityTranslation(translation_base(Facility)):
     facility_string = sa.Column(sa.Unicode(80))
     unique_facility_constraint = sa.PrimaryKeyConstraint('id', 'facility_string', 'locale', name='ufc_1')
 
-class FacilityPending(FacilityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class FacilityPending(pending_university_detail(Facility, "facility_id"), FacilityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "FacilityPending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
@@ -62,34 +63,6 @@ class FacilityPending(FacilityBase, Translatable, BaseModelTranslateable, Declar
     pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="facilities")
     pending_type = db.Column(db.String(6), nullable=False)
-
-    def __init__(self, pending_uni_id, translations):
-        self.pending_uni_id = pending_uni_id
-        self.set_translations(translations)
-
-    def approve(self, university_id):
-        if self.pending_type == "add_edit":
-            if self.facility_id:
-                Facility.get_single(facility_id=self.facility_id).set_translations(self.translations)
-            else:
-                Facility.create(university_id, self.translations)
-
-        self.delete()
-
-    @classmethod
-    def addition(cls, pending_uni_id, translations):
-        facility_obj = cls(pending_uni_id, translations)
-        facility_obj.pending_type = "add_edit"
-        facility_obj.save()
-        return facility_obj
-
-    @classmethod
-    def deletion(cls, facility):
-        facility_obj = cls(facility.university.university_id, {})
-        facility_obj.pending_type = "del"
-        facility_obj.facility_id = facility.facility_id
-        facility_obj.save()
-        return facility_obj
 
 class FacilityPendingTranslation(translation_base(FacilityPending), TranslationMixin):
     __tablename__ = 'FacilityPendingTranslation'

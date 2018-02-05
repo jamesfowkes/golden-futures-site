@@ -10,6 +10,7 @@ from sqlalchemy_i18n import Translatable, translation_base
 import app
 from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase, TranslationMixin, get_locales
+from app.models.pending_changes import pending_university_detail
 
 class ScholarshipBase():
 
@@ -51,7 +52,8 @@ class ScholarshipTranslation(translation_base(Scholarship)):
     scholarship_string = sa.Column(sa.Unicode(80))
     unique_scholarship_constraint = sa.PrimaryKeyConstraint('id', 'scholarship_string', 'locale', name='ufc_1')
 
-class ScholarshipPending(ScholarshipBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+
+class ScholarshipPending(pending_university_detail(Scholarship, "scholarship_id"), ScholarshipBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "ScholarshipPending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
@@ -62,34 +64,6 @@ class ScholarshipPending(ScholarshipBase, Translatable, BaseModelTranslateable, 
     pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="scholarships")
     pending_type = db.Column(db.String(6), nullable=False)
-
-    def __init__(self, pending_uni_id, translations):
-        self.pending_uni_id = pending_uni_id
-        self.set_translations(translations)
-
-    def approve(self, university_id):
-        if self.pending_type == "add_edit":
-            if self.scholarship_id:
-                Scholarship.get_single(scholarship_id=self.scholarship_id).set_translations(self.translations)
-            else:
-                Scholarship.create(university_id, self.translations)
-
-        self.delete()
-
-    @classmethod
-    def addition(cls, pending_uni_id, translations):
-        scholarship_obj = cls(pending_uni_id, translations)
-        scholarship_obj.pending_type = "add_edit"
-        scholarship_obj.save()
-        return scholarship_obj
-
-    @classmethod
-    def deletion(cls, scholarship):
-        scholarship_obj = cls(scholarship.university.university_id, {})
-        scholarship_obj.pending_type = "del"
-        scholarship_obj.scholarship_id = scholarship.scholarship_id
-        scholarship_obj.save()
-        return scholarship_obj
 
 class ScholarshipPendingTranslation(translation_base(ScholarshipPending), TranslationMixin):
     __tablename__ = 'ScholarshipPendingTranslation'

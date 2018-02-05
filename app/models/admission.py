@@ -10,6 +10,7 @@ from sqlalchemy_i18n import Translatable, translation_base
 import app
 from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase, TranslationMixin, get_locales
+from app.models.pending_changes import pending_university_detail
 
 class AdmissionBase():
 
@@ -52,7 +53,7 @@ class AdmissionTranslation(translation_base(Admission)):
     admission_string = sa.Column(sa.Unicode(80))
     unique_admission_constraint = sa.PrimaryKeyConstraint('id', 'admission_string', 'locale', name='ufc_1')
 
-class AdmissionPending(AdmissionBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class AdmissionPending(pending_university_detail(Admission, "admission_id"), AdmissionBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "AdmissionPending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
@@ -63,34 +64,6 @@ class AdmissionPending(AdmissionBase, Translatable, BaseModelTranslateable, Decl
     pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="admissions")
     pending_type = db.Column(db.String(6), nullable=False)
-
-    def __init__(self, pending_uni_id, translations):
-        self.pending_uni_id = pending_uni_id
-        self.set_translations(translations)
-
-    def approve(self, university_id):
-        if self.pending_type == "add_edit":
-            if self.admission_id:
-                Admission.get_single(admission_id=self.admission_id).set_translations(self.translations)
-            else:
-                Admission.create(university_id, self.translations)
-
-        self.delete()
-
-    @classmethod
-    def addition(cls, pending_uni_id, translations):
-        admission_obj = cls(pending_uni_id, translations)
-        admission_obj.pending_type = "add_edit"
-        admission_obj.save()
-        return admission_obj
-
-    @classmethod
-    def deletion(cls, admission):
-        admission_obj = cls(admission.university.university_id, {})
-        admission_obj.pending_type = "del"
-        admission_obj.admission_id = admission.admission_id
-        admission_obj.save()
-        return admission_obj
 
 class AdmissionPendingTranslation(translation_base(AdmissionPending), TranslationMixin):
     __tablename__ = 'AdmissionPendingTranslation'
