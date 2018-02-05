@@ -101,8 +101,6 @@ def render_courses_dashboard():
     pending_courses = CoursePending.all()
     all_courses = live_courses + pending_courses
     all_courses = sorted(all_courses, key=lambda c: c.course_name[0])
-    for course in all_courses:
-        print(course.is_pending())
     return render_template('dashboard.courses.tpl', courses=all_courses)
 
 @dashboard.route("/dashboard/universities", methods=['GET'])
