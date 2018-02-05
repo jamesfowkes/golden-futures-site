@@ -13,10 +13,14 @@ def pending_university_detail(ParentClass, target_id_name):
         def __init__(self, pending_uni_id, translations):
             self.pending_uni_id = pending_uni_id
             self.set_translations(translations)
-            
+
+        def kwargs(self):
+            """ To be overridden by subclass if extra constuctor args are required """
+            return {}
+
         @classmethod
-        def addition(cls, pending_id, translations):
-            pending_object = cls(pending_id, translations)
+        def addition(cls, pending_id, translations, **kwargs):
+            pending_object = cls(pending_id, translations, **kwargs)
             pending_object.pending_type = "add_edit"
             pending_object.save()
             logger.info("Creating pending addition of %s", pending_object)
@@ -37,7 +41,7 @@ def pending_university_detail(ParentClass, target_id_name):
                     ParentClass.get_single(target_id_name=getattr(self, target_id_name)).set_translations(self.translations)
                 else:
                     logger.info("Approving pending edit of %s", self)
-                    ParentClass.create(university_id, self.translations)
+                    ParentClass.create(university_id, self.translations, **self.kwargs())
 
             self.delete()
 
