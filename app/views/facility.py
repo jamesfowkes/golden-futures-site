@@ -13,6 +13,8 @@ from app.locale import get_locale
 @flask_login.login_required
 def create_facility():
     if request.method == 'POST':
-        facility = FacilityPending.create(
-        	request.form["university_id"], request.form["facility"], request.form["language"])
+        facility = FacilityPending.addition(
+        	request.form["university_id"],
+        	{request.form["language"]: {"facility_string": request.form["facility"]}}
+        )
         return json.dumps(facility.json())
