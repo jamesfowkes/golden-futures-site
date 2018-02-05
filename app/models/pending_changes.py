@@ -1,13 +1,15 @@
+import logging
 from collections import namedtuple
 
 PendingChanges = namedtuple("PendingChanges", ["additions", "edits", "deletions"])
 
 from app.database import db
 
+logger = logging.getLogger(__name__)
+
 def pending_university_detail(ParentClass, target_id_name):
     
     class PendingUniversityDetail:
-
         def __init__(self, pending_uni_id, translations):
             self.pending_uni_id = pending_uni_id
             self.set_translations(translations)
@@ -17,6 +19,7 @@ def pending_university_detail(ParentClass, target_id_name):
             pending_object = cls(pending_id, translations)
             pending_object.pending_type = "add_edit"
             pending_object.save()
+            logger.info("Creating pending addition of %s", pending_object)
             return pending_object
 
         @classmethod
@@ -30,8 +33,10 @@ def pending_university_detail(ParentClass, target_id_name):
         def approve(self, university_id):
             if self.pending_type == "add_edit":
                 if getattr(self, target_id_name):
+                    logger.info("Approving pending add of %s", self)
                     ParentClass.get_single(target_id_name=getattr(self, target_id_name)).set_translations(self.translations)
                 else:
+                    logger.info("Approving pending edit of %s", self)
                     ParentClass.create(university_id, self.translations)
 
             self.delete()

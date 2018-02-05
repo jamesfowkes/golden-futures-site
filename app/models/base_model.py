@@ -14,9 +14,11 @@ logger = logging.getLogger(__name__)
 
 def get_locales(translations_obj_or_dict):
     try:
-        return translations_obj_or_dict.manager.options['locales']
+        locales = translations_obj_or_dict.manager.options['locales'].keys()
     except AttributeError:
-        return translations_obj_or_dict.keys()
+        locales = translations_obj_or_dict.keys()
+
+    return list(locales)
 
 class DbIntegrityException(Exception):
     pass
@@ -50,7 +52,11 @@ class BaseModel(__Deleteable__):
 class TranslationMixin:
 
     def __getitem__(self, key):
-        return self.__getattribute__(key)
+        try:
+            return self.__getattribute__(key)
+        except TypeError:
+            logger.error("unexpected key '%s' (%s)", key, type(key))
+            raise
         
 class BaseModelTranslateable(__Deleteable__):
 

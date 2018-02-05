@@ -1,3 +1,4 @@
+import logging
 import json
 
 from flask import g
@@ -12,6 +13,8 @@ from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase, TranslationMixin, get_locales
 from app.models.pending_changes import pending_university_detail
 
+logger = logging.getLogger(__name__)
+
 class AdmissionBase():
 
     def __init__(self, university_id, translations):
@@ -20,8 +23,7 @@ class AdmissionBase():
 
     def set_translations(self, translations):
         for language in get_locales(translations):
-            if "admission_string" in translations[language]:
-                self.translations[language].admission_string = translations[language]["admission_string"]
+            self.translations[language].admission_string = translations[language]["admission_string"]
 
     @classmethod
     def create(cls, university_id, translations):
@@ -37,6 +39,9 @@ class AdmissionBase():
             "university_name": self.university.university_name,
             "admission": self.current_translation.admission_string
         }
+
+    def __str__(self):
+        return "Admission:" + "'" + self.translations["en"].admission_string + "'"
 
 class Admission(AdmissionBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
