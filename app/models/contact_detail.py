@@ -26,8 +26,7 @@ class ContactDetailBase():
     def create(cls, university_id, translations):
         university_id = int(university_id)
         contact_detail_obj = cls(university_id, translations)
-        db.session.add(contact_detail_obj)
-        db.session.commit()
+        contact_detail_obj.save()
         return contact_detail_obj
 
     def json(self):

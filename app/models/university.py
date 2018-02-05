@@ -47,7 +47,11 @@ class UniversityBase():
         return self.current_translation.university_name < other.current_translation.university_name
 
     def json(self):
-        return {"university_id": self.university_id, "university_name": self.current_translation.university_name, "language": get_current_locale(self)}
+        return {
+            "university_id": self.university_id,
+            "university_name": self.current_translation.university_name,
+            "language": get_current_locale(self)
+        }
     
     def set_translations(self, translation_dict_or_uni_obj):
         try:
@@ -191,27 +195,14 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
 
                 new_university = University.create(self.all_translations())
 
-                for facility in self.facilities:
-                    facility.approve(new_university.university_id)
-                    
-                for contact_detail in self.contact_details:
-                    contact_detail.approve(new_university.university_id)
-
-                for admission in self.admissions:
-                    admission.approve(new_university.university_id)
-
-                for tuition_fee in self.tuition_fees:
-                    tuition_fee.approve(new_university.university_id)
-
-                for scholarship in self.scholarships:
-                    scholarship.approve(new_university.university_id)
-
-                for course_to_add in self.pending_courses:
-                    new_university.courses.append(Course.get_single(course_id=course_to_add.course_id))
+                self.approve_detail_changes(new_university)
 
             else:
                 university = University.get(university_id=self.university_id).one();
                 logger.info("Editing university %s", university.translations["en"].university_name)
+
+                self.approve_detail_changes(university)
+
                 university.set_translations(self)
                 university.save()
 
@@ -221,6 +212,25 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
             university.delete()
 
         self._delete()
+
+    def approve_detail_changes(self, university):
+        for facility in self.facilities:
+            facility.approve(university.university_id)
+            
+        for contact_detail in self.contact_details:
+            contact_detail.approve(university.university_id)
+
+        for admission in self.admissions:
+            admission.approve(university.university_id)
+
+        for tuition_fee in self.tuition_fees:
+            tuition_fee.approve(university.university_id)
+
+        for scholarship in self.scholarships:
+            scholarship.approve(university.university_id)
+
+        for course_to_add in self.pending_courses:
+            university.courses.append(Course.get_single(course_id=course_to_add.course_id))
 
     def reject(self):
         for course in self.courses:
