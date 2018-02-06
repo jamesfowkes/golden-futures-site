@@ -13,6 +13,8 @@ from app.locale import get_locale
 @flask_login.login_required
 def create_contact_detail():
     if request.method == 'POST':
-        contact_detail = ContactDetailPending.create(
-        	request.form["university_id"], request.form["contact_detail"], request.form["language"])
+        contact_detail = ContactDetailPending.addition(
+        	request.form["university_id"],
+        	{request.form["language"]: {"contact_detail_string": request.form["contact_detail"]}}
+        )
         return json.dumps(contact_detail.json())

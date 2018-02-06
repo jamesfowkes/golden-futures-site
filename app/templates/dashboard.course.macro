@@ -12,14 +12,25 @@
 </form>
 {%- endmacro %}
 
-{% macro render_edit_course_link(id, name) -%}
+{% macro render_edit_course_link(course) -%}
     <div class="edit_course">
-        <a href="{{url_for('dashboard.render_edit_course_dashboard', course_id=id)}}" class="edit_course" id='{{id}}'>{{name}}</a>
+        <a href="{{url_for('dashboard.render_edit_course_dashboard', course_id=course.course_id)}}" class="edit_course" id='{{course.course_id}}'>
+            {{course.course_name}}
+            {% if course.pending_change and course.pending_change.is_edit() %}
+            <mark>({{_("pending changes")}})</mark>
+            {% endif %}
+            {% if course.pending_change and course.pending_change.is_deletion() %}
+            <mark>({{_("pending for deletion")}})</mark>
+            {% endif %}
+        </a>
     </div>
 {%- endmacro %}
 
 {% macro render_edit_pending_course_link(id, name) -%}
     <div class="edit_course">
-        <a href="{{url_for('dashboard.render_edit_pending_course_dashboard', pending_id=id)}}" class="edit_course" id='{{id}}'>{{name}}</a>
+        <a href="{{url_for('dashboard.render_edit_pending_course_dashboard', pending_id=id)}}" class="edit_course" id='{{id}}'>
+            {{name}}
+            <mark>({{_("pending addition")}})</mark>
+        </a>
     </div>
 {%- endmacro %}

@@ -10,23 +10,22 @@ from sqlalchemy_i18n.utils import get_current_locale
 
 import app
 from app.database import db
-from app.models.base_model import BaseModelTranslateable, DeclarativeBase
+from app.models.base_model import BaseModelTranslateable, DeclarativeBase, TranslationMixin, get_locales
+from app.models.pending_changes import pending_university_detail
 
 class FacilityBase():
-    def __init__(self, university_id, facility, language):
+    def __init__(self, university_id, translations):
         self.university_id = university_id
-        self.add_translation(facility, language)
+        self.set_translations(translations)
 
-    def add_translation(self, facility, language=None):
-        if language:
-            self.translations[language].facility_string = facility
-        else:
-            self.current_translation.facility_string = facility
+    def set_translations(self, translations):
+        for language in get_locales(translations):
+            self.translations[language].facility_string = translations[language]["facility_string"]
 
     @classmethod
-    def create(cls, university_id, facility, language=None):
+    def create(cls, university_id, translations):
         university_id = int(university_id)
-        facility_obj = cls(university_id, facility, language)
+        facility_obj = cls(university_id, translations)
         db.session.add(facility_obj)
         db.session.commit()
         return facility_obj
@@ -53,17 +52,19 @@ class FacilityTranslation(translation_base(Facility)):
     facility_string = sa.Column(sa.Unicode(80))
     unique_facility_constraint = sa.PrimaryKeyConstraint('id', 'facility_string', 'locale', name='ufc_1')
 
-class FacilityPending(FacilityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class FacilityPending(pending_university_detail(Facility, "facility_id"), FacilityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "FacilityPending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
     locale = 'en'
 
-    facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    university_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.university_id'))
+    pending_facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    facility_id = db.Column(db.Integer, db.ForeignKey('Facility.facility_id'), nullable=True)
+    pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="facilities")
+    pending_type = db.Column(db.String(6), nullable=False)
 
-class FacilityPendingTranslation(translation_base(FacilityPending)):
+class FacilityPendingTranslation(translation_base(FacilityPending), TranslationMixin):
     __tablename__ = 'FacilityPendingTranslation'
     facility_string = sa.Column(sa.Unicode(80))
     unique_facility_constraint = sa.PrimaryKeyConstraint('id', 'facility_string', 'locale', name='ufc_1')

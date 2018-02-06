@@ -6,12 +6,14 @@
 {% block content %}
 <div class="container">
     {{ dashboard_macro.dashboard_heading(_("Manage course: ") + course.course_name) }}
-    <form id="form_add_course">
+    <form id="form_edit_course" method="post">
         <div class="form-group">
             <h4>{{ _("Course Details") }}</h4>
             <div class="form-group">
                 {{ dashboard_course_macro.course_name_input(course.course_name) }}
-            <button id="course_edit_submit" class="btn btn-default btn-block" type="button">{{_("Submit")}}</button>
+                <input type="hidden" name="language" value="{{g.lang}}">
+            </div>
+            <button id="course_edit_submit" class="btn btn-default btn-block">{{_("Submit")}}</button>
         </div>
     </form>
 

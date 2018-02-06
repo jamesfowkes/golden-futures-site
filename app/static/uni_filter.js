@@ -32,7 +32,7 @@ function filter_by_category(filter) {
 function filter_by_fee(max_fee) {
   $(".university_card").each(function() {
     var this_min_fee = parseInt($(this).attr("min_fee"));
-    if (this_min_fee >= max_fee) {
+    if (this_min_fee > max_fee) {
       $(this).hide();
     }
   });

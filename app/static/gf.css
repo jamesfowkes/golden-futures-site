@@ -90,3 +90,8 @@ label input {
 label.form-check-label {
 	padding-bottom: 1em;
 }
+
+mark {
+    background-color: #efa83d;
+    color: inherit;
+}

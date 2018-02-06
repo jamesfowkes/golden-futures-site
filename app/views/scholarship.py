@@ -14,11 +14,8 @@ logger = logging.getLogger(__name__)
 @flask_login.login_required
 def create_scholarship():
     if request.method == 'POST':
-        university = request.form["university_id"]
-        scholarship = request.form["scholarship"]
-        language = request.form["language"]
-        logger.info("Creating scholarship %s (%s)", university, scholarship)
-        scholarship = ScholarshipPending.create(
-            university, scholarship, language
+        facility = ScholarshipPending.addition(
+            request.form["university_id"],
+            {request.form["language"]: {"scholarship_string": request.form["scholarship"]}}
         )
-        return json.dumps(scholarship.json())
+        return json.dumps(facility.json())

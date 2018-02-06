@@ -11,13 +11,18 @@ from app import app
 @flask_login.login_required
 def create_tuition_fee():
     if request.method == 'POST':
-        tuition_fee = TuitionFeePending.create(
+        tuition_fee = TuitionFeePending.addition(
             request.form["university_id"],
-            request.form["tuition_fee"],
-            request.form["tuition_fee"],
-            request.form["currency"],
-            request.form["period"],
-            request.form["award"],
-            request.form["language"]
+            {
+                request.form["language"]:
+                {
+                    "tuition_fee_min": request.form["tuition_fee_min"],
+                    "tuition_fee_max": request.form["tuition_fee_max"],
+                    "currency": request.form["currency"],
+                    "period": request.form["period"],
+                    "award": request.form["award"]
+                }
+            },
+            include_in_filter=request.form.get("include_in_filter", True)
         )
         return json.dumps(tuition_fee.json())

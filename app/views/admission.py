@@ -13,6 +13,9 @@ from app.locale import get_locale
 @flask_login.login_required
 def create_admission():
     if request.method == 'POST':
-        admission = AdmissionPending.create(
-        	request.form["university_id"], request.form["admission"], request.form["language"])
+        admission = AdmissionPending.addition(
+            request.form["university_id"],
+            {request.form["language"]: {"admission_string": request.form["admission"]}}
+        )
+
         return json.dumps(admission.json())

@@ -24,7 +24,6 @@ def create_course():
             "redirect": url_for('dashboard.render_courses_dashboard')
         })
 
-
 @app.route("/course/edit/<course_id>", methods=['POST'])
 @flask_login.login_required
 def edit_course(course_id):
@@ -34,7 +33,8 @@ def edit_course(course_id):
 
         course_to_edit = Course.get_single_by_id(course_id)
         pending_course = CoursePending.edit(course_to_edit)
-        pending_course.translations[language].course_name = course_name
+        pending_course.set_name(course_name, language)
+        
         return jsonify({
             "success": True,
             "data": pending_course.json(),
@@ -64,7 +64,7 @@ def approve_pending_course_change():
         course_pending = CoursePending.get_single(pending_id=request.form["data_id"])
         json = course_pending.json()
 
-        remaining_count = CoursePending.get_count(course_pending.pending_type) - 1
+        remaining_count = CoursePending.get_similar_count(course_pending) - 1
 
         logger.info("Approve pending change '%s' to course %s (%d remaining)", course_pending.pending_type, course_pending.course_name, remaining_count)
 
@@ -83,7 +83,7 @@ def reject_pending_course_change():
         course_pending = CoursePending.get_single(pending_id=request.form["data_id"])
         json = course_pending.json()
 
-        remaining_count = CoursePending.get_count(course_pending.pending_type) - 1
+        remaining_count = CoursePending.get_similar_count(course_pending) - 1
                 
         logger.info("Rejecting pending change '%s' to course %s", course_pending.pending_type, course_pending.course_name)
         

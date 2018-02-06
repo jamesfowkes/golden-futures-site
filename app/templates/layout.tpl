@@ -68,7 +68,7 @@
                             {{ g.lang | language_name }}<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="{{url_for(request.url_rule.endpoint, lang='km', **g.ep_data)}}" class="language">{{_("Khmer")}}</a></li>
+                            <li><a href="{{url_for(request.url_rule.endpoint, lang='km', **g.ep_data)}}" class="language">{{_("ភាសាខ្មែរ")}}</a></li>
                             <li><a href="{{url_for(request.url_rule.endpoint, lang='en', **g.ep_data)}}" class="language">{{_("English")}}</a></li>
                         </ul>
                     </li>

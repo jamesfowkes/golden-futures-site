@@ -1,0 +1,33 @@
+{% macro university_name_input(default="") -%}
+    <label for="university_name" class="sr-only">{{ _("University Name") }}</label>
+    <input class="form-control" type="text" id="university_name" name="university_name" placeholder="{{_("University Name")}}" value="{{default}}" required>
+{%- endmacro %}
+
+{% macro university_intro_input(default="") -%}
+    <label for="university_intro" class="sr-only">{{ _("University Introduction") }}</label>
+    <textarea rows="4" class="form-control" type="text" id="university_intro" name="university_intro" placeholder="{{_("University Introduction")}}" required>{{default}}</textarea>
+{%- endmacro %}
+
+{% macro render_add_new_university_form() -%}
+<form id="form_add_university" action="{{url_for('create_university')}}">
+    <div class="form-group">
+        <h4>{{ _("University Details") }}</h4>
+        {{ university_name_input() }}
+        {{ university_intro_input() }}
+        <button id="add_university" class="btn btn-default btn-block" type="button">{{_("Submit New University")}}</button>
+    </div>
+</form>
+{%- endmacro %}
+
+{% macro render_edit_university_link(university) -%}
+    <div class="edit_university">
+        <a href="{{url_for('dashboard.render_edit_university_dashboard', university_id=university.university_id)}}" class="edit_university" id='{{id}}'>{{university.university_name}}</a>
+    </div>
+{%- endmacro %}
+
+{% macro render_edit_pending_university_link(university) -%}
+
+    <div class="edit_university">
+        <a href="{{url_for('dashboard.render_edit_pending_university_dashboard', pending_id=university.pending_id)}}" class="edit_university" id='{{id}}'>{{university.university_name}}</a>
+    </div>
+{%- endmacro %}

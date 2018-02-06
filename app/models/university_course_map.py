@@ -5,8 +5,3 @@ university_course_map_table = sa.Table('UniversityCourseMap', DeclarativeBase.me
     sa.Column('university_id', sa.Integer, sa.ForeignKey('University.university_id')),
     sa.Column('course_id', sa.Integer, sa.ForeignKey('Course.course_id'))
 )
-
-university_course_pending_map_table = sa.Table('UniversityCoursePendingMap', DeclarativeBase.metadata,
-    sa.Column('university_id', sa.Integer, sa.ForeignKey('UniversityPending.university_id')),
-    sa.Column('course_id', sa.Integer, sa.ForeignKey('CoursePending.course_id'))
-)

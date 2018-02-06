@@ -11,10 +11,9 @@ from sqlalchemy_i18n import Translatable, translation_base
 
 import app
 from app.database import db
-from app.models.base_model import BaseModelTranslateable, DeclarativeBase, DbIntegrityException
+from app.models.base_model import PendingChangeBase, BaseModelTranslateable, DeclarativeBase, DbIntegrityException
 
 from app.models.university_course_map import university_course_map_table
-from app.models.university_course_map import university_course_pending_map_table
 
 from app.models.category_course_map import category_course_map_table
 
@@ -24,16 +23,15 @@ logger = logging.getLogger(__name__)
 
 class CourseBase():
 
-    def __init__(self, course_name, language=None):
-        self.set_name(course_name, language)
+    def __init__(self, course_name, language):
+        logger.info("Creating base course %s (%s)", course_name, language)
+        self.translations[language].course_name = course_name
 
     def set_name(self, course_name, language=None):
         if language:
             self.translations[language].course_name = course_name
         else:
             self.current_translation.course_name = course_name
-
-        db.session.add(self)
         db.session.commit()
 
     def __repr__(self):
@@ -55,7 +53,8 @@ class CourseBase():
     def json(self):
         return {
             "course_name": self.course_name,
-            "category_name": ", ".join([c.category_name for c in self.categories])
+            "category_names": [c.category_name for c in self.categories],
+            "language": self.current_language
         }
 
     def university_names(self):
@@ -65,8 +64,7 @@ class CourseBase():
     def create(cls, course_name, language):
         logger.info("Creating course %s (%s)", course_name, language)
         course = cls(course_name, language)
-        db.session.add(course)
-        db.session.commit()
+        course.save()
         return course
 
     @classmethod
@@ -85,8 +83,7 @@ class CourseBase():
         for lang in app.app.config["SUPPORTED_LOCALES"]:
             self.translations[lang].course_name = other.translations[lang].course_name
 
-        db.session.add(self)
-        db.session.commit()
+        self.save()
 
     def is_pending(self):
         return False
@@ -101,12 +98,13 @@ class Course(CourseBase, Translatable, BaseModelTranslateable, DeclarativeBase):
     course_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     universities = db.relationship('University', secondary=university_course_map_table, back_populates="courses")
     categories = db.relationship('Category', secondary=category_course_map_table, back_populates="courses")
+    pending_change = db.relationship("CoursePending", uselist=False, back_populates="course")
 
 class CourseTranslation(translation_base(Course)):
     __tablename__ = 'CourseTranslation'
     course_name = sa.Column(sa.Unicode(80))
 
-class CoursePending(CourseBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class CoursePending(CourseBase, PendingChangeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "CoursePending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
@@ -116,17 +114,15 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
     course_id = db.Column(db.Integer, db.ForeignKey("Course.course_id"), unique=True, nullable=True)
     pending_type = db.Column(db.String(6), nullable=False)
     
-    universities = db.relationship('UniversityPending', secondary=university_course_pending_map_table, back_populates="courses")
-    course = db.relationship('Course', uselist=False)
+    course = db.relationship('Course', uselist=False, back_populates="pending_change")
 
     def __init__(self, course_name, language, pending_type):
         
-        self.pending_type = pending_type
         CourseBase.__init__(self, course_name, language)
-        
+        self.pending_type = pending_type
+
         try:
-            db.session.add(self)
-            db.session.commit()
+            self.save()
         except sa.exc.IntegrityError:
             raise DbIntegrityException()
 
@@ -145,12 +141,15 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
         
     def json(self):
         return {
-            "course_name": self.current_translation.course_name,
-            "pending": self.pending_type
+            "course_name": self.course_name,
+            "category_names": [],
+            "language": self.current_language(),
+            "pending_type": self.pending_type,
+            "pending_id": self.pending_id
         }
 
     def approve(self):
-        if self.pending_type == "edit":
+        if self.pending_type == "add_edit":
             if self.course_id is None:
                 logger.info("Adding course %s", self.translations["en"].course_name)
                 new_course = Course.create(self.translations["en"].course_name, "en")
@@ -173,47 +172,36 @@ class CoursePending(CourseBase, Translatable, BaseModelTranslateable, Declarativ
     def reject(self):
         self._delete()
 
+    def is_addition(self):
+        return self.course_id is None
+
+    def is_edit(self):
+        return self.course_id is not None and self.pending_type == "add_edit"
+
+    def is_deletion(self):
+        return self.pending_type == "del"
+
     def is_pending(self):
         return True
 
     @classmethod
-    def get_count(cls, pending_type):
-        if pending_type == "add":
-            return len(cls.all_by_type().additions)
-        elif pending_type == "edit":
-            return len(cls.all_by_type().edits)
-        elif pending_type == "del":
-            return len(cls.all_by_type().deletions)
-        elif pending_type == "all":
-            return len(cls.all_by_type())
-
-    @classmethod
-    def all_by_type(cls):
-        all_changes = cls.all();
-        additions = [c for c in all_changes if c.pending_type == "add"]
-        edits = [c for c in all_changes if c.pending_type == "edit"]
-        dels = [c for c in all_changes if c.pending_type == "del"]
-
-        return PendingChanges(additions, edits, dels)
-
-    @classmethod
     def create_from(cls, existing_course, pending_type):
+        logger.info("Creating %s from %s", cls.__name__, existing_course.course_name)
         new = cls("", "en", pending_type)
         new.update(existing_course)
         return new
 
     @classmethod
     def addition(cls, course_name, language):
-        pending = cls(course_name, language, "add")
+        pending = cls(course_name, language, "add_edit")
         return pending
 
     @classmethod
     def edit(cls, existing_course):
-        try:
-            pending = cls.create_from(existing_course, "edit")
-
-        except DbIntegrityException:
-            pending = cls.get_single(course_id = existing_course.course_id)
+        if existing_course.pending_change:
+            return existing_course.pending_change
+        else:
+            pending = cls.create_from(existing_course, "add_edit")
 
         return pending
 
