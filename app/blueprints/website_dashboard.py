@@ -106,9 +106,41 @@ def render_courses_dashboard():
 @dashboard.route("/dashboard/universities", methods=['GET'])
 @flask_login.login_required
 def render_universities_dashboard():
-    universities = [(university.university_id, university.university_name) for university in University.all()]
-    universities = sorted(universities, key=lambda c: c[1])
-    return render_template('dashboard.universities.tpl', universities=universities)
+    live_universities = University.all()
+    pending_universities = UniversityPending.all()
+    all_universities = live_universities + pending_universities
+    all_universities = sorted(all_universities, key=lambda c: c.university_name[0])
+    return render_template('dashboard.universities.tpl', universities=all_universities)
+
+@dashboard.route("/dashboard/universities/edit/<university_id>", methods=['GET'])
+@flask_login.login_required
+def render_edit_university_dashboard(university_id):
+    g.ep_data["university_id"] = university_id
+    university = university.get_single(university_id=university_id)
+    courses = sorted(Course.all(), key=lambda c: c.course_name)
+    alphabetised_courses = defaultdict(list)
+    for course in courses:
+        first_letter = course.course_name[0]
+        alphabetised_courses[first_letter].append(course)
+
+    sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
+    return render_template('dashboard.university.edit.tpl', university=university, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
+
+@dashboard.route("/dashboard/universities/editpending/<pending_id>", methods=['GET'])
+@flask_login.login_required
+def render_edit_pending_university_dashboard(pending_id):
+    g.ep_data["pending_id"] = pending_id
+    g.ep_data["api_endpoint"] = url_for("edit_pending_university", pending_id=pending_id)
+    university = universityPending.get_single(pending_id=pending_id)
+    courses = sorted(Course.all(), key=lambda c: c.course_name)
+    alphabetised_courses = defaultdict(list)
+    for course in courses:
+        first_letter = course.course_name[0]
+        alphabetised_courses[first_letter].append(course)
+
+    sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
+    return render_template('dashboard.university.edit.tpl', university=university, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
+
 
 def init_app(app):
     dashboard.before_request(common.init_request)
