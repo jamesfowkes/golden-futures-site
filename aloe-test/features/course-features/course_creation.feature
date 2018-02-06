@@ -29,7 +29,7 @@ Scenario: A user wants to add a translation to a course name
 Given the french user is logged in
 And the category "Pet Care" exists
 And the course "Basic Reptiles" exists
-When the translation "Reptiles de base" in "fr" is pending to be added to course "Basic Reptiles"
+When the user pends translation "Reptiles de base" in "fr" for course "Basic Reptiles"
 Then I should get a '200' response
 When the user accepts pending changes to course "Basic Reptiles"
 Then I should get a '200' response
@@ -39,3 +39,4 @@ And the course "Basic Reptiles" should have the "en" translations:
 And the course "Basic Reptiles" should have the "fr" translations:
  | course_name |
  | Reptiles de base |
+ 

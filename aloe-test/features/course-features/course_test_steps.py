@@ -20,17 +20,6 @@ from app.models.category import Category, CategoryPending
 
 logger = logging.getLogger(__name__)
 
-@aloe.step(u"the user sets the course \"([\w\d ]*)\" as pending for creation")
-def the_user_sets_the_course_as_pending_for_creation(step, course_name):
-    with app.test_request_context():
-        aloe.world.response = aloe.world.app.post(
-            "/course/create",
-            data={
-                "course_name": course_name,
-                "language": aloe.world.language
-            }
-        )
-
 @aloe.step(u"the course \"([\w\d ]*)\" should be pending for creation(?: in language \"([\w\d ]*)\")?")
 def the_course_should_be_pending_for_creation(step, course_name, language):
     language = language or "en"
@@ -41,6 +30,17 @@ def the_course_should_be_pending_for_creation(step, course_name, language):
         assert_equals(None, pending_course.course_id)
         assert_equals(language, pending_course.current_language())
 
+@aloe.step(u"the course \"([\w\d ]*)\" should be pending for edit as \"([\w\d ]*)\"(?: in language \"([\w\d ]*)\")?")
+def the_course_should_be_pending_for_edit(step, existing_course_name, new_course_name, language):
+    language = language or "en"
+    with app.app_context():
+        course = Course.get_single(course_name=existing_course_name)
+        pending_course = CoursePending.get_single(course_name=new_course_name, language=language)
+        assert_equals(new_course_name, pending_course.course_name)
+        assert_equals("add_edit", pending_course.pending_type)
+        assert_equals(course.course_id, pending_course.course_id)
+        assert_equals(language, pending_course.current_language())
+
 @aloe.step(u"the course \"([\w\d ]*)\" is pending for creation")
 def the_course_is_pending_for_creation(step, course):
     with app.app_context():
@@ -49,44 +49,6 @@ def the_course_is_pending_for_creation(step, course):
         except sqlalchemy.exc.IntegrityError as e:
             db.session.rollback() # Course already pending
             raise(e)
-
-@aloe.step(u"the user accepts pending changes to course \"([\w\d ]*)\"")
-def the_user_accepts_pending_changes_to_course(step, course_name):
-    with app.test_request_context():
-        pending_course = CoursePending.get_single(course_name=course_name)
-        aloe.world.response = aloe.world.app.post(
-            "/course/pending/approve",
-            data={
-                "data_id": pending_course.pending_id
-            }
-        )
-
-@aloe.step(u"the user accepts the creation of course \"([\w\d ]*)\"")
-def the_user_accepts_the_creation_of_course(step, course_name):
-    with app.test_request_context():
-        pending_course = CoursePending.get_single(course_name=course_name)
-        aloe.world.response = aloe.world.app.post(
-            "/course/pending/approve",
-            data={
-                "data_id": pending_course.pending_id
-            }
-        )
-
-@aloe.step(u"the user pends addition of course \"([\w\d ]*)\" to category \"([\w\d ]*)\"")
-def the_user_pends_addition_of_course(step, course_name, category_name):
-    with app.test_request_context():
-        category = Category.get_single(category_name=category_name, language=aloe.world.language)
-        course = Course.get_single(course_name=course_name, language=aloe.world.language)
-        aloe.world.response = aloe.world.app.post(
-            "/category/edit/" + str(category.category_id),
-            data={
-                "category_name": category.category_name,
-                "category_intro": category.category_intro or "",
-                "category_careers": category.category_careers or "",
-                "category_courses[]": category.course_ids() + [course.course_id],
-                "language": aloe.world.language
-            }
-        )
 
 @aloe.step(u'the course \"([\w\d ]*)\" is pending to be added to category \"([\w\d ]*)\"')
 def the_course_is_pending_to_be_added_to_category(step, course_name, category_name):
@@ -116,18 +78,6 @@ def the_following_course_details_are_returned(step):
 
     assert_equals(step.hashes[0], details)
 
-@aloe.step(u'the translation \"([\w\d ]*)\" in \"([\w\d ]*)\" is pending to be added to course \"([\w\d ]*)\"')
-def the_translation_in_language_is_pending_to_be_added_to_course(step, course_name_translation, language, course_name_en):
-    with app.test_request_context():
-        course = Course.get_single(course_name=course_name_en, language="en")
-        aloe.world.response = aloe.world.app.post(
-            "/course/edit/" + str(course.course_id),
-            data={
-                "course_name": course_name_translation,
-                "language": language
-            }
-        )
-
 @aloe.step(u"the course \"([\w\d ]*)\" exists")
 def the_course_exists(step, course_name):
     with app.app_context():
@@ -148,6 +98,12 @@ def the_course_should_exist(step, course_name):
     with app.app_context():
         course = Course.get_single(course_name=course_name, language=aloe.world.language)
         assert_equals(course.translations[aloe.world.language].course_name, course_name)
+
+@aloe.step(u'the course \"([\w\d ]*)\" should not exist')
+def the_course_should_exist(step, course_name):
+    with app.app_context():
+        course = Course.get_single(course_name=course_name, language=aloe.world.language)
+        assert_equals(None, course)
 
 @aloe.step(u'the course \"([\w\d ]*)\" should have the \"([\w\d ]*)\" translations')
 def the_course_should_have_the_translations(step, course_name, language):
