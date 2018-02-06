@@ -139,6 +139,9 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
         self.courses.append(course)
         self.save()
 
+    def is_pending(self):
+        return False
+
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
     university_name = sa.Column(sa.Unicode(80))

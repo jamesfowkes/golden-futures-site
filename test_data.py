@@ -850,8 +850,7 @@ if __name__ == "__main__":
                 for tuition_fee in uni_data["tuition_fees"]:
                     fee = TuitionFee.create(
                         universities[university].university_id, 
-                        tuition_fee.get("include_in_filter", True),
-                            {
+                        {
                             "en": {
                                 "tuition_fee_min": tuition_fee["min"],
                                 "tuition_fee_max": tuition_fee["max"], 
@@ -866,7 +865,8 @@ if __name__ == "__main__":
                                 "period": khmer(tuition_fee["period"]),
                                 "award": khmer(tuition_fee["award"])
                             }
-                        }
+                        },
+                        include_in_filter=tuition_fee.get("include_in_filter", True)
                     )
 
                 for scholarship in uni_data["scholarships"]:
@@ -942,22 +942,25 @@ if __name__ == "__main__":
                     university.add_course(courses[course])
 
                 for tuition_fee in addition["tuition_fees"]:
-                    TuitionFeePending.addition(university.pending_id, {
-                        "en": {
-                            "tuition_fee_min": tuition_fee["min"],
-                            "tuition_fee_max": tuition_fee["max"], 
-                            "currency": tuition_fee["currency"],
-                            "period": tuition_fee["period"],
-                            "award": tuition_fee["award"]
+                    TuitionFeePending.addition(university.pending_id,
+                        {
+                            "en": {
+                                "tuition_fee_min": tuition_fee["min"],
+                                "tuition_fee_max": tuition_fee["max"], 
+                                "currency": tuition_fee["currency"],
+                                "period": tuition_fee["period"],
+                                "award": tuition_fee["award"]
+                            },
+                            "km": {
+                                "tuition_fee_min": int(float(tuition_fee["min"])/ 0.00025),
+                                "tuition_fee_max": int(float(tuition_fee["max"])/ 0.00025),
+                                "currency": "៛",
+                                "period": khmer(tuition_fee["period"]),
+                                "award": khmer(tuition_fee["award"])
+                            }
                         },
-                        "km": {
-                            "tuition_fee_min": int(float(tuition_fee["min"])/ 0.00025),
-                            "tuition_fee_max": int(float(tuition_fee["max"])/ 0.00025),
-                            "currency": "៛",
-                            "period": khmer(tuition_fee["period"]),
-                            "award": khmer(tuition_fee["award"])
-                        }
-                    })
+                        include_in_filter=True
+                    )
 
 
                 for admission in addition["admissions"]:
@@ -1025,7 +1028,7 @@ if __name__ == "__main__":
                     AdmissionPending.deletion(admission)
 
                 for tuition_fee in edits["new_tuition_fees"]:
-                    TuitionFeePending.addition(pending_uni.pending_id, tuition_fee)
+                    TuitionFeePending.addition(pending_uni.pending_id, tuition_fee, include_in_filter=True)
 
                 for tuition_fee_idx in edits["deleted_tuition_fees"]:
                     tuition_fee = universities[name].tuition_fees[tuition_fee_idx]

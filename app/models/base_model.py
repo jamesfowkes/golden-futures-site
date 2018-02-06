@@ -49,6 +49,10 @@ class BaseModel(__Deleteable__):
         db.session.add(self)
         db.session.commit()
 
+    def kwargs(self):
+            """ To be overridden by subclass if extra constuctor args are required """
+            return {}
+
 class TranslationMixin:
 
     def __getitem__(self, key):
@@ -70,6 +74,10 @@ class BaseModelTranslateable(__Deleteable__):
         fields = self.translateable_fields()
         return {language: {c:self.translations[language].__getattribute__(c) for c in fields} for language, translations in self.translations.items()}
 
+    def kwargs(self):
+            """ To be overridden by subclass if extra constuctor args are required """
+            return {}
+            
     @classmethod
     def all(cls):
         return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).all()

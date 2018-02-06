@@ -16,7 +16,7 @@ class TuitionFeeBase():
 
     def __init__(self, university_id, translations, **kwargs):
         self.university_id = university_id
-        self.include_in_filter = kwargs["include_in_filter"]
+        self.include_in_filter = kwargs.get("include_in_filter", True)
         self.set_translations(translations)
 
     def set_translations(self, translations):
@@ -66,10 +66,7 @@ class TuitionFeeBase():
                 tuition_fee_max = self.current_translation.tuition_fee_max,
                 period = period_string)
 
-        if self.include_in_filter:
-            return s + " (inc.)"
-        else:
-            return s + " (exc.)"
+        return s
 
     def kwargs(self):
         return {"include_in_filter" : self.include_in_filter}
@@ -105,7 +102,7 @@ class TuitionFeePending(pending_university_detail(TuitionFee, "tuition_fee_id"),
 
     def kwargs(self):
         return {"include_in_filter" : self.include_in_filter}
-        
+
     pending_tuition_fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tuition_fee_id = db.Column(db.Integer, db.ForeignKey('TuitionFee.tuition_fee_id'), nullable=True)
     pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))

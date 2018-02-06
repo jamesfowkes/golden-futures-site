@@ -28,7 +28,7 @@ def pending_university_detail(ParentClass, target_id_name):
 
         @classmethod
         def deletion(cls, to_delete):
-            pending_object = cls(to_delete.university.university_id, {})
+            pending_object = cls(to_delete.university.university_id, {}, **to_delete.kwargs())
             pending_object.pending_type = "del"
             setattr(pending_object, target_id_name, getattr(to_delete, target_id_name))
             pending_object.save()
