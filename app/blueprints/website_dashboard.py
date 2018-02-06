@@ -45,6 +45,7 @@ def render_pending_university_changes():
 @flask_login.login_required
 def render_edit_category_dashboard(category_id):
     g.ep_data["category_id"] = category_id
+    g.ep_data["api_endpoint"] = url_for("edit_category", category_id=category_id)
     category = Category.get_single(category_id=category_id)
     courses = sorted(Course.all(), key=lambda c: c.course_name)
     alphabetised_courses = defaultdict(list)
@@ -91,6 +92,7 @@ def render_edit_pending_course_dashboard(pending_id):
 def render_categories_dashboard():
     live_categories = Category.all()
     pending_categories = CategoryPending.all()
+    pending_categories = list(filter(lambda c: c.is_addition(), pending_categories))
     all_categories = live_categories + pending_categories
     all_categories = sorted(all_categories, key=lambda c: c.category_name[0])
     return render_template('dashboard.categories.tpl', categories=all_categories)

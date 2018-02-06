@@ -130,6 +130,7 @@ class Category(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBa
 
     category_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     courses = db.relationship('Course', secondary=category_course_map_table, back_populates="categories")
+    pending_change = db.relationship("CategoryPending", uselist=False, back_populates="category")
 
     def add_course(self, course):
         logger.info("Adding course %s to category %s", course.translations["en"].course_name, self.translations["en"].category_name)
@@ -157,10 +158,11 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
     locale = 'en'
 
     pending_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    category_id = db.Column(db.Integer, unique=True, nullable=True)
+    category_id = db.Column(db.Integer, db.ForeignKey("Category.category_id"), unique=True, nullable=True)
     pending_type = db.Column(db.String(6), nullable=False)
 
     courses = db.relationship('CategoryPendingCourses', back_populates="category")
+    category = db.relationship('Category', uselist=False, back_populates="pending_change")
 
     def __init__(self, category_name, language, pending_type):
         
@@ -218,6 +220,12 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
 
     def is_addition(self):
         return self.category_id is None
+
+    def is_edit(self):
+        return self.category_id is not None and self.pending_type == "add_edit"
+
+    def is_deletion(self):
+        return self.pending_type == "del"
 
     def is_pending(self):
         return True

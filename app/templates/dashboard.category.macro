@@ -27,14 +27,25 @@
 
 {% macro render_edit_category_link(category) -%}
     <div class="edit_category">
-        <a href="{{url_for('dashboard.render_edit_category_dashboard', category_id=category.category_id)}}" class="edit_category" id='{{id}}'>{{category.category_name}}</a>
+        <a href="{{url_for('dashboard.render_edit_category_dashboard', category_id=category.category_id)}}" class="edit_category" id='{{id}}'>
+            {{category.category_name}}
+            {% if category.pending_change and category.pending_change.is_edit() %}
+            <mark>({{_("pending changes")}})</mark>
+            {% endif %}
+            {% if category.pending_change and category.pending_change.is_deletion() %}
+            <mark>({{_("pending for deletion")}})</mark>
+            {% endif %}
+        </a>
     </div>
 {%- endmacro %}
 
 {% macro render_edit_pending_category_link(category) -%}
 
     <div class="edit_category">
-        <a href="{{url_for('dashboard.render_edit_pending_category_dashboard', pending_id=category.pending_id)}}" class="edit_category" id='{{id}}'>{{category.category_name}}</a>
+        <a href="{{url_for('dashboard.render_edit_pending_category_dashboard', pending_id=category.pending_id)}}" class="edit_category" id='{{id}}'>
+            {{category.category_name}}
+            <mark>({{_("pending addition")}})</mark>
+        </a>
     </div>
 {%- endmacro %}
 
