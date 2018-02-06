@@ -3,11 +3,8 @@
 Usage:
     test_data.py create_baseline
     test_data.py create_pending
-    test_data.py copy
+    test_data.py restore
     test_data.py make_original
-
-Options:
-    --add_pending    Add a set of pending changes
 
 This data is used for debugging the website.
 Unit and BDD tests use their own datasets.
@@ -1057,7 +1054,7 @@ if __name__ == "__main__":
             for deletion in pending_deletions["course"]:
                 course = CoursePending.deletion(courses[deletion])
 
-    elif args["copy"]:
+    elif args["restore"]:
         shutil.copy("app/debug.original.db", "app/debug.db")
 
     elif args["make_original"]:
