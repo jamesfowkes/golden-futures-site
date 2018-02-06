@@ -74,6 +74,7 @@ def render_edit_pending_category_dashboard(pending_id):
 @flask_login.login_required
 def render_edit_course_dashboard(course_id):
     g.ep_data["course_id"] = course_id
+    g.ep_data["api_endpoint"] = url_for("edit_course", course_id=course_id)
     course = Course.get_single(course_id=course_id)
     return render_template('dashboard.course.edit.tpl', course=course)
 

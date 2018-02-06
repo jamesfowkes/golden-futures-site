@@ -24,7 +24,6 @@ def create_course():
             "redirect": url_for('dashboard.render_courses_dashboard')
         })
 
-
 @app.route("/course/edit/<course_id>", methods=['POST'])
 @flask_login.login_required
 def edit_course(course_id):
