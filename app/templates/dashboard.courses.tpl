@@ -30,7 +30,7 @@
                         {% if course.is_pending() %}
                             {{ dashboard_course_macro.render_edit_pending_course_link(course.pending_id, course.course_name) }}
                         {% else %}
-                            {{ dashboard_course_macro.render_edit_course_link(course.course_id, course.course_name) }}
+                            {{ dashboard_course_macro.render_edit_course_link(course) }}
                         {% endif %}
                     {% endfor %}
                 </div>

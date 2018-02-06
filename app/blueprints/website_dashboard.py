@@ -100,6 +100,8 @@ def render_categories_dashboard():
 def render_courses_dashboard():
     live_courses = Course.all()
     pending_courses = CoursePending.all()
+    pending_courses = list(filter(lambda c: c.is_addition(), pending_courses))
+
     all_courses = live_courses + pending_courses
     all_courses = sorted(all_courses, key=lambda c: c.course_name[0])
     return render_template('dashboard.courses.tpl', courses=all_courses)
