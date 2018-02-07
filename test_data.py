@@ -65,6 +65,7 @@ def load_universities_from_db(test_university_data):
 
 test_university_data = {
     "National Technical Training Institute": {
+        "latlong": "11.567313,104.876774",
         "courses": [
             "Architecture", "Information Technology", "Civil Engineering", "Electrical Engineering", "Electronic Engineering"
         ],
@@ -98,6 +99,7 @@ test_university_data = {
     },
 
     "Asia Euro University": {
+        "latlong": "11.566176,104.895406",
         "courses": [
             "Accounting", "Computer Science", "Electronics and Electricity", "Finance and Banking",
             "Electrical Engineering", "Electronic Engineering", "Chinese for Business", "English",
@@ -136,6 +138,7 @@ test_university_data = {
     },
 
     "Royal University of Fine Arts": {
+        "latlong": "11.564941,104.928117",
         "courses": [
             "Architecture"
         ],
@@ -167,6 +170,7 @@ test_university_data = {
     },
 
     "Western University": {
+        "latlong": "11.580927,104.900814)",
         "courses": [
             "Accounting", "Biology", "Chemistry", "Computer Science", "Information Technology",
             "Banking and Finance", "Development Economics", "Teaching English as a Foreign Language",
@@ -217,6 +221,7 @@ test_university_data = {
     },
 
     "IIC University of Technology": {
+        "latlong": "11.509091,104.938308",
         "courses": [
             "Business Statistics and Forecasting", "International Business", "Computer Science", "Information Technology",
             "Software Engineering", "Teaching English as a Foreign Language", "Geography", "History",
@@ -255,6 +260,7 @@ test_university_data = {
     },
 
     "O3D Asia Graphic School": {
+        "latlong": "11.456456,104.931994",
         "courses": [
             "Graphic Design"
         ],
@@ -293,6 +299,7 @@ test_university_data = {
     },
 
     "Pannasastra University of Cambodia": {
+        "latlong": "11.573047,104.890433",
         "courses": [
             "Accounting", "Architecture and Interior Design", "Interior Design", "Product Design",
             "Banking and Finance", "Business Administration", "Business Information System", "Computer Engineering",
@@ -341,6 +348,7 @@ test_university_data = {
         "facilities": []
     },
     "Prek Leap National College of Agriculture": {
+        "latlong": "11.641852,104.918627",
         "courses": [
             "Agribusiness/Economics",
             "Agricultural Economics",
@@ -830,10 +838,12 @@ if __name__ == "__main__":
                     }
                 )
 
-
             for university, uni_data in test_university_data.items():
 
                 print(university + "...")
+
+                universities[university].set_latlong(uni_data["latlong"])
+
                 for course in uni_data["courses"]:
                     universities[university].add_course(courses[course])
 

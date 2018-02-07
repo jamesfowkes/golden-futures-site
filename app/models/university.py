@@ -114,7 +114,7 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
     locale = 'en'
 
     university_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
+    latlong = db.Column(db.String)
     courses = db.relationship('Course', secondary=university_course_map_table, back_populates="universities")
     facilities = db.relationship("Facility", back_populates="university")
     contact_details = db.relationship("ContactDetail", back_populates="university")
@@ -137,6 +137,10 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
 
     def add_course(self, course):
         self.courses.append(course)
+        self.save()
+
+    def set_latlong(self, latlong):
+        self.latlong = latlong
         self.save()
 
     def is_pending(self):
