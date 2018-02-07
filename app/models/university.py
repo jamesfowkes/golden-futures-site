@@ -93,6 +93,9 @@ class UniversityBase():
 
         return category_course_map
 
+    def has_course(self, course):
+        return course.course_id in [course.course_id for course in self.courses]
+        
     @classmethod
     def create(cls, translations):
         university = cls(translations)

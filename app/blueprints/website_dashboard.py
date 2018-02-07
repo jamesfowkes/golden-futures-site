@@ -121,7 +121,7 @@ def render_universities_dashboard():
 @flask_login.login_required
 def render_edit_university_dashboard(university_id):
     g.ep_data["university_id"] = university_id
-    university = university.get_single(university_id=university_id)
+    university = University.get_single(university_id=university_id)
     courses = sorted(Course.all(), key=lambda c: c.course_name)
     alphabetised_courses = defaultdict(list)
     for course in courses:

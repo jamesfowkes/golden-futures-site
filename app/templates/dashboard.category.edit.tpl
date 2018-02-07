@@ -2,6 +2,7 @@
 
 {% import 'dashboard.macro' as dashboard_macro with context%}
 {% import 'dashboard.category.macro' as dashboard_category_macro with context%}
+{% import 'dashboard.course_selector.macro' as dashboard_course_selector_macro with context%}
 
 {% block content %}
 <div class="container">
@@ -16,7 +17,7 @@
             </div>
             <div class="form-group">
                 <h3>{{_("Assign Courses")}}</h3>
-                {{ dashboard_category_macro.render_course_selector(category, all_courses, alphabetised_courses) }}
+                {{ dashboard_course_selector_macro.render_course_selector(category, all_courses, alphabetised_courses) }}
             </div>
             <button id="category_edit_submit" class="btn btn-default btn-block" type="button">{{_("Submit")}}</button>
         </div>
