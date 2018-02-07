@@ -95,3 +95,7 @@ mark {
     background-color: #efa83d;
     color: inherit;
 }
+
+div#map {
+	height: 400px;
+}

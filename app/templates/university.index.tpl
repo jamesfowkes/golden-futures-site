@@ -2,7 +2,15 @@
 
 {% block content %}
 <div class="container">
-    <h1>{{university.university_name}}</h1>
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>{{university.university_name}}</h1>
+        </div>
+            <div class="col-sm-6">
+        <div id="map"></div>
+    </div>
+    </div>
+    
 
     <h2>{{_("Courses")}}</h2>
     {% for category, courses in university.courses_by_category().items() %}
@@ -43,6 +51,12 @@
         {% endfor %}
     </ul>
     {% endif %}
+
+
+    <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
+    <script type="text/javascript" src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
 
 </div>
 

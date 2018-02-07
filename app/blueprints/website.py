@@ -40,9 +40,13 @@ def render_universities():
 
 @website.route("/university/<university_id>", methods=['GET'])
 def render_university(university_id):
+    university = University.get_single_by_id(university_id)
+
     g.active="universities"
     g.ep_data["university_id"] = university_id
-    university = University.get_single_by_id(university_id)
+    g.ep_data["latlong"] = university.latlong
+    g.ep_data["university_icon_path"] = url_for("static", filename="leaflet/university.svg")
+
     return render_template('university.index.tpl', university=university)
 
 @website.route("/courses", methods=['GET'])
