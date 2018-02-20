@@ -66,11 +66,6 @@ def logout():
     flask_login.logout_user()
     return redirect(url_for("website.render_index"))
 
-@website.route("/settings", methods=['GET'])
-@flask_login.login_required
-def render_user_settings():
-    return render_template('user_settings.tpl')
-
 def init_app(app):
     website.before_request(common.init_request)
     website.add_app_template_filter(common.language_name)
