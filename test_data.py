@@ -66,6 +66,7 @@ def load_universities_from_db(test_university_data):
 test_university_data = {
     "National Technical Training Institute": {
         "latlong": "11.567313,104.876774",
+        "web_address": "www.ntti.edu.kh",
         "courses": [
             "Architecture", "Information Technology", "Civil Engineering", "Electrical Engineering", "Electronic Engineering"
         ],
@@ -91,7 +92,6 @@ test_university_data = {
             "Student ranked 4th and 5th : 10% scholarship"
         ],
         "contact_details": [
-            "www.ntti.edu.kh",
             "info@ntti.edu.kh",
             "023 883 039"
         ],
@@ -100,6 +100,7 @@ test_university_data = {
 
     "Asia Euro University": {
         "latlong": "11.566176,104.895406",
+        "web_address": "www.aeu.edu.kh",
         "courses": [
             "Accounting", "Computer Science", "Electronics and Electricity", "Finance and Banking",
             "Electrical Engineering", "Electronic Engineering", "Chinese for Business", "English",
@@ -129,7 +130,6 @@ test_university_data = {
             "Grade E- 20%",
         ],
         "contact_details": [
-            "www.aeu.edu.kh",
             "Email: info@aeu.edu.kh",
             "www.facebook.com/aeucamboadia",
             "Phone:(855)23 998 124 / 1572 00 72"
@@ -139,6 +139,7 @@ test_university_data = {
 
     "Royal University of Fine Arts": {
         "latlong": "11.564941,104.928117",
+        "web_address": "www.rufa.edu.kh",
         "courses": [
             "Architecture"
         ],
@@ -160,7 +161,6 @@ test_university_data = {
             "You should apply through your high school."
         ],
         "contact_details": [
-            "www.rufa.edu.kh",
             "rufa@camnet.com.kh",
             "023 986 417",
             "012 444 589",
@@ -171,6 +171,7 @@ test_university_data = {
 
     "Western University": {
         "latlong": "11.580927,104.900814)",
+        "web_address": "www.western.edu.kh",
         "courses": [
             "Accounting", "Biology", "Chemistry", "Computer Science", "Information Technology",
             "Banking and Finance", "Development Economics", "Teaching English as a Foreign Language",
@@ -206,7 +207,6 @@ test_university_data = {
             "Grade E: 0% scholarship"
         ],
         "contact_details": [
-            "www.western.edu.kh",
             "info@western.edu.kh",
             "023 998 233",
             "No. 15, Street 173"
@@ -222,6 +222,7 @@ test_university_data = {
 
     "IIC University of Technology": {
         "latlong": "11.509091,104.938308",
+        "web_address": "www.iic.edu.kh",
         "courses": [
             "Business Statistics and Forecasting", "International Business", "Computer Science", "Information Technology",
             "Software Engineering", "Teaching English as a Foreign Language", "Geography", "History",
@@ -251,7 +252,6 @@ test_university_data = {
             "No Scholarships available."
         ],
         "contact_details": [
-            "www.iic.edu.kh",
             "info@iic.edu.kh",
             "023 425 148",
             "No. 650, Street 2"
@@ -261,6 +261,7 @@ test_university_data = {
 
     "O3D Asia Graphic School": {
         "latlong": "11.456456,104.931994",
+        "web_address": "www.o3dasia.com",
         "courses": [
             "Graphic Design"
         ],
@@ -290,7 +291,6 @@ test_university_data = {
             "CMK Bank offers full funding through loans to be reimbursed once the student is in full employed."
         ],
         "contact_details": [
-            "www.o3dasia.com",
             "contact@o3dasia.com",
             "+855 (0) 92 968 912",
             "No. 108ABCD Mao Tse Toung Blvd"
@@ -300,6 +300,7 @@ test_university_data = {
 
     "Pannasastra University of Cambodia": {
         "latlong": "11.573047,104.890433",
+        "web_address": "www.puc.edu.kh",
         "courses": [
             "Accounting", "Architecture and Interior Design", "Interior Design", "Product Design",
             "Banking and Finance", "Business Administration", "Business Information System", "Computer Engineering",
@@ -339,7 +340,6 @@ test_university_data = {
             "All scholarships are only valid for one year. Students must reapply by September 31st of each academic year"
         ],
         "contact_details": [
-            "www.puc.edu.kh",
             "info@puc.edu.kh",
             "023 990 153",
             "012 681 606",
@@ -349,6 +349,7 @@ test_university_data = {
     },
     "Prek Leap National College of Agriculture": {
         "latlong": "11.641852,104.918627",
+        "web_address": "www.pnsa.edu.kh",
         "courses": [
             "Agribusiness/Economics",
             "Agricultural Economics",
@@ -389,7 +390,6 @@ test_university_data = {
             "Students need to apply through the University."
         ],
         "contact_details": [
-            "www.pnsa.edu.kh",
             "info@pnsa.edu.kh",
             "+855 162 695 62",
             "National Road 6A"
@@ -843,6 +843,7 @@ if __name__ == "__main__":
                 print(university + "...")
 
                 universities[university].set_latlong(uni_data["latlong"])
+                universities[university].set_web_address(uni_data["web_address"])
 
                 for course in uni_data["courses"]:
                     universities[university].add_course(courses[course])
