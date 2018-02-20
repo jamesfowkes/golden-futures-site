@@ -7,10 +7,10 @@
         <h4 class="card-title">Search and Filter</h4>
         <div class="card-body">
             <div class="filter_controls">
-                <label class="label label-default" for="course_filter_dropdown">{{ _("Filter by Course") }}:</label>
+                <label class="label label-default" for="course_filter_dropdown">{{ _("Filter by Category") }}:</label>
                 <div class="dropdown" id="course_filter_dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="course_filter_btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ _("Select Course") }}
+                        {{ _("Select Category") }}
                     </button>
                     <div class="dropdown-menu" aria-labelledby="course_filter_btn">
                         {% for category in data["categories"] | sort %}
@@ -29,7 +29,10 @@
                 <button class="btn btn-default" type="button" id="apply_fee_filter_button">{{ _("Apply") }}</button>
             </div>
             <div>
-                <button class="btn btn-default" type="button" style="display:none;" id="reset_all_filter_button">{{ _("Reset All") }}</button>
+                <div id="applied_filters"></div>
+                <div>
+                    <button class="btn btn-default" type="button" style="display:none;" id="reset_all_filter_button">{{ _("Reset Filters") }}</button>
+                </div>
             </div>
         </div>
     </div>

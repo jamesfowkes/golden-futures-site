@@ -84,4 +84,8 @@ def get_js_strings():
         "pending_add_heading": gettext("No pending additions"),
         "pending_edit_heading": gettext("No pending edits"),
         "pending_del_heading": gettext("No pending deletions"),
+        "category_filter_display_text": gettext("Category"),
+        "fee_filter_display_text": gettext("Maximum Tuition Fee"),
+        "applied_filters": gettext("Applied Filters"),
+        "currency": gettext("$")
     }
