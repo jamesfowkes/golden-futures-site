@@ -21,7 +21,15 @@ function initmap(lat, long) {
 	map.setView(new L.LatLng(lat, long), 14);
 	map.addLayer(osm);
 
-	L.marker([lat, long], {icon: universityIcon}).addTo(map)
+	marker = L.marker([lat, long], {icon: universityIcon})
+	
+	marker.on('click', function(e) {
+		url = "http://www.openstreetmap.org/?mlat=" + this.getLatLng().lat + "&mlon=" + this.getLatLng().lng + "&zoom=14";
+		window.open(url);
+	});
+
+	marker.addTo(map)
+
 }
 
 $( document ).ready(function() {
