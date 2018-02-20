@@ -2,15 +2,16 @@
 
 {% block content %}
 <div class="container">
-    <div class="row">
-        <div class="col-sm-6">
-            <h1>{{university.university_name}}</h1>
-        </div>
-            <div class="col-sm-6">
-        <div id="map"></div>
-    </div>
-    </div>
-    
+    <h1><a class="link_no_underline" href="http://{{university.web_address}}">{{university.university_name}}</a></h1>
+
+    <div id="map"></div>
+
+    <h2>{{_("Contact Details")}}</h2>
+    <ul>
+    {% for detail in university.contact_details %}
+        <li>{{ detail.contact_detail_string }}</li>
+    {% endfor %}
+    </ul>
 
     <h2>{{_("Courses")}}</h2>
     {% for category, courses in university.courses_by_category().items() %}
@@ -45,14 +46,11 @@
 
     {% if university.facilities | length %}
     <h2>{{_("Facilities")}}</h2>
-    <ul>
-        {% for facility in university.facilities %}
-        <li>{{ facility.facility_string }}</li>
-        {% endfor %}
-    </ul>
+    <p>
+    {{ university.facility_names() | join (", ") }}
     {% endif %}
-
-
+    </p>
+    
     <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
     <script type="text/javascript" src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
