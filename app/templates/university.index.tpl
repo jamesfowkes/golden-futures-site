@@ -14,6 +14,7 @@
         </div>
         <div id="map_collapse" class="collapse">
             <div id="map"></div>
+            <a href="#" id="open_map_link">{{_("Open map in new window")}}</a>
         </div>
     </div>
 

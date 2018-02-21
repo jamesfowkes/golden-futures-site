@@ -46,7 +46,7 @@ def render_university(university_id):
     g.ep_data["university_id"] = university_id
     g.ep_data["latlong"] = university.latlong
     g.ep_data["university_icon_path"] = url_for("static", filename="leaflet/university.svg")
-
+    g.ep_data["osm_url"] = "http://www.openstreetmap.org/?mlat=" + university.lat + "&mlon=" + university.long + "&zoom=14"
     return render_template('university.index.tpl', university=university)
 
 @website.route("/courses", methods=['GET'])

@@ -105,6 +105,14 @@ div#map {
 	margin: 20px;
 }
 
+div#map_collapse {
+	padding-bottom: 1em;
+}
+
+a#open_map_link{
+	margin: 20px;
+}
+
 .print-only {
 	display:none;
 }

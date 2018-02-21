@@ -21,7 +21,7 @@ function initmap(lat, long) {
 	marker = L.marker([lat, long], {icon: universityIcon})
 	
 	marker.on('click', function(e) {
-		url = "http://www.openstreetmap.org/?mlat=" + this.getLatLng().lat + "&mlon=" + this.getLatLng().lng + "&zoom=14";
+		url = $data["osm_url"];
 		window.open(url);
 	});
 
@@ -30,6 +30,10 @@ function initmap(lat, long) {
 }
 
 $( document ).ready(function() {
+
+	$("#open_map_link").on("click", function() {
+		window.open($data["osm_url"], "_blank");
+	});
 
 	$("#map_collapse").on("shown.bs.collapse", function(){
 		if (map == null) {
