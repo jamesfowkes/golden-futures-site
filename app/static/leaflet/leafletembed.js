@@ -1,7 +1,4 @@
-var map;
-var ajaxRequest;
-var plotlist;
-var plotlayers=[];
+var map=null;
 
 var universityIcon = L.icon({
     iconUrl: $data["university_icon_path"],
@@ -33,8 +30,13 @@ function initmap(lat, long) {
 }
 
 $( document ).ready(function() {
-	latlong = $data["latlong"].split(",")
-	lat = parseFloat(latlong[0])
-	long = parseFloat(latlong[1])
-	map = initmap(lat, long);
+
+	$("#map_collapse").on("shown.bs.collapse", function(){
+		if (map == null) {
+			latlong = $data["latlong"].split(",")
+			lat = parseFloat(latlong[0])
+			long = parseFloat(latlong[1])
+			map = initmap(lat, long);
+		}
+	});
 });
