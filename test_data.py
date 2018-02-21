@@ -732,20 +732,21 @@ pending_edits = {
             "deleted_admissions": [0],
 
             "new_tuition_fees": [
-                {
-                    "en": {
+                {            
+                    "fee_data": {
                         "tuition_fee_min": 999,
                         "tuition_fee_max": 999, 
-                        "currency": "$",
-                        "period": "year",
-                        "award": "Nobel Prize"
+                        "currency": "$"
                     },
-                    "km": {
-                        "tuition_fee_min": int(float(999)/ 0.00025),
-                        "tuition_fee_max": int(float(999)/ 0.00025), 
-                        "currency": "៛",
-                        "period": khmer("year"),
-                        "award": khmer("Nobel Prize")
+                    "translations": {
+                        "en": {
+                            "period": "year",
+                            "award": "Nobel Prize"
+                        },
+                        "km": {
+                            "period": khmer("year"),
+                            "award": khmer("Nobel Prize")
+                        }
                     }
                 }
             ],
@@ -860,20 +861,17 @@ if __name__ == "__main__":
                         universities[university].university_id, 
                         {
                             "en": {
-                                "tuition_fee_min": tuition_fee["min"],
-                                "tuition_fee_max": tuition_fee["max"], 
-                                "currency": tuition_fee["currency"],
                                 "period": tuition_fee["period"],
                                 "award": tuition_fee["award"],
                             },
                             "km": {                            
-                                "tuition_fee_min": int(float(tuition_fee["min"])/ 0.00025),
-                                "tuition_fee_max": int(float(tuition_fee["max"])/ 0.00025), 
-                                "currency": "៛",
                                 "period": khmer(tuition_fee["period"]),
                                 "award": khmer(tuition_fee["award"])
                             }
                         },
+                        tuition_fee_min=tuition_fee["min"],
+                        tuition_fee_max=tuition_fee["max"], 
+                        currency=tuition_fee["currency"],
                         include_in_filter=tuition_fee.get("include_in_filter", True)
                     )
 
@@ -953,20 +951,17 @@ if __name__ == "__main__":
                     TuitionFeePending.addition(university.pending_id,
                         {
                             "en": {
-                                "tuition_fee_min": tuition_fee["min"],
-                                "tuition_fee_max": tuition_fee["max"], 
-                                "currency": tuition_fee["currency"],
                                 "period": tuition_fee["period"],
                                 "award": tuition_fee["award"]
                             },
                             "km": {
-                                "tuition_fee_min": int(float(tuition_fee["min"])/ 0.00025),
-                                "tuition_fee_max": int(float(tuition_fee["max"])/ 0.00025),
-                                "currency": "៛",
                                 "period": khmer(tuition_fee["period"]),
                                 "award": khmer(tuition_fee["award"])
                             }
                         },
+                        tuition_fee_min= tuition_fee["min"],
+                        tuition_fee_max= tuition_fee["max"], 
+                        currency= tuition_fee["currency"],
                         include_in_filter=True
                     )
 
@@ -1036,7 +1031,8 @@ if __name__ == "__main__":
                     AdmissionPending.deletion(admission)
 
                 for tuition_fee in edits["new_tuition_fees"]:
-                    TuitionFeePending.addition(pending_uni.pending_id, tuition_fee, include_in_filter=True)
+                    TuitionFeePending.addition(
+                        pending_uni.pending_id, tuition_fee["translations"], include_in_filter=True, **tuition_fee["fee_data"])
 
                 for tuition_fee_idx in edits["deleted_tuition_fees"]:
                     tuition_fee = universities[name].tuition_fees[tuition_fee_idx]

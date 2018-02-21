@@ -37,10 +37,10 @@ def pending_university_detail(ParentClass, target_id_name):
         def approve(self, university_id):
             if self.pending_type == "add_edit":
                 if getattr(self, target_id_name):
-                    logger.info("Approving pending add of %s", self)
+                    logger.info("Approving pending edit of %s", self)
                     ParentClass.get_single(target_id_name=getattr(self, target_id_name)).set_translations(self.translations)
                 else:
-                    logger.info("Approving pending edit of %s", self)
+                    logger.info("Approving pending add of %s", self)
                     ParentClass.create(university_id, self.translations, **self.kwargs())
 
             self.delete()

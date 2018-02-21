@@ -16,13 +16,13 @@ def create_tuition_fee():
             {
                 request.form["language"]:
                 {
-                    "tuition_fee_min": request.form["tuition_fee_min"],
-                    "tuition_fee_max": request.form["tuition_fee_max"],
-                    "currency": request.form["currency"],
                     "period": request.form["period"],
                     "award": request.form["award"]
                 }
             },
+            tuition_fee_min=request.form["tuition_fee_min"],
+            tuition_fee_max=request.form["tuition_fee_max"],
+            currency=request.form["currency"],
             include_in_filter=request.form.get("include_in_filter", True)
         )
         return json.dumps(tuition_fee.json())
