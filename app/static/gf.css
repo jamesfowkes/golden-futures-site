@@ -104,3 +104,22 @@ div#map {
 	height: 400px;
 	margin: 20px;
 }
+
+.print-only {
+	display:none;
+}
+
+@media print {
+	.print-only {
+		display:unset;
+	}
+
+	.navbar {
+		display:none;
+	}
+
+	#map_collapse_heading
+	{
+		display:none;
+	}
+}

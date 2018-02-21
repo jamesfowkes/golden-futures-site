@@ -2,8 +2,12 @@
 
 {% block content %}
 <div class="container">
-    <h1><a class="link_no_underline" href="http://{{university.web_address}}">{{university.university_name}}</a></h1>
+    <h1>
+        <a class="link_no_underline" href="http://{{university.web_address}}">{{university.university_name}}</a>
+    </h1>
 
+    <h2 class="print-only">{{university.web_address}}</h2>
+    
     <div class="card plain">
         <div class="card-title" role="tab" id="map_collapse_heading">
             <h3><a data-toggle="collapse" data-parent="#accordion" href="#map_collapse" aria-expanded="true" aria-controls="map_collapse">{{_("Show on Map")}}</a></h3>
