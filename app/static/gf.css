@@ -104,3 +104,30 @@ div#map {
 	height: 400px;
 	margin: 20px;
 }
+
+div#map_collapse {
+	padding-bottom: 1em;
+}
+
+a#open_map_link{
+	margin: 20px;
+}
+
+.print-only {
+	display:none;
+}
+
+@media print {
+	.print-only {
+		display:unset;
+	}
+
+	.navbar {
+		display:none;
+	}
+
+	#map_collapse_heading
+	{
+		display:none;
+	}
+}

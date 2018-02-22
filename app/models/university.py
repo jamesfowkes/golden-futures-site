@@ -95,7 +95,15 @@ class UniversityBase():
 
     def has_course(self, course):
         return course.course_id in [course.course_id for course in self.courses]
-        
+
+    @property
+    def lat(self):
+        return self.latlong.split(",")[0]
+
+    @property
+    def long(self):
+        return self.latlong.split(",")[1]
+
     @classmethod
     def create(cls, translations):
         university = cls(translations)

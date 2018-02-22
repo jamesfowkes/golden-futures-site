@@ -14,10 +14,9 @@ logger = logging.getLogger(__name__)
 
 def get_locales(translations_obj_or_dict):
     try:
-        locales = translations_obj_or_dict.manager.options['locales'].keys()
+        locales = translations_obj_or_dict.manager.options['locales']
     except AttributeError:
         locales = translations_obj_or_dict.keys()
-
     return list(locales)
 
 class DbIntegrityException(Exception):
