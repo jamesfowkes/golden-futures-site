@@ -11,9 +11,7 @@
         <div class="form-group">
             <h4>{{ _("Category Details") }}</h4>
             <div class="form-group">
-                {{ dashboard_category_macro.category_name_input(category.category_name) }}
-                {{ dashboard_category_macro.category_intro_input(category.category_intro) }}
-                {{ dashboard_category_macro.category_careers_input(category.category_careers) }}
+                {{ dashboard_category_macro.render_edit_category_form(category, languages=languages) }}
             </div>
             <div class="form-group">
                 <h3>{{_("Assign Courses")}}</h3>

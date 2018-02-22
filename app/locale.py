@@ -78,6 +78,9 @@ def init_app(app):
     sqlalchemy_utils.i18n.get_locale = get_locale
     sqlalchemy_i18n.make_translatable(options={'locales': app.config["SUPPORTED_LOCALES"]})
 
+def supported_languages():
+    return [(k, v) for k,v in app.config["SUPPORTED_LOCALES"].items()]
+
 def get_js_strings():
     return {
         "add_success": gettext("added successfully"),

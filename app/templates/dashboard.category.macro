@@ -1,28 +1,68 @@
-{% macro category_name_input(default="") -%}
-    <label for="category_name" class="sr-only">{{ _("Category Name") }}</label>
-    <input class="form-control" type="text" id="category_name" name="category_name" placeholder="{{_("Category Name")}}" value="{{default}}" required>
+{% macro category_name_input(lang, default="") -%}
+    <label for="category_name" class="sr-only">{{ _("Category Name") }} ({{lang[0]}})</label>
+    <input class="form-control" type="text" id="category_name" name="category_name.{{lang[1]}}" placeholder="{{_("Category Name")}} ({{lang[0]}})" value="{{default}}" required>
 {%- endmacro %}
 
-{% macro category_intro_input(default="") -%}
-    <label for="category_intro" class="sr-only">{{ _("Category Introduction") }}</label>
-    <textarea rows="4" class="form-control" type="text" id="category_intro" name="category_intro" placeholder="{{_("Category Introduction")}}" required>{{default}}</textarea>
+{% macro category_intro_input(lang, default="") -%}
+    <label for="category_intro" class="sr-only">{{ _("Category Introduction") }} ({{lang[0]}})</label>
+    <textarea rows="4" class="form-control" type="text" id="category_intro" name="category_intro.{{lang[1]}}" placeholder="{{_("Category Introduction")}} ({{lang[0]}})" required>{{default}}</textarea>
 {%- endmacro %}
 
-{% macro category_careers_input(default="") -%}
-    <label for="category_careers" class="sr-only">{{ _("Category Careers") }}</label>
-    <textarea rows="4" class="form-control" type="text" id="category_careers" name="category_careers" placeholder="{{_("Category Careers")}}" required>{{default}}</textarea>
+{% macro category_careers_input(lang, default="") -%}
+    <label for="category_careers" class="sr-only">{{ _("Category Careers") }} ({{lang[0]}})</label>
+    <textarea rows="4" class="form-control" type="text" id="category_careers" name="category_careers.{{lang[1]}}" placeholder="{{_("Category Careers")}} ({{lang[0]}})" required>{{default}}</textarea>
 {%- endmacro %}
 
-{% macro render_add_new_category_form() -%}
-<form id="form_add_category" action="{{url_for('create_category')}}">
-    <div class="form-group">
-        <h4>{{ _("Category Details") }}</h4>
-        {{ category_name_input() }}
-        {{ category_intro_input() }}
-        {{ category_careers_input() }}
-        <button id="add_category" class="btn btn-default btn-block" type="button">{{_("Submit New Category")}}</button>
-    </div>
-</form>
+{% macro render_add_new_category_fields(lang) -%}
+        {{ category_name_input(lang) }}
+        {{ category_intro_input(lang) }}
+        {{ category_careers_input(lang) }}
+{%- endmacro %}
+
+{% macro render_edit_category_fields(category, lang) -%}
+        {{ category_name_input(lang, default=category.translations[lang[0]].category_name) }}
+        {{ category_intro_input(lang, default=category.translations[lang[0]].category_intro) }}
+        {{ category_careers_input(lang, default=category.translations[lang[0]].category_careers) }}
+{%- endmacro %}
+
+{% macro render_add_new_category_form(languages) -%}
+<div class="container">
+    <form id="form_add_category" action="{{url_for('create_category')}}">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-6">
+                    {{ render_add_new_category_fields(languages[0]) }}
+                </div>
+                <div class="col-sm-6">
+                    {{ render_add_new_category_fields(languages[1]) }}
+                </div>
+            </div>
+            <div class="row">
+                <button id="add_category" class="btn btn-default btn-block" type="button">{{_("Submit New Category")}}</button>
+            </div>
+        </div>
+    </form>
+</div>
+{%- endmacro %}
+
+{% macro render_edit_category_form(category, languages) -%}
+<div class="container">
+    <form id="form_add_category" action="{{url_for('create_category')}}">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-6">
+                    {{ render_edit_category_fields(category, languages[0]) }}
+                </div>
+                <div class="col-sm-6">
+                    {{ render_edit_category_fields(category, languages[1]) }}
+                </div>
+            </div>
+            <div class="row">
+                <button id="add_category" class="btn btn-default btn-block" type="button">{{_("Submit New Category")}}</button>
+            </div>
+        </div>
+    </form>
+</div>
 {%- endmacro %}
 
 {% macro render_edit_category_link(category) -%}

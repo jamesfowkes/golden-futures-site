@@ -14,6 +14,8 @@ from app.models.pending_changes import PendingChanges
 
 from app.blueprints import common
 
+from app import locale
+
 logger = logging.getLogger(__name__)
 
 dashboard = Blueprint('dashboard', __name__, template_folder='templates')
@@ -54,7 +56,11 @@ def render_edit_category_dashboard(category_id):
         alphabetised_courses[first_letter].append(course)
 
     sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
-    return render_template('dashboard.category.edit.tpl', category=category, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
+    return render_template(
+        'dashboard.category.edit.tpl',
+        category=category, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses,
+        languages=locale.supported_languages()
+    )
 
 @dashboard.route("/dashboard/categories/editpending/<pending_id>", methods=['GET'])
 @flask_login.login_required
@@ -95,7 +101,7 @@ def render_categories_dashboard():
     pending_categories = list(filter(lambda c: c.is_addition(), pending_categories))
     all_categories = live_categories + pending_categories
     all_categories = sorted(all_categories, key=lambda c: c.category_name[0])
-    return render_template('dashboard.categories.tpl', categories=all_categories)
+    return render_template('dashboard.categories.tpl', categories=all_categories, languages=locale.locale_names())
     
 @dashboard.route("/dashboard/courses", methods=['GET'])
 @flask_login.login_required
