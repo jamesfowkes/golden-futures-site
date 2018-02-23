@@ -14,6 +14,7 @@ from app.models.pending_changes import PendingChanges
 
 from app.blueprints import common
 
+from app import app
 from app import locale
 
 logger = logging.getLogger(__name__)
@@ -101,7 +102,7 @@ def render_categories_dashboard():
     pending_categories = list(filter(lambda c: c.is_addition(), pending_categories))
     all_categories = live_categories + pending_categories
     all_categories = sorted(all_categories, key=lambda c: c.category_name[0])
-    return render_template('dashboard.categories.tpl', categories=all_categories, languages=locale.locale_names())
+    return render_template('dashboard.categories.tpl', categories=all_categories, languages=locale.supported_languages())
     
 @dashboard.route("/dashboard/courses", methods=['GET'])
 @flask_login.login_required

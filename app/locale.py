@@ -1,3 +1,4 @@
+from collections import namedtuple
 import logging
 
 import sqlalchemy_i18n
@@ -15,6 +16,8 @@ logger = logging.getLogger(__name__)
 babel = Babel()
 
 testing_get_locale = None
+
+Language = namedtuple("Language", ["id", "name"])
 
 @babel.localeselector
 def get_locale():
@@ -79,7 +82,7 @@ def init_app(app):
     sqlalchemy_i18n.make_translatable(options={'locales': app.config["SUPPORTED_LOCALES"]})
 
 def supported_languages():
-    return [(k, v) for k,v in app.config["SUPPORTED_LOCALES"].items()]
+    return [Language(k, v) for k,v in app.config["SUPPORTED_LOCALES"].items()]
 
 def get_js_strings():
     return {

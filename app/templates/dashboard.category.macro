@@ -1,16 +1,16 @@
 {% macro category_name_input(lang, default="") -%}
-    <label for="category_name" class="sr-only">{{ _("Category Name") }} ({{lang[0]}})</label>
-    <input class="form-control" type="text" id="category_name" name="category_name.{{lang[1]}}" placeholder="{{_("Category Name")}} ({{lang[0]}})" value="{{default}}" required>
+    <label for="category_name" class="sr-only">{{ _("Category Name") }} ({{lang.name}})</label>
+    <input class="form-control" type="text" id="category_name" name="category_name.{{lang.id}}" placeholder="{{_("Category Name")}} ({{lang.name}})" value="{{default}}" required>
 {%- endmacro %}
 
 {% macro category_intro_input(lang, default="") -%}
-    <label for="category_intro" class="sr-only">{{ _("Category Introduction") }} ({{lang[0]}})</label>
-    <textarea rows="4" class="form-control" type="text" id="category_intro" name="category_intro.{{lang[1]}}" placeholder="{{_("Category Introduction")}} ({{lang[0]}})" required>{{default}}</textarea>
+    <label for="category_intro" class="sr-only">{{ _("Category Introduction") }} ({{lang.name}})</label>
+    <textarea rows="4" class="form-control" type="text" id="category_intro" name="category_intro.{{lang.id}}" placeholder="{{_("Category Introduction")}} ({{lang.name}})" required>{{default}}</textarea>
 {%- endmacro %}
 
 {% macro category_careers_input(lang, default="") -%}
-    <label for="category_careers" class="sr-only">{{ _("Category Careers") }} ({{lang[0]}})</label>
-    <textarea rows="4" class="form-control" type="text" id="category_careers" name="category_careers.{{lang[1]}}" placeholder="{{_("Category Careers")}} ({{lang[0]}})" required>{{default}}</textarea>
+    <label for="category_careers" class="sr-only">{{ _("Category Careers") }} ({{lang.name}})</label>
+    <textarea rows="4" class="form-control" type="text" id="category_careers" name="category_careers.{{lang.id}}" placeholder="{{_("Category Careers")}} ({{lang.name}})" required>{{default}}</textarea>
 {%- endmacro %}
 
 {% macro render_add_new_category_fields(lang) -%}
@@ -20,9 +20,9 @@
 {%- endmacro %}
 
 {% macro render_edit_category_fields(category, lang) -%}
-        {{ category_name_input(lang, default=category.translations[lang[0]].category_name) }}
-        {{ category_intro_input(lang, default=category.translations[lang[0]].category_intro) }}
-        {{ category_careers_input(lang, default=category.translations[lang[0]].category_careers) }}
+        {{ category_name_input(lang, default=category.translations[lang.id].category_name) }}
+        {{ category_intro_input(lang, default=category.translations[lang.id].category_intro) }}
+        {{ category_careers_input(lang, default=category.translations[lang.id].category_careers) }}
 {%- endmacro %}
 
 {% macro render_add_new_category_form(languages) -%}
