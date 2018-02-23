@@ -1,13 +1,22 @@
 import os
 import logging
-
-logging.basicConfig(level=logging.INFO)
+import logging.handlers
 
 from flask import Flask
 
 app = Flask(__name__)
 
 app.config.from_object(os.environ["GF_CONFIG_CLASS"])
+
+log_level = app.config["DEBUG"]
+logfile = app.config["LOGFILE"]
+
+formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(module)s - %(message)s')
+handler = logging.handlers.RotatingFileHandler(logfile, maxBytes=10000, backupCount=1)
+handler.setFormatter(formatter)
+handler.setLevel(log_level)
+root_logger = logging.getLogger()
+root_logger.addHandler(handler)
 
 from app import encrypt
 encrypt.init_app(app)

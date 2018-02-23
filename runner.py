@@ -7,8 +7,6 @@ Usage:
 import docopt
 import logging
 
-from flask import url_for
-
 from app import app
 
 def get_logger():
