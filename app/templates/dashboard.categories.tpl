@@ -24,7 +24,7 @@
         <div class="card-title" role="tab" id="categories_heading">
             <h3 id="edit_category">{{_("Edit Categories")}}</h3>
         </div>
-        <div id="catgories_list" aria-labelledby="edit_category">
+        <div id="categories_list" aria-labelledby="edit_category">
             {% for category in categories %}
                 {% if category.is_pending() %}
                     {{ dashboard_category_macro.render_edit_pending_category_link(category) }}

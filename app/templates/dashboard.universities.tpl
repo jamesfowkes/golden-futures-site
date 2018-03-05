@@ -25,7 +25,7 @@
                 <div class="card-title" role="tab" id="universities_heading">
                     <h3 id="edit_university">{{_("Edit universities")}}</h3>
                 </div>
-                <div id="catgories_list" aria-labelledby="edit_university">
+                <div id="categories_list" aria-labelledby="edit_university">
                     {% for university in universities %}
                         {% if university.is_pending() %}
                             {{ dashboard_university_macro.render_edit_pending_university_link(university) }}
