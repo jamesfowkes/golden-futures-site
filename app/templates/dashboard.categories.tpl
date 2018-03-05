@@ -41,4 +41,5 @@
     {{ super() }}
     <script src="{{url_for('static', filename='dashboard.js')}}"></script>
     <script src="{{url_for('static', filename='dashboard.category.js')}}"></script>
+    <script src="{{url_for('static', filename='jquery_plugins/jquery.form.min.js')}}"></script>
 {% endblock %}

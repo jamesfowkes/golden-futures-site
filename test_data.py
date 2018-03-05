@@ -808,15 +808,22 @@ if __name__ == "__main__":
             print("Creating categories...", end=""); sys.stdout.flush()
             
             for category_name, category_data in test_category_data.items():
-                new_category = Category.create(category_name, "en")
+                new_category = Category.create(
+                    {
+                        "en": {
+                            "category_name":category_name,
+                            "category_intro":category_data["intro"],
+                            "category_careers":category_data["careers"]
+                        },
+                        "km": {
+                            "category_name":khmer(category_name),
+                            "category_intro":khmer(category_data["intro"]),
+                            "category_careers":khmer(category_data["careers"])
+                        }
+                    }
+                )
+
                 categories[category_name] = new_category
-
-                new_category.set_name(khmer(category_name), "km")
-                new_category.set_intro(category_data["intro"], "en")
-                new_category.set_intro(khmer(category_data["intro"]), "km")
-
-                new_category.set_careers(category_data["careers"], "en")
-                new_category.set_careers(khmer(category_data["careers"]), "km")
 
                 for course in category_data["courses"]:
                     categories[category_name].add_course(courses[course])
@@ -918,12 +925,21 @@ if __name__ == "__main__":
 
             for addition in pending_additions["category"]:
                 print("Addition of '{}' category".format(addition[0]))
-                category = CategoryPending.addition(category_name=addition[0], language="en")
-                category.set_name(khmer(addition[0]), "km")
-                category.set_intro(addition[1], "en")
-                category.set_intro(khmer(addition[1]), "km")
-                category.set_careers(addition[2], "en")
-                category.set_careers(khmer(addition[2]), "km")
+                category = CategoryPending.addition(
+                    {
+                        "en": {
+                            "category_name":addition[0],
+                            "category_intro":addition[1],
+                            "category_careers":addition[2]
+                        },
+                        "km": {
+                            "category_name":khmer(addition[0]),
+                            "category_intro":khmer(addition[1]),
+                            "category_careers":khmer(addition[2])
+                        }
+                    }
+                )
+
                 if len(addition) == 4:
                     category.add_course(courses[addition[3]])
 

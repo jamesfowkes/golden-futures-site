@@ -1,33 +1,20 @@
-{% macro category_name_input(lang, default="") -%}
-    <label for="category_name" class="sr-only">{{ _("Category Name") }} ({{lang.name}})</label>
-    <input class="form-control" type="text" id="category_name" name="category_name.{{lang.id}}" placeholder="{{_("Category Name")}} ({{lang.name}})" value="{{default}}" required>
-{%- endmacro %}
-
-{% macro category_intro_input(lang, default="") -%}
-    <label for="category_intro" class="sr-only">{{ _("Category Introduction") }} ({{lang.name}})</label>
-    <textarea rows="4" class="form-control" type="text" id="category_intro" name="category_intro.{{lang.id}}" placeholder="{{_("Category Introduction")}} ({{lang.name}})" required>{{default}}</textarea>
-{%- endmacro %}
-
-{% macro category_careers_input(lang, default="") -%}
-    <label for="category_careers" class="sr-only">{{ _("Category Careers") }} ({{lang.name}})</label>
-    <textarea rows="4" class="form-control" type="text" id="category_careers" name="category_careers.{{lang.id}}" placeholder="{{_("Category Careers")}} ({{lang.name}})" required>{{default}}</textarea>
-{%- endmacro %}
+{% import 'forms.macro' as forms_macro with context%}
 
 {% macro render_add_new_category_fields(lang) -%}
-        {{ category_name_input(lang) }}
-        {{ category_intro_input(lang) }}
-        {{ category_careers_input(lang) }}
+        {{ forms_macro.i18n_text_input("category_name", "Category Name", lang, default="", other="required") }}
+        {{ forms_macro.i18n_textarea_input("category_intro", "Category Intro", 4, lang, default="", other="required") }}
+        {{ forms_macro.i18n_text_input("category_careers", "Category Careers", lang, default="", other="required") }}
 {%- endmacro %}
 
 {% macro render_edit_category_fields(category, lang) -%}
-        {{ category_name_input(lang, default=category.translations[lang.id].category_name) }}
-        {{ category_intro_input(lang, default=category.translations[lang.id].category_intro) }}
-        {{ category_careers_input(lang, default=category.translations[lang.id].category_careers) }}
+        {{ forms_macro.i18n_text_input("category_name", "Category Name", lang, default=category.translations[lang.id].category_name, other="required") }}
+        {{ forms_macro.i18n_textarea_input("category_intro", "Category Intro", 4, lang, default=category.translations[lang.id].category_intro, other="required") }}
+        {{ forms_macro.i18n_text_input("category_careers", "Category Careers", lang, default=category.translations[lang.id].category_careers, other="required") }}
 {%- endmacro %}
 
 {% macro render_add_new_category_form(languages) -%}
 <div class="container">
-    <form id="form_add_category" action="{{url_for('create_category')}}">
+    <form id="form_add_category" method="post">
         <div class="form-group">
             <div class="row">
                 <div class="col-sm-6">
@@ -40,6 +27,7 @@
             <div class="row">
                 <button id="add_category" class="btn btn-default btn-block" type="button">{{_("Submit New Category")}}</button>
             </div>
+            <input type="hidden" name="languages" value="{{languages[0].id}},{{languages[1].id}}">
         </div>
     </form>
 </div>
@@ -47,7 +35,7 @@
 
 {% macro render_edit_category_form(category, languages) -%}
 <div class="container">
-    <form id="form_add_category" action="{{url_for('create_category')}}">
+    <form id="form_edit_category" method="post">
         <div class="form-group">
             <div class="row">
                 <div class="col-sm-6">
@@ -58,8 +46,9 @@
                 </div>
             </div>
             <div class="row">
-                <button id="add_category" class="btn btn-default btn-block" type="button">{{_("Submit New Category")}}</button>
+                <button id="edit_category" class="btn btn-default btn-block" type="button">{{_("Submit Changes")}}</button>
             </div>
+            <input type="hidden" name="languages" value="{{languages[0].id}},{{languages[1].id}}">
         </div>
     </form>
 </div>

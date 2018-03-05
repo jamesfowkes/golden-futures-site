@@ -19,6 +19,19 @@ def get_locales(translations_obj_or_dict):
         locales = translations_obj_or_dict.keys()
     return list(locales)
 
+def get_translation(translations_obj_or_dict, language, field_name):
+    try:
+        return getattr(translations_obj_or_dict[language], field_name)
+    except AttributeError:
+        pass
+
+    try:
+        return translations_obj_or_dict[language][field_name]
+    except KeyError:
+        return None
+
+    return translation
+
 class DbIntegrityException(Exception):
     pass
     
@@ -77,6 +90,12 @@ class BaseModelTranslateable(__Deleteable__):
             """ To be overridden by subclass if extra constuctor args are required """
             return {}
             
+    def set_translation(self, translations_obj_or_dict, language, field_name):
+        translation = get_translation(translations_obj_or_dict, language, field_name)
+        if translation:
+            logger.info("Setting translation '%s' in '%s' to %s", field_name, language, translation)
+            setattr(self.translations[language], field_name, translation)
+
     @classmethod
     def all(cls):
         return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).all()

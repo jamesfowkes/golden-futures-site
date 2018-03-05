@@ -48,7 +48,11 @@ def render_pending_university_changes():
 @flask_login.login_required
 def render_edit_category_dashboard(category_id):
     g.ep_data["category_id"] = category_id
-    g.ep_data["api_endpoint"] = url_for("edit_category", category_id=category_id)
+    g.ep_data["api_endpoints"] = {
+        "edit_category": url_for("edit_category", category_id=category_id),
+        "edit_category_courses": url_for("edit_category_courses", category_id=category_id)
+    }
+    
     category = Category.get_single(category_id=category_id)
     courses = sorted(Course.all(), key=lambda c: c.course_name)
     alphabetised_courses = defaultdict(list)

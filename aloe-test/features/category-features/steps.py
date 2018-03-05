@@ -16,16 +16,18 @@ from app.models.user import User
 from app.models.category import Category, CategoryPending
 from app.models.course import Course
 
+from ..steps import fieldname_with_language
+
 @aloe.step(u"the user sets the category \"([\w\d ]*)\" as pending for creation")
 def the_user_sets_the_category_as_pending_for_creation(step, category_name):
     with app.test_request_context():
         aloe.world.response = aloe.world.app.post(
             "/category/create",
             data={
-                "category_name": category_name,
-                "category_intro": "Aloe test category introduction",
-                "category_careers":  "Behaviour Driven Development",
-                "language": aloe.world.language
+                fieldname_with_language("category_name", aloe.world.language): category_name,
+                fieldname_with_language("category_intro", aloe.world.language): "Aloe test category introduction",
+                fieldname_with_language("category_careers", aloe.world.language):  "Behaviour Driven Development",
+                "languages": [aloe.world.language]
             }
         )
 
@@ -43,7 +45,7 @@ def the_category_should_be_pending_for_creation(step, category_name, language):
 def the_category_is_pending_for_creation(step, category):
     with app.app_context():
         try:
-            CategoryPending.addition(category, aloe.world.language)
+            CategoryPending.addition({aloe.world.language: {"category_name": category}})
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # Category already pending
 
@@ -93,7 +95,7 @@ def the_category_should_be_pending_for_deletion(step, category_name):
 def the_category_exists(step, category):
     with app.app_context():
         try:
-            Category.create(category_name=category, language=aloe.world.language)
+            Category.create({aloe.world.language:{"category_name":category}})
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # Category already pending
 

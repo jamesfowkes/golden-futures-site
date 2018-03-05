@@ -14,6 +14,7 @@ import app
 from app.database import db
 
 from app.models.base_model import BaseModel, BaseModelTranslateable, DeclarativeBase, PendingChangeBase, DbIntegrityException
+from app.models.base_model import get_locales, get_translation
 
 from app.models.category_course_map import category_course_map_table
 from app.models.course import Course
@@ -23,9 +24,8 @@ logger = logging.getLogger(__name__)
 
 class CategoryBase():
 
-    def __init__(self, category_name, language):
-        logger.info("Creating base category %s (%s)", category_name, language)
-        self.translations[language].category_name = category_name
+    def __init__(self, translations):
+        self.set_translations(translations)
 
     def __hash__(self):
         return self.category_id
@@ -92,12 +92,11 @@ class CategoryBase():
         return False
         
     @classmethod
-    def create(cls, category_name, language):
-        logger.info("Creating category %s (%s)", category_name, language)
-        category = cls(category_name, language)
+    def create(cls, translations):
+        logger.info("Creating category %s", get_translation(translations, get_locales(translations)[0], "category_name"))
+        category = cls(translations)
         
-        db.session.add(category)
-        db.session.commit()
+        category.save()
 
         return category
 
@@ -120,6 +119,12 @@ class CategoryBase():
     
     def course_count(self):
         return len(self.courses)
+
+    def set_translations(self, translations):
+        for language in get_locales(translations):
+            self.set_translation(translations, language, "category_name")
+            self.set_translation(translations, language, "category_intro")
+            self.set_translation(translations, language, "category_careers")
 
 @total_ordering
 class Category(CategoryBase, Translatable, BaseModelTranslateable, DeclarativeBase):
@@ -164,14 +169,13 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
     courses = db.relationship('CategoryPendingCourses', back_populates="category")
     category = db.relationship('Category', uselist=False, back_populates="pending_change")
 
-    def __init__(self, category_name, language, pending_type):
+    def __init__(self, translations, pending_type):
         
-        CategoryBase.__init__(self, category_name, language)
+        CategoryBase.__init__(self, translations)
         self.pending_type = pending_type
         
         try:
-            db.session.add(self)
-            db.session.commit()
+            self.save()
         except sa.exc.IntegrityError:
             raise DbIntegrityException()
 
@@ -187,9 +191,7 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
         if self.pending_type == "add_edit":
             if self.category_id is None:
                 logger.info("Adding category %s", self.translations["en"].category_name)
-                new_category = Category.create(self.translations["en"].category_name, "en")
-                new_category.set_intro(self.translations["en"].category_intro, "en")
-                new_category.set_careers(self.translations["en"].category_careers, "en")
+                new_category = Category.create(self.translations)
                 for course in self.courses:
                     new_category.add_course(Course.get_single(course_id=course.course_id))
             else:
@@ -232,13 +234,13 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
 
     @classmethod
     def create_from(cls, existing_category, pending_type):
-        new = cls("", "en", pending_type)
+        new = cls({}, pending_type)
         new.update(existing_category)
         return new
 
     @classmethod
-    def addition(cls, category_name, language):
-        pending = cls(category_name, language, "add_edit")
+    def addition(cls, translations):
+        pending = cls(translations, "add_edit")
         return pending
 
     @classmethod

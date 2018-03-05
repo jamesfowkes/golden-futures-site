@@ -7,19 +7,19 @@
 {% block content %}
 <div class="container">
     {{ dashboard_macro.dashboard_heading(_("Manage Category: ") + category.category_name) }}
-    <form id="form_add_category">
-        <div class="form-group">
+    <div>
+        <div>
             <h4>{{ _("Category Details") }}</h4>
-            <div class="form-group">
-                {{ dashboard_category_macro.render_edit_category_form(category, languages=languages) }}
-            </div>
-            <div class="form-group">
-                <h3>{{_("Assign Courses")}}</h3>
-                {{ dashboard_course_selector_macro.render_course_selector(category, all_courses, alphabetised_courses) }}
-            </div>
-            <button id="category_edit_submit" class="btn btn-default btn-block" type="button">{{_("Submit")}}</button>
+            {{ dashboard_category_macro.render_edit_category_form(category, languages=languages) }}
         </div>
-    </form>
+        <div>
+            <h4>{{_("Assign Courses")}}</h4>
+            <form id="form_edit_category_courses" method="post">
+                {{ dashboard_course_selector_macro.render_course_selector(category, all_courses, alphabetised_courses) }}
+                <button id="edit_category_courses" class="btn btn-default btn-block" type="button">{{_("Submit")}}</button>
+            </form>
+        </div>
+    </div>
 
 </div>
 {% endblock %}
@@ -28,4 +28,5 @@
     {{ super() }}
     <script src="{{url_for('static', filename='dashboard.js')}}"></script>
     <script src="{{url_for('static', filename='dashboard.category.edit.js')}}"></script>
+    <script src="{{url_for('static', filename='jquery_plugins/jquery.form.min.js')}}"></script>
 {% endblock %}

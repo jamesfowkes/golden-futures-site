@@ -1,0 +1,9 @@
+{% macro i18n_text_input(name, label, lang, default="", other="") -%}
+    <label for="{{name}}"" class="sr-only">{{ _(label) }} ({{lang.name}})</label>
+    <input class="form-control" type="text" id="{{name}}.{{lang.id}}" name="{{name}}.{{lang.id}}" placeholder="{{_(label)}} ({{lang.name}})" value="{{default}}" {{other}}>
+{%- endmacro %}
+
+{% macro i18n_textarea_input(name, label, rows, lang, default="", other="") -%}
+    <label for="{{name}}"" class="sr-only">{{ _(label) }} ({{lang.name}})</label>
+    <textarea rows="{{rows}}" class="form-control" type="text" id="{{name}}.{{lang.id}}" name="{{name}}.{{lang.id}}" placeholder="{{_(label)}} ({{lang.name}})" {{other}}">{{default}}</textarea>
+{%- endmacro %}

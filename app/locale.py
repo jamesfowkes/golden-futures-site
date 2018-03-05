@@ -87,6 +87,7 @@ def supported_languages():
 def get_js_strings():
     return {
         "add_success": gettext("added successfully"),
+        "edit_success": gettext("edited successfully"),
         "pending_add_heading": gettext("No pending additions"),
         "pending_edit_heading": gettext("No pending edits"),
         "pending_del_heading": gettext("No pending deletions"),

@@ -16,12 +16,7 @@
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
         $L = {{ g.translations|tojson|safe }};
         $pagelang = "{{ g.lang }}";
-        $data = {
-            {% for k, v in g.ep_data.items() %}
-            '{{k}}': '{{v}}',
-            {% endfor %}
-        };
-
+        $data = {{ g.ep_data | tojson | safe}};
     </script>
 </head>
 

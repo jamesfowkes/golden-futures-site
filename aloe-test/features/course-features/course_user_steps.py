@@ -59,13 +59,9 @@ def the_user_pends_addition_of_course(step, course_name, category_name):
         category = Category.get_single(category_name=category_name, language=aloe.world.language)
         course = Course.get_single(course_name=course_name, language=aloe.world.language)
         aloe.world.response = aloe.world.app.post(
-            "/category/edit/" + str(category.category_id),
+            "/category/editcourses/" + str(category.category_id),
             data={
-                "category_name": category.category_name,
-                "category_intro": category.category_intro or "",
-                "category_careers": category.category_careers or "",
                 "category_courses[]": category.course_ids() + [course.course_id],
-                "language": aloe.world.language
             }
         )
 
