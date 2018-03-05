@@ -7,8 +7,6 @@ Usage:
 import docopt
 import logging
 
-from app import app
-
 def get_logger():
     return logging.getLogger(__name__)
 
@@ -22,6 +20,9 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.INFO)
     else:
     	logging.basicConfig(level=logging.WARNING)
+
+    #Import app after logging setup to properly inherit global settings
+    from app import app
     	
     app.run(debug=debug)
     
