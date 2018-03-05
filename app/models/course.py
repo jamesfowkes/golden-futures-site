@@ -12,6 +12,7 @@ from sqlalchemy_i18n import Translatable, translation_base
 import app
 from app.database import db
 from app.models.base_model import PendingChangeBase, BaseModelTranslateable, DeclarativeBase, DbIntegrityException
+from app.models.base_model import get_locales, get_translation
 
 from app.models.university_course_map import university_course_map_table
 
@@ -23,9 +24,8 @@ logger = logging.getLogger(__name__)
 
 class CourseBase():
 
-    def __init__(self, course_name, language):
-        logger.info("Creating base course %s (%s)", course_name, language)
-        self.translations[language].course_name = course_name
+    def __init__(self, translations):
+        self.set_translations(translations)
 
     def set_name(self, course_name, language=None):
         if language:
@@ -61,9 +61,8 @@ class CourseBase():
         return [uni.university_name for uni in self.universities]
         
     @classmethod
-    def create(cls, course_name, language):
-        logger.info("Creating course %s (%s)", course_name, language)
-        course = cls(course_name, language)
+    def create(cls, translations):
+        course = cls(translations)
         course.save()
         return course
 
@@ -80,13 +79,18 @@ class CourseBase():
 
     def update(self, other):
         self.course_id = other.course_id
-        for lang in app.app.config["SUPPORTED_LOCALES"]:
-            self.translations[lang].course_name = other.translations[lang].course_name
+        self.set_translations(other.translations)
+        #for lang in app.app.config["SUPPORTED_LOCALES"]:
+        #    self.translations[lang].course_name = other.translations[lang].course_name
 
         self.save()
 
     def is_pending(self):
         return False
+
+    def set_translations(self, translations):
+        for language in get_locales(translations):
+            self.set_translation(translations, language, "course_name")
 
 @total_ordering
 class Course(CourseBase, Translatable, BaseModelTranslateable, DeclarativeBase):
@@ -116,9 +120,9 @@ class CoursePending(CourseBase, PendingChangeBase, Translatable, BaseModelTransl
     
     course = db.relationship('Course', uselist=False, back_populates="pending_change")
 
-    def __init__(self, course_name, language, pending_type):
+    def __init__(self, translations, pending_type):
         
-        CourseBase.__init__(self, course_name, language)
+        CourseBase.__init__(self, translations)
         self.pending_type = pending_type
 
         try:
@@ -152,11 +156,8 @@ class CoursePending(CourseBase, PendingChangeBase, Translatable, BaseModelTransl
         if self.pending_type == "add_edit":
             if self.course_id is None:
                 logger.info("Adding course %s", self.translations["en"].course_name)
-                new_course = Course.create(self.translations["en"].course_name, "en")
-                for lang, translation in self.translations.items():
-                    new_course.translations[lang].course_name = translation.course_name
-                db.session.add(new_course)
-                db.session.commit()
+                new_course = Course.create(self.translations)
+                new_course.save()
             else:
                 course = Course.get(course_id=self.course_id).one();
                 logger.info("Editing course %s", course.translations["en"].course_name)
@@ -187,13 +188,13 @@ class CoursePending(CourseBase, PendingChangeBase, Translatable, BaseModelTransl
     @classmethod
     def create_from(cls, existing_course, pending_type):
         logger.info("Creating %s from %s", cls.__name__, existing_course.course_name)
-        new = cls("", "en", pending_type)
+        new = cls({}, pending_type)
         new.update(existing_course)
         return new
 
     @classmethod
-    def addition(cls, course_name, language):
-        pending = cls(course_name, language, "add_edit")
+    def addition(cls, translations):
+        pending = cls(translations, "add_edit")
         return pending
 
     @classmethod
@@ -212,5 +213,5 @@ class CoursePending(CourseBase, PendingChangeBase, Translatable, BaseModelTransl
 
 class CoursePendingTranslation(translation_base(CoursePending)):
     __tablename__ = 'CoursePendingTranslation'
-    course_name = sa.Column(sa.Unicode(80))
-    old_name = sa.Column(sa.Unicode(80))
+    course_name = sa.Column(sa.Unicode(80), unique=True)
+

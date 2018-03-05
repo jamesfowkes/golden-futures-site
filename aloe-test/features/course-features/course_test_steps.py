@@ -45,7 +45,7 @@ def the_course_should_be_pending_for_edit(step, existing_course_name, new_course
 def the_course_is_pending_for_creation(step, course):
     with app.app_context():
         try:
-            CoursePending.addition(course, aloe.world.language)
+            CoursePending.addition({aloe.world.language: {"course_name": course}})
         except sqlalchemy.exc.IntegrityError as e:
             db.session.rollback() # Course already pending
             raise(e)
@@ -82,7 +82,7 @@ def the_following_course_details_are_returned(step):
 def the_course_exists(step, course_name):
     with app.app_context():
         try:
-            Course.create(course_name=course_name, language=aloe.world.language)
+            Course.create({aloe.world.language: {"course_name": course_name}})
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # Course already pending
 

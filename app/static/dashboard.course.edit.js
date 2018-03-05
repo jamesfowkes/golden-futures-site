@@ -1,13 +1,18 @@
 $( document ).ready(function() {
-  $("#course_edit_submit").click(function(event) {
-      $.post($SCRIPT_ROOT + $data["api_endpoint"],{
-        language: $pagelang,
-        course_name: $("#course_name").val()
-      }, function(data) {
+  $("#edit_course").click(function(event) {
+    $("p.success").remove();
+    $("p.fail").remove();
+    $("#form_edit_course").ajaxSubmit({
+      url:$SCRIPT_ROOT + $data["api_endpoints"]["edit_course"],
+      success: function(data) {
         if (data.success) {
-          window.location.replace(data.redirect)
+          flash = $("<p class='success'></p>").text(data.data.course_name + " " + $L["edit_success"])
+        } else {
+          flash = $("<p class='fail'></p>").text(data.err)
         }
-      });
-      return false;
+        flash.insertBefore($("button#edit_course"))
+      }
+    });
+    return false;
   });
 });

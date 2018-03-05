@@ -18,6 +18,8 @@ from app.models.user import User
 from app.models.course import Course, CoursePending
 from app.models.category import Category, CategoryPending
 
+from ..steps import fieldname_with_language
+
 logger = logging.getLogger(__name__)
 
 @aloe.step(u"the user sets the course \"([\w\d ]*)\" as pending for creation")
@@ -26,8 +28,8 @@ def the_user_sets_the_course_as_pending_for_creation(step, course_name):
         aloe.world.response = aloe.world.app.post(
             "/course/create",
             data={
-                "course_name": course_name,
-                "language": aloe.world.language
+                fieldname_with_language("course_name", aloe.world.language): course_name,
+                "languages": [aloe.world.language]
             }
         )
 
@@ -72,7 +74,7 @@ def the_translation_in_language_is_pending_to_be_added_to_course(step, course_na
         aloe.world.response = aloe.world.app.post(
             "/course/edit/" + str(course.course_id),
             data={
-                "course_name": course_name_translation,
-                "language": language
+                fieldname_with_language("course_name", language): course_name_translation,
+                "languages": [language]
             }
         )

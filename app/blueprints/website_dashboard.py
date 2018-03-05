@@ -86,9 +86,12 @@ def render_edit_pending_category_dashboard(pending_id):
 @flask_login.login_required
 def render_edit_course_dashboard(course_id):
     g.ep_data["course_id"] = course_id
-    g.ep_data["api_endpoint"] = url_for("edit_course", course_id=course_id)
+    g.ep_data["api_endpoints"] = {"edit_course":url_for("edit_course", course_id=course_id)}
     course = Course.get_single(course_id=course_id)
-    return render_template('dashboard.course.edit.tpl', course=course)
+    return render_template('dashboard.course.edit.tpl',
+        course=course,
+        languages=locale.supported_languages()
+    )
 
 @dashboard.route("/dashboard/courses/editpending/<pending_id>", methods=['GET'])
 @flask_login.login_required
@@ -106,18 +109,26 @@ def render_categories_dashboard():
     pending_categories = list(filter(lambda c: c.is_addition(), pending_categories))
     all_categories = live_categories + pending_categories
     all_categories = sorted(all_categories, key=lambda c: c.category_name[0])
-    return render_template('dashboard.categories.tpl', categories=all_categories, languages=locale.supported_languages())
+    return render_template('dashboard.categories.tpl',
+        categories=all_categories,
+        languages=locale.supported_languages()
+    )
     
 @dashboard.route("/dashboard/courses", methods=['GET'])
 @flask_login.login_required
 def render_courses_dashboard():
+    g.ep_data["api_endpoints"] = {"add_course":url_for("create_course")}
+
     live_courses = Course.all()
     pending_courses = CoursePending.all()
     pending_courses = list(filter(lambda c: c.is_addition(), pending_courses))
 
     all_courses = live_courses + pending_courses
     all_courses = sorted(all_courses, key=lambda c: c.course_name[0])
-    return render_template('dashboard.courses.tpl', courses=all_courses)
+    return render_template('dashboard.courses.tpl',
+        courses=all_courses,
+        languages=locale.supported_languages()
+    )
 
 @dashboard.route("/dashboard/universities", methods=['GET'])
 @flask_login.login_required

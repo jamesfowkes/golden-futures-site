@@ -95,7 +95,9 @@ class BaseModelTranslateable(__Deleteable__):
         if translation:
             logger.info("Setting translation '%s' in '%s' to %s", field_name, language, translation)
             setattr(self.translations[language], field_name, translation)
-
+        else:
+            logger.info("%s translation for %s not present", language, field_name)
+            
     @classmethod
     def all(cls):
         return db.session.query(cls).options(sqlalchemy.orm.joinedload(cls.current_translation)).all()

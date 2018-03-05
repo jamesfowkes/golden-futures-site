@@ -8,16 +8,21 @@ from app.models.course import Course, CoursePending
 
 from app import app
 
+from app.views.request_utils import get_request_languages, get_req_data_by_language
+
 logger = logging.getLogger(__name__)
 
 @app.route("/course/create", methods=['POST'])
 @flask_login.login_required
 def create_course():
     if request.method == 'POST':
-        course_name = request.form["course_name"]
-        language = request.form["language"]
-        logger.info("Creating new pending course %s", course_name)
-        pending_course = CoursePending.addition(course_name, language)
+
+        languages = get_request_languages(request)
+        data = get_req_data_by_language(request, ["course_name"])
+
+        logger.info("Creating course from data %s".format(data))
+        
+        pending_course = CoursePending.addition(data)
         return jsonify({
             "success": True,
             "data": pending_course.json(),
@@ -28,12 +33,13 @@ def create_course():
 @flask_login.login_required
 def edit_course(course_id):
     if request.method == 'POST':
-        course_name = request.form["course_name"]
-        language = request.form["language"]
+        languages = get_request_languages(request)
+        data = get_req_data_by_language(request, ["course_name"])
 
         course_to_edit = Course.get_single_by_id(course_id)
         pending_course = CoursePending.edit(course_to_edit)
-        pending_course.set_name(course_name, language)
+        pending_course.set_translations(data)
+        pending_course.save()
         
         return jsonify({
             "success": True,

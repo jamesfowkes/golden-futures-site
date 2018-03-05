@@ -6,17 +6,8 @@
 {% block content %}
 <div class="container">
     {{ dashboard_macro.dashboard_heading(_("Manage course: ") + course.course_name) }}
-    <form id="form_edit_course" method="post">
-        <div class="form-group">
-            <h4>{{ _("Course Details") }}</h4>
-            <div class="form-group">
-                {{ dashboard_course_macro.course_name_input(course.course_name) }}
-                <input type="hidden" name="language" value="{{g.lang}}">
-            </div>
-            <button id="course_edit_submit" class="btn btn-default btn-block">{{_("Submit")}}</button>
-        </div>
-    </form>
-
+    <h4>{{ _("Course Details") }}</h4>
+    {{ dashboard_course_macro.render_edit_course_form(course, languages) }}
 </div>
 {% endblock %}
 
@@ -24,4 +15,5 @@
     {{ super() }}
     <script src="{{url_for('static', filename='dashboard.js')}}"></script>
     <script src="{{url_for('static', filename='dashboard.course.edit.js')}}"></script>
+    <script src="{{url_for('static', filename='jquery_plugins/jquery.form.min.js')}}"></script>
 {% endblock %}

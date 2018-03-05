@@ -800,9 +800,16 @@ if __name__ == "__main__":
             print("Creating courses...", end=""); sys.stdout.flush()
             
             for course in test_course_data:
-                courses[course] = Course.create(course, "en")
-                courses[course].set_name(khmer(course), "km")
-
+                courses[course] = Course.create(
+                    {
+                        "en": {
+                            "course_name": course
+                        },
+                        "km": {
+                            "course_name": khmer(course)
+                        }
+                    }
+                )
             print("done.")
 
             print("Creating categories...", end=""); sys.stdout.flush()
@@ -945,7 +952,9 @@ if __name__ == "__main__":
 
             for addition in pending_additions["course"]:
                 print("Addition of '{}' course".format(addition))
-                course = CoursePending.addition(course_name=addition, language="en")
+                course = CoursePending.addition(
+                    {"en": {"course_name":addition}}
+                )
 
             for addition in pending_additions["university"]:
                 print("Addition of '{}' university".format(addition["name"]))
