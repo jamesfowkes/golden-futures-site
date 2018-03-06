@@ -97,9 +97,12 @@ def render_edit_course_dashboard(course_id):
 @flask_login.login_required
 def render_edit_pending_course_dashboard(pending_id):
     g.ep_data["pending_id"] = pending_id
-    g.ep_data["api_endpoint"] = url_for("edit_pending_course", pending_id=pending_id)
+    g.ep_data["api_endpoints"] = {"edit_course": url_for("edit_pending_course", pending_id=pending_id)}
     course = CoursePending.get_single(pending_id=pending_id)
-    return render_template('dashboard.course.edit.tpl', course=course)
+    return render_template('dashboard.course.edit.tpl',
+        course=course,
+        languages=locale.supported_languages()
+    )
 
 @dashboard.route("/dashboard/categories", methods=['GET'])
 @flask_login.login_required

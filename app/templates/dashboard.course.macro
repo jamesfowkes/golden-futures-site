@@ -19,8 +19,8 @@
 {% macro render_edit_course_form(course, languages) -%}
 <form id="form_edit_course" method="post">
     <div class="form-group">
-        {{ forms_macro.i18n_text_input("course_name", "Course Name", languages[0], default=course.translations[languages[0].id].course_name, other="required") }}
-        {{ forms_macro.i18n_text_input("course_name", "Course Name", languages[1], default=course.translations[languages[1].id].course_name, other="required") }}
+        {{ forms_macro.i18n_text_input("course_name", "Course Name", languages[0], default=course.translations[languages[0].id].course_name or "", other="required") }}
+        {{ forms_macro.i18n_text_input("course_name", "Course Name", languages[1], default=course.translations[languages[1].id].course_name or "", other="required") }}
         <button id="edit_course" class="btn btn-default btn-block">{{_("Submit Changes")}}</button>
         <input type="hidden" name="languages" value="{{languages[0].id}},{{languages[1].id}}">
     </div>

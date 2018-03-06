@@ -51,12 +51,13 @@ def edit_course(course_id):
 @flask_login.login_required
 def edit_pending_course(pending_id):
     if request.method == 'POST':
-        course_name = request.form["course_name"]
-        language = request.form["language"]
+        languages = get_request_languages(request)
+        data = get_req_data_by_language(request, ["course_name"])
 
         course_pending = CoursePending.get(pending_id=pending_id).one()
-        logger.info("New name for '%s': '%s'", course_pending.course_name, course_name)
-        course_pending.set_name(course_name, language)
+        course_pending.set_translations(data)
+        course_pending.save()
+        
         return jsonify({
             "success": True,
             "data": course_pending.json(),
