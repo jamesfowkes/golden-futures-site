@@ -1,20 +1,27 @@
-{% macro university_name_input(default="") -%}
-    <label for="university_name" class="sr-only">{{ _("University Name") }}</label>
-    <input class="form-control" type="text" id="university_name" name="university_name" placeholder="{{_("University Name")}}" value="{{default}}" required>
-{%- endmacro %}
+{% import 'forms.macro' as forms_macro with context%}
 
-{% macro university_intro_input(default="") -%}
-    <label for="university_intro" class="sr-only">{{ _("University Introduction") }}</label>
-    <textarea rows="4" class="form-control" type="text" id="university_intro" name="university_intro" placeholder="{{_("University Introduction")}}" required>{{default}}</textarea>
+{% macro render_add_new_university_fields(lang) -%}
+        {{ forms_macro.i18n_text_input("university_name", "University Name", lang, default="", other="required") }}
+        {{ forms_macro.i18n_textarea_input("university_intro", "University Intro", 4, lang, default="", other="required") }}
 {%- endmacro %}
 
 {% macro render_add_new_university_form() -%}
-<form id="form_add_university" action="{{url_for('create_university')}}">
+<form id="form_add_university"}}">
     <div class="form-group">
-        <h4>{{ _("University Details") }}</h4>
-        {{ university_name_input() }}
-        {{ university_intro_input() }}
-        <button id="add_university" class="btn btn-default btn-block" type="button">{{_("Submit New University")}}</button>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-6">
+                    {{ render_add_new_university_fields(languages[0]) }}
+                </div>
+                <div class="col-sm-6">
+                    {{ render_add_new_university_fields(languages[1]) }}
+                </div>
+            </div>
+            <div class="row">
+                <button id="add_university" class="btn btn-default btn-block" type="button">{{_("Submit New University")}}</button>
+            </div>
+            <input type="hidden" name="languages" value="{{languages[0].id}},{{languages[1].id}}">
+        </div>
     </div>
 </form>
 {%- endmacro %}

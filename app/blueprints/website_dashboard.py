@@ -149,7 +149,10 @@ def render_universities_dashboard():
     pending_universities = UniversityPending.all()
     all_universities = live_universities + pending_universities
     all_universities = sorted(all_universities, key=lambda c: c.university_name[0])
-    return render_template('dashboard.universities.tpl', universities=all_universities)
+    return render_template('dashboard.universities.tpl',
+        universities=all_universities,
+        languages=locale.supported_languages()
+    )
 
 @dashboard.route("/dashboard/universities/edit/<university_id>", methods=['GET'])
 @flask_login.login_required
