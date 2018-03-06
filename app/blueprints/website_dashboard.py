@@ -145,6 +145,9 @@ def render_courses_dashboard():
 @dashboard.route("/dashboard/universities", methods=['GET'])
 @flask_login.login_required
 def render_universities_dashboard():
+
+    g.ep_data["api_endpoints"] = {"add_university": url_for("create_university")}
+    
     live_universities = University.all()
     pending_universities = UniversityPending.all()
     all_universities = live_universities + pending_universities

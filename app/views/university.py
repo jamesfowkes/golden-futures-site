@@ -8,15 +8,22 @@ from app.models.university import University, UniversityPending
 
 from app import app
 
+from app.views.request_utils import get_request_languages, get_req_data_by_language
+
 logger = logging.getLogger(__name__)
 
 @app.route("/university/create", methods=['POST'])
 @flask_login.login_required
 def create_university():
     if request.method == 'POST':
-        university = UniversityPending.addition(
-            {request.form["language"]: {"university_name": request.form["university_name"]}}
+
+        languages = get_request_languages(request)
+        data = get_req_data_by_language(request,
+            ["university_name", "university_intro"]
         )
+
+        university = UniversityPending.addition(data)
+
         return json.dumps(university.json())
 
 @app.route("/university/<university_id>/translate", methods=['POST'])
