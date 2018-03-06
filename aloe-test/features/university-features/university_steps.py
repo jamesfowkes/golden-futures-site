@@ -14,14 +14,17 @@ from app.database import db
 
 from app.models.university import University, UniversityPending
 
+from ..steps import fieldname_with_language
+
 @aloe.step(u'the user pends addition of university \"([\w\d ]*)\"')
 def the_user_pends_addition_of_university(step, university_name):
     with app.test_request_context():
         aloe.world.response = aloe.world.app.post(
             '/university/create', 
             data={
-                'university_name':university_name,
-                'language': aloe.world.language
+                fieldname_with_language("university_name", aloe.world.language):university_name,
+                fieldname_with_language("university_intro", aloe.world.language):"A new university",
+                'languages': [aloe.world.language] 
             }
         )
 
