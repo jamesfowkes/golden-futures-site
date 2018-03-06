@@ -96,9 +96,7 @@ def edit_category(category_id):
 def edit_category_courses(category_id):
 
     if request.method == 'POST':
-
         courses = request.form.getlist("category_courses[]")
-        print(courses)
         category = CategoryPending.get_single(category_id=category_id)
         
         if category is None:
@@ -127,23 +125,36 @@ def edit_category_courses(category_id):
 @flask_login.login_required
 def edit_pending_category(pending_id):
     if request.method == 'POST':
-        category_name = request.form["category_name"]
-        category_intro = request.form["category_intro"]
-        category_careers = request.form["category_careers"]
-        courses = request.form.getlist("category_courses[]")
-        language = request.form["language"]
+        languages = get_request_languages(request)
+        logger.info("Request languages: %s", languages)
+        data = get_req_data_by_language(request,
+            ["category_name", "category_intro", "category_careers"]
+        )
+        logger.info("Request data: %s", data)
+
 
         category = CategoryPending.get_single(pending_id=pending_id)
 
-        logger.info("Saving pendings edits to category id %s", pending_id)
-        logger.info("New name: %s", category_name)
-        logger.info("Intro: %s", shorten(category_intro, width=40, placeholder="..."))
-        logger.info("Careers: %s", shorten(category_careers, width=40, placeholder="..."))
-        logger.info("Courses: %s", ", ".join(courses))
+        logger.info("Saving pendings edits to pending id %s", pending_id)
+        logger.info("New name: %s", data["en"]["category_name"])
+        logger.info("Intro: %s", shorten(data["en"]["category_intro"], width=40, placeholder="..."))
+        logger.info("Careers: %s", shorten(data["en"]["category_careers"], width=40, placeholder="..."))
         
-        category.set_name(category_name, language)
-        category.set_intro(category_intro, language)
-        category.set_careers(category_careers, language)
+        category.set_translations(data)
+        category.save()
+
+        return jsonify({
+            "success": True,
+            "redirect": url_for("dashboard.render_edit_pending_category_dashboard", pending_id=pending_id)
+        })
+
+@app.route("/category/editpendingcourses/<pending_id>", methods=['POST'])
+@flask_login.login_required
+def edit_pending_category_courses(pending_id):
+    if request.method == 'POST':
+
+        category = CategoryPending.get_single(pending_id=pending_id)
+        courses = request.form.getlist("category_courses[]")
 
         for course in category.courses:
             course.delete()

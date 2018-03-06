@@ -70,9 +70,15 @@ def render_edit_category_dashboard(category_id):
 @dashboard.route("/dashboard/categories/editpending/<pending_id>", methods=['GET'])
 @flask_login.login_required
 def render_edit_pending_category_dashboard(pending_id):
+    
     g.ep_data["pending_id"] = pending_id
-    g.ep_data["api_endpoint"] = url_for("edit_pending_category", pending_id=pending_id)
+    g.ep_data["api_endpoints"] = {
+        "edit_category": url_for("edit_pending_category", pending_id=pending_id),
+        "edit_category_courses": url_for("edit_pending_category_courses", pending_id=pending_id)
+    }
+
     category = CategoryPending.get_single(pending_id=pending_id)
+
     courses = sorted(Course.all(), key=lambda c: c.course_name)
     alphabetised_courses = defaultdict(list)
     for course in courses:
@@ -80,7 +86,10 @@ def render_edit_pending_category_dashboard(pending_id):
         alphabetised_courses[first_letter].append(course)
 
     sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
-    return render_template('dashboard.category.edit.tpl', category=category, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
+    return render_template('dashboard.category.edit.tpl',
+        category=category, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses,
+        languages=locale.supported_languages()
+    )
 
 @dashboard.route("/dashboard/courses/edit/<course_id>", methods=['GET'])
 @flask_login.login_required
