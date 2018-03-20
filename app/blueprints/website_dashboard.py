@@ -169,7 +169,12 @@ def render_edit_university_dashboard(university_id):
         alphabetised_courses[first_letter].append(course)
 
     sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
-    return render_template('dashboard.university.edit.tpl', university=university, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
+    return render_template('dashboard.university.edit.tpl',
+        university=university,
+        all_courses=courses,
+        alphabetised_courses=sorted_alphabetised_courses,
+        languages=locale.supported_languages()
+    )
 
 @dashboard.route("/dashboard/universities/editpending/<pending_id>", methods=['GET'])
 @flask_login.login_required

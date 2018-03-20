@@ -1,0 +1,3 @@
+{% macro render_location_selector(heading_text) -%}
+
+{%- endmacro %}

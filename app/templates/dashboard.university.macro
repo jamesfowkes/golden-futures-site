@@ -1,20 +1,20 @@
 {% import 'forms.macro' as forms_macro with context%}
 
-{% macro render_add_new_university_fields(lang) -%}
-        {{ forms_macro.i18n_text_input("university_name", "University Name", lang, default="", other="required") }}
-        {{ forms_macro.i18n_textarea_input("university_intro", "University Intro", 4, lang, default="", other="required") }}
+{% macro render_university_fields(name, intro, lang) -%}
+        {{ forms_macro.i18n_text_input("university_name", "University Name", lang, default=name, other="required") }}
+        {{ forms_macro.i18n_textarea_input("university_intro", "University Intro", 4, lang, default=intro, other="required") }}
 {%- endmacro %}
 
 {% macro render_add_new_university_form() -%}
-<form id="form_add_university" method="post">
+<form id="form_addedit_university" method="post">
     <div class="form-group">
         <div class="form-group">
             <div class="row">
                 <div class="col-sm-6">
-                    {{ render_add_new_university_fields(languages[0]) }}
+                    {{ render_university_fields("", "", languages[0]) }}
                 </div>
                 <div class="col-sm-6">
-                    {{ render_add_new_university_fields(languages[1]) }}
+                    {{ render_university_fields("", "", languages[1]) }}
                 </div>
             </div>
             <div class="row">
@@ -33,8 +33,32 @@
 {%- endmacro %}
 
 {% macro render_edit_pending_university_link(university) -%}
-
     <div class="edit_university">
         <a href="{{url_for('dashboard.render_edit_pending_university_dashboard', pending_id=university.pending_id)}}" class="edit_university" id='{{id}}'>{{university.university_name}}</a>
     </div>
+{%- endmacro %}
+
+{% macro render_website_address_editor(university, language) -%}
+    {{ forms_macro.i18n_text_input("university_web_address", "Web Address", language,
+        default=university.translations[language.id].web_address) }}
+{%- endmacro %}
+
+{% macro render_contact_details_editor(university, language) -%}
+    {% for contact_detail in university.contact_details %}
+        <div class="input-group">
+            {{ forms_macro.i18n_text_array_input("university_contact_detail", loop.index0,
+        "Contact Detail", language,
+        default=contact_detail.translations[language.id].contact_detail_string) }}
+            {{ forms_macro.i18n_array_element_deleter("university_contact_detail", language, loop.index0) }}
+        </div>
+    {% endfor %}
+{%- endmacro %}
+
+
+{% macro facility_editor(university, language) -%}
+
+{%- endmacro %}
+
+{% macro scholarship_editor(university, language) -%}
+
 {%- endmacro %}

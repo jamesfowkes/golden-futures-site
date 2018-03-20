@@ -1,9 +1,17 @@
 {% macro i18n_text_input(name, label, lang, default="", other="") -%}
-    <label for="{{name}}"" class="sr-only">{{ _(label) }} ({{lang.name}})</label>
+    <label for="{{name}}.{{lang.id}}"" class="sr-only">{{ _(label) }} ({{lang.name}})</label>
     <input class="form-control" type="text" id="{{name}}.{{lang.id}}" name="{{name}}.{{lang.id}}" placeholder="{{_(label)}} ({{lang.name}})" value="{{default}}" {{other}}>
 {%- endmacro %}
 
 {% macro i18n_textarea_input(name, label, rows, lang, default="", other="") -%}
     <label for="{{name}}"" class="sr-only">{{ _(label) }} ({{lang.name}})</label>
     <textarea rows="{{rows}}" class="form-control" type="text" id="{{name}}.{{lang.id}}" name="{{name}}.{{lang.id}}" placeholder="{{_(label)}} ({{lang.name}})" {{other}}">{{default}}</textarea>
+{%- endmacro %}
+
+{% macro i18n_text_array_input(name, num, label, lang, default="", other="") -%}
+    <input class="form-control" type="text" id="{{name}}.{{lang.id}}.{{num}}" name="{{name}}.{{lang.id}}[]" placeholder="{{_(label)}} ({{lang.name}})" value="{{default}}" {{other}}>
+{%- endmacro %}
+
+{% macro i18n_array_element_deleter(name, lang, num) -%}
+	<i target="{{name}}.{{lang.id}}.{{num}}" class="fa fa-remove fa-2x pull-right" aria-hidden="true"></i>
 {%- endmacro %}
