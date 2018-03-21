@@ -71,6 +71,10 @@ form input.form-control, form textarea.form-control {
 	margin-bottom: 1em;
 }
 
+.input-group .form-control {
+	margin-bottom: 1em;	
+}
+
 form button {
 	margin-bottom: 1em;
 }
