@@ -64,20 +64,20 @@
                 </div>
                 <div id="contact_details_selector_collapse" class="collapse show" role="tabpanel" aria-labelledby="contact_details_selector_heading">
                     <div class="form-group card-block">
+                        <h4>{{_("Web Address")}}</h4>
                         <div class="row">
                             <div class="col-sm-6">
-                                <h4>{{_("Web Address")}}</h4>
                                 {{ dashboard_university_macro.render_website_address_editor(university, languages[0]) }}
-                                <h4>{{_("Other Contact Details")}}</h4>
-                                {{ dashboard_university_macro.render_contact_details_editor(university, languages[0]) }}
                             </div>
                             <div class="col-sm-6">
-                                <h4>{{_("Web Address")}}</h4>
                                 {{ dashboard_university_macro.render_website_address_editor(university, languages[1]) }}
-                                <h4>{{_("Other Contact Details")}}</h4>
-                                {{ dashboard_university_macro.render_contact_details_editor(university, languages[1]) }}
                             </div>
                         </div>
+
+                        <h4>{{_("Other Contact Details")}}</h4>
+                        {{ dashboard_university_macro.render_contact_details_editor(university, languages) }}
+                        
+                        <button type="button" id="add_new_contact_details" class="btn btn-default btn-block">{{_("Add another")}}</button>
                     </div>
                 </div>
             </div>

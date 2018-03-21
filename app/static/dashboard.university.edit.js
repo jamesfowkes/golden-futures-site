@@ -1,3 +1,8 @@
+function clone_i18n_elements(selector, insertAfter) {
+  new_elems = $(selector).clone();
+  new_elems.insertAfter(insertAfter);
+}
+
 $( document ).ready(function() {
   $("#edit_university").click(function(event) {
       $("p.success").remove();
@@ -17,5 +22,14 @@ $( document ).ready(function() {
           }
         });
       return false;
+  });
+
+  $(".i18n_deleter").click(function(event) {
+    to_delete = $(this).attr("target");
+    $(to_delete).remove();
+  });
+
+  $("#add_new_contact_details").click(function(event) {
+    clone_i18n_elements("div.contact_details:last", "div.contact_details:last")
   });
 });

@@ -12,6 +12,6 @@
     <input class="form-control" type="text" id="{{name}}.{{lang.id}}.{{num}}" name="{{name}}.{{lang.id}}[]" placeholder="{{_(label)}} ({{lang.name}})" value="{{default}}" {{other}}>
 {%- endmacro %}
 
-{% macro i18n_array_element_deleter(name, lang, num) -%}
-	<i target="{{name}}.{{lang.id}}.{{num}}" class="fa fa-remove fa-2x pull-right" aria-hidden="true"></i>
+{% macro i18n_array_element_deleter(name, num) -%}
+	<i target="#{{name}}{{num}}" class="fa fa-remove fa-2x pull-right i18n_deleter" aria-hidden="true"></i>
 {%- endmacro %}

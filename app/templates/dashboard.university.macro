@@ -43,17 +43,27 @@
         default=university.translations[language.id].web_address) }}
 {%- endmacro %}
 
-{% macro render_contact_details_editor(university, language) -%}
+{% macro render_contact_details_editor(university, languages) -%}
     {% for contact_detail in university.contact_details %}
-        <div class="input-group">
-            {{ forms_macro.i18n_text_array_input("university_contact_detail", loop.index0,
-        "Contact Detail", language,
-        default=contact_detail.translations[language.id].contact_detail_string) }}
-            {{ forms_macro.i18n_array_element_deleter("university_contact_detail", language, loop.index0) }}
+        <div class="row contact_details" id="university_contact_detail{{loop.index0}}">
+            <div class="col-sm-6">
+                <div class="input-group">
+                    {{ forms_macro.i18n_text_array_input("university_contact_detail", loop.index0,
+                    "Contact Detail", languages[0],
+                    default=contact_detail.translations[languages[0].id].contact_detail_string) }}
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-group">
+                    {{ forms_macro.i18n_text_array_input("university_contact_detail", loop.index0,
+                    "Contact Detail", languages[1],
+                    default=contact_detail.translations[languages[1].id].contact_detail_string) }}
+                    {{ forms_macro.i18n_array_element_deleter("university_contact_detail", loop.index0) }}
+                </div>        
+            </div>
         </div>
     {% endfor %}
 {%- endmacro %}
-
 
 {% macro facility_editor(university, language) -%}
 
