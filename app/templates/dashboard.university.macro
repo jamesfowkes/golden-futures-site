@@ -45,7 +45,7 @@
 
 {% macro render_contact_details_editor(university, languages) -%}
     {% for contact_detail in university.contact_details %}
-        <div class="row contact_details" id="university_contact_detail{{loop.index0}}">
+        <div class="row university_contact_detail" id="university_contact_detail{{loop.index0}}">
             <div class="col-sm-6">
                 <div class="input-group">
                     {{ forms_macro.i18n_text_array_input("university_contact_detail", loop.index0,
