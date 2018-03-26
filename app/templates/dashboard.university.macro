@@ -59,7 +59,29 @@
                     "Contact Detail", languages[1],
                     default=contact_detail.translations[languages[1].id].contact_detail_string) }}
                     {{ forms_macro.i18n_array_element_deleter("university_contact_detail", loop.index0) }}
-                </div>        
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{%- endmacro %}
+
+{% macro render_facilities_editor(university, languages) -%}
+    {% for facility in university.facilities %}
+        <div class="row university_facility" id="university_facility{{loop.index0}}">
+            <div class="col-sm-6">
+                <div class="input-group">
+                    {{ forms_macro.i18n_text_array_input("university_facility", loop.index0,
+                    "Facility", languages[0],
+                    default=facility.translations[languages[0].id].facility_string) }}
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-group">
+                    {{ forms_macro.i18n_text_array_input("university_facility", loop.index0,
+                    "Facility", languages[1],
+                    default=facility.translations[languages[1].id].facility_string) }}
+                    {{ forms_macro.i18n_array_element_deleter("university_facility", loop.index0) }}
+                </div>
             </div>
         </div>
     {% endfor %}

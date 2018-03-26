@@ -130,14 +130,10 @@
                 </div>
                 <div id="facility_editor_collapse" class="collapse" role="tabpanel" aria-labelledby="facility_editor_heading">
                     <div class="form-group card-block">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                {{ dashboard_university_macro.facility_editor(university, languages[0]) }}
-                            </div>
-                            <div class="col-sm-6">
-                                {{ dashboard_university_macro.facility_editor(university, languages[1]) }}
-                            </div>
+                        <div id="facilities_container">
+                        {{ dashboard_university_macro.render_facilities_editor(university, languages) }}
                         </div>
+                        <button type="button" id="add_new_facility" class="btn btn-default btn-block">{{_("Add another")}}</button>
                     </div>
                 </div>
             </div>

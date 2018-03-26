@@ -1,5 +1,6 @@
 var id_counters = {
-  "contact_details": 0
+  "contact_details": 0,
+  "facilities": 0
 }
 
 function i18n_deleter_fn(event) {
@@ -96,5 +97,11 @@ $( document ).ready(function() {
     id_counters["contact_details"]++;
   });
 
-  id_counters["contact_details"] = $("div.contact_details").length-1
+  $("#add_new_facility").click(function(event) {
+    add_i18n_edits($("div#facilities_container"), "university_facility", id_counters["facilities"]+1, $data["languages"]);
+    id_counters["facilities"]++;
+  });
+
+  id_counters["contact_details"] = $("div.university_contact_detail").length-1
+  id_counters["facilities"] = $("div.university_facility").length-1
 });
