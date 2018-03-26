@@ -62,7 +62,7 @@
                         </a>
                     </h3>
                 </div>
-                <div id="contact_details_selector_collapse" class="collapse show" role="tabpanel" aria-labelledby="contact_details_selector_heading">
+                <div id="contact_details_selector_collapse" class="collapse" role="tabpanel" aria-labelledby="contact_details_selector_heading">
                     <div class="form-group card-block">
                         <h4>{{_("Web Address")}}</h4>
                         <div class="row">
