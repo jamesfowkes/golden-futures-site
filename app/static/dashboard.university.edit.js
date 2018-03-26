@@ -7,6 +7,16 @@ function i18n_deleter_fn(event) {
     $(to_delete).remove();
 }
 
+function get_i18n_deleter(class_name, index) {
+  deleter = $("<i>")
+  deleter.attr("target", "#" + class_name + index)
+  deleter.attr("aria-hidden", "true")
+  deleter.addClass("fa fa-remove fa-2x pull-right i18n_deleter")
+  deleter.click(i18n_deleter_fn)
+
+  return deleter
+}
+
 function get_i18n_divs() {
   lcolumn_div = $("<div>").addClass("col-sm-6")
   linput_div = $("<div>").addClass("input-group")
@@ -45,11 +55,7 @@ function add_i18n_edits(parent, class_name, index, languages) {
   left_input = get_i18n_input(class_name, languages[0][0], index)
   right_input = get_i18n_input(class_name, languages[1][0], index)
 
-  deleter = $("<i>")
-  deleter.attr("target", "#" + class_name + index)
-  deleter.attr("aria-hidden", "true")
-  deleter.addClass("fa fa-remove fa-2x pull-right i18n_deleter")
-  deleter.click(i18n_deleter_fn)
+  deleter = get_i18n_deleter(class_name, index)
 
   divs.linput.append(left_input)
   divs.rinput.append(right_input)
