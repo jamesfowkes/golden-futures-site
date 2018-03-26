@@ -75,8 +75,9 @@
                         </div>
 
                         <h4>{{_("Other Contact Details")}}</h4>
+                        <div id="contact_details_container">
                         {{ dashboard_university_macro.render_contact_details_editor(university, languages) }}
-                        
+                        </div>
                         <button type="button" id="add_new_contact_details" class="btn btn-default btn-block">{{_("Add another")}}</button>
                     </div>
                 </div>
