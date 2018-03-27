@@ -65,20 +65,15 @@
                 <div id="contact_details_selector_collapse" class="collapse" role="tabpanel" aria-labelledby="contact_details_selector_heading">
                     <div class="form-group card-block">
                         <h4>{{_("Web Address")}}</h4>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                {{ dashboard_university_macro.render_website_address_editor(university, languages[0]) }}
-                            </div>
-                            <div class="col-sm-6">
-                                {{ dashboard_university_macro.render_website_address_editor(university, languages[1]) }}
-                            </div>
+                        <div id="website_address_container">
+                            {{ dashboard_university_macro.render_website_address_editors(university, languages) }}
                         </div>
 
                         <h4>{{_("Other Contact Details")}}</h4>
                         <div id="contact_details_container">
-                        {{ dashboard_university_macro.render_contact_details_editor(university, languages) }}
+                            {{ dashboard_university_macro.render_contact_details_editor(university, languages) }}
                         </div>
-                        <button type="button" id="add_new_contact_details" class="btn btn-default btn-block">{{_("Add another")}}</button>
+                        <button type="button" id="add_new_contact_details" class="btn btn-default btn-block">{{_("Add new Contact Detail")}}</button>                        
                     </div>
                 </div>
             </div>
@@ -108,14 +103,10 @@
                 </div>
                 <div id="scholarship_editor_collapse" class="collapse" role="tabpanel" aria-labelledby="scholarship_editor_heading">
                     <div class="form-group card-block">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                {{ dashboard_university_macro.scholarship_editor(university, languages[0]) }}
-                            </div>
-                            <div class="col-sm-6">
-                                {{ dashboard_university_macro.scholarship_editor(university, languages[1]) }}
-                            </div>
+                        <div id="scholarships_container">
+                        {{ dashboard_university_macro.render_scholarships_editor(university, languages) }}
                         </div>
+                        <button type="button" id="add_new_scholarship" class="btn btn-default btn-block">{{_("Add new Scholarship")}}</button>
                     </div>
                 </div>
             </div>
@@ -133,10 +124,29 @@
                         <div id="facilities_container">
                         {{ dashboard_university_macro.render_facilities_editor(university, languages) }}
                         </div>
-                        <button type="button" id="add_new_facility" class="btn btn-default btn-block">{{_("Add another")}}</button>
+                        <button type="button" id="add_new_facility" class="btn btn-default btn-block">{{_("Add new Facility")}}</button>
                     </div>
                 </div>
             </div>
+
+            <div class="card plain" role="tab">
+                <div class="card-title" role="tab">
+                    <h3>
+                        <a id="tuition_fee_editor_heading" data-toggle="collapse" href="#tuition_fee_editor_collapse" aria-expanded="true" aria-controls="tuition_fee_editor_collapse">
+                        {{_("Tuition Fees")}}
+                        </a>
+                    </h3>
+                </div>
+                <div id="tuition_fee_editor_collapse" class="collapse show" role="tabpanel" aria-labelledby="tuition_fee_editor_heading">
+                    <div class="form-group card-block">
+                        <div id="tuition_fees_container">
+                            {{ dashboard_university_macro.render_tuition_fees_editor(university, languages) }}
+                        </div>
+                        <button type="button" id="add_new_tuition_fee" class="btn btn-default btn-block">{{_("Add new Tuition Fee")}}</button>
+                    </div>
+                </div>
+            </div>
+
             <button id="university_edit_submit" class="btn btn-default btn-block" type="button">{{_("Submit")}}</button>
         </div>
     </form>

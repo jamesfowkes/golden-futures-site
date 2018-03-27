@@ -8,8 +8,20 @@
     <textarea rows="{{rows}}" class="form-control" type="text" id="{{name}}.{{lang.id}}" name="{{name}}.{{lang.id}}" placeholder="{{_(label)}} ({{lang.name}})" {{other}}">{{default}}</textarea>
 {%- endmacro %}
 
-{% macro i18n_text_array_input(name, num, label, lang, default="", other="") -%}
-    <input class="form-control" type="text" id="{{name}}.{{lang.id}}.{{num}}" name="{{name}}.{{lang.id}}[]" placeholder="{{_(label)}} ({{lang.name}})" value="{{default}}" {{other}}>
+{% macro text_array_input_id(name, num) -%}
+	{{name}}.{{num}}
+{%- endmacro %}
+
+{% macro text_array_input(name, num, label, default="", other="", type="text") -%}
+    <input class="form-control" type={{type}} id="{{ text_array_input_id(name, num) }}" name="{{name}}[]" placeholder="{{_(label)}}" value="{{default}}" {{other}}>
+{%- endmacro %}
+
+{% macro i18n_text_array_input_id(name, lang, num) -%}
+	{{name}}.{{lang.id}}.{{num}}
+{%- endmacro %}
+
+{% macro i18n_text_array_input(name, num, label, lang, default="", other="", type="text") -%}
+    <input class="form-control" type={{type}} id="{{ i18n_text_array_input_id(name, lang, num) }}" name="{{name}}.{{lang.id}}[]" placeholder="{{_(label)}} ({{lang.name}})" value="{{default}}" {{other}}>
 {%- endmacro %}
 
 {% macro i18n_array_element_deleter(name, num) -%}
