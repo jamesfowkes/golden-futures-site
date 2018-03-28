@@ -8,7 +8,7 @@ from flask import request, g
 from app import app
 
 def fieldname_with_language(fieldname, language):
-	return fieldname + "." + language
+	return "{}[{}]".format(fieldname, language)
 	
 @aloe.step(u'I should get a \'(.*)\' response')
 def i_should_get_response(step, expected_status_code):
