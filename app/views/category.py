@@ -96,7 +96,7 @@ def edit_category(category_id):
 def edit_category_courses(category_id):
 
     if request.method == 'POST':
-        courses = request.form.getlist("category_courses[]")
+        courses = request.form.getlist("courses[]")
         category = CategoryPending.get_single(category_id=category_id)
         
         if category is None:
@@ -154,7 +154,7 @@ def edit_pending_category_courses(pending_id):
     if request.method == 'POST':
 
         category = CategoryPending.get_single(pending_id=pending_id)
-        courses = request.form.getlist("category_courses[]")
+        courses = request.form.getlist("courses[]")
 
         for course in category.courses:
             course.delete()

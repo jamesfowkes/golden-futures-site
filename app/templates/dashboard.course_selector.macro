@@ -1,9 +1,9 @@
 {% macro render_course_checkbox(course, checked) -%}
     <label for="course_check_{{course.course_id}}" class="form-check-label">
     {% if checked %}
-        <input name="category_courses[]" value="{{course.course_id}}" id="course_check_{{course.course_id}}" type="checkbox" class="form-check-input" checked></input>
+        <input name="courses[]" value="{{course.course_id}}" id="course_check_{{course.course_id}}" type="checkbox" class="form-check-input" checked></input>
     {% else %}
-        <input name="category_courses[]" value="{{course.course_id}}" id="course_check_{{course.course_id}}" type="checkbox" class="form-check-input"></input>
+        <input name="courses[]" value="{{course.course_id}}" id="course_check_{{course.course_id}}" type="checkbox" class="form-check-input"></input>
     {% endif %}
     {{course.course_name}}
     </label>

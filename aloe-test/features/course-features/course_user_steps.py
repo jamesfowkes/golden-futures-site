@@ -63,7 +63,7 @@ def the_user_pends_addition_of_course(step, course_name, category_name):
         aloe.world.response = aloe.world.app.post(
             "/category/editcourses/" + str(category.category_id),
             data={
-                "category_courses[]": category.course_ids() + [course.course_id],
+                "courses[]": category.course_ids() + [course.course_id],
             }
         )
 
