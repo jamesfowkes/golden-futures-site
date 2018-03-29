@@ -180,12 +180,8 @@ class CategoryPending(CategoryBase, PendingChangeBase, Translatable, BaseModelTr
             raise DbIntegrityException()
 
     def _delete(self):
-        for lang, translation in self.translations:
-            db.session.delete(translation)
-
         self.remove_courses()
-
-        super(BaseModelTranslateable,self).delete()
+        self.delete()
 
     def approve(self):
         if self.pending_type == "add_edit":

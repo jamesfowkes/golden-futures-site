@@ -37,6 +37,12 @@ class DbIntegrityException(Exception):
     
 class __Deleteable__:
     def delete(self):
+        try:
+            for lang, translation in self.translations:
+                db.session.delete(translation)
+        except:
+            pass
+            
         db.session.delete(self)
         db.session.commit()
 
