@@ -34,7 +34,15 @@
 
 {% macro render_edit_pending_university_link(university) -%}
     <div class="edit_university">
-        <a href="{{url_for('dashboard.render_edit_pending_university_dashboard', pending_id=university.pending_id)}}" class="edit_university" id='{{id}}'>{{university.university_name}}</a>
+        <a href="{{url_for('dashboard.render_edit_pending_university_dashboard', pending_id=university.pending_id)}}" class="edit_university" id='{{id}}'>
+            {{university.university_name}}
+            {% if university.pending_change and university.pending_change.is_edit() %}
+            <mark>({{_("pending changes")}})</mark>
+            {% endif %}
+            {% if university.pending_change and university.pending_change.is_deletion() %}
+            <mark>({{_("pending for deletion")}})</mark>
+            {% endif %}
+        </a>
     </div>
 {%- endmacro %}
 
