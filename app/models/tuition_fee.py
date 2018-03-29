@@ -126,28 +126,6 @@ class TuitionFeePending(TuitionFeePendingDetail, TuitionFeeBase, Translatable, B
     currency = sa.Column(sa.Unicode(6))
     pending_type = db.Column(db.String(6), nullable=False)
 
-    #@classmethod
-    #def make_from_zip(cls, zipped_data):
-#
-    #    cls.addition(
-    #        pending_university.university_id
-    #        {
-    #            languages[0]:
-    #            {
-    #                "period": tuition_fee_data[0]
-    #                "award": tuition_fee_data[2]
-    #            },
-    #            languages[1]:
-    #            {
-    #                "period": tuition_fee_data[1]
-    #                "award": tuition_fee_data[3]
-    #            }
-    #        },
-    #        tuition_fee_min=tuition_fee_data[4],
-    #        tuition_fee_max=tuition_fee_data[5],
-    #        currency="$",
-    #        include_in_filter=request.form.get("include_in_filter", True)
-
 class TuitionFeePendingTranslation(translation_base(TuitionFeePending), TranslationMixin):
     __tablename__ = 'TuitionFeePendingTranslation'
     award = sa.Column(sa.Unicode(80))
