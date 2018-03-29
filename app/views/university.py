@@ -8,6 +8,8 @@ from app.models.university import University, UniversityPending
 from app.models.course import Course
 from app.models.tuition_fee import TuitionFeePending
 from app.models.contact_detail import ContactDetailPending
+from app.models.scholarship import ScholarshipPending
+
 from app import app
 
 from app.views.request_utils import get_request_languages, get_req_list_by_language, get_req_data_by_language, get_i18n_list, zip_and_tag_request_data_lists
@@ -97,6 +99,13 @@ def edit_university(university_id):
             ContactDetailPending.addition(
                 pending_university.pending_id,
                 contact_detail
+                )
+
+        pending_university.remove_scholarships()
+        for scholarship in request_data["scholarships"]:
+            ScholarshipPending.addition(
+                pending_university.pending_id,
+                scholarship
                 )
 
         pending_university.set_courses([Course.get_single(course_id=int(c)) for c in request_data["courses"]])

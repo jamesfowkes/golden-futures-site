@@ -192,6 +192,10 @@ class UniversityBase():
         for contact_detail in self.contact_details:
             contact_detail.delete()
 
+    def remove_scholarships(self):
+        for scholarship in self.scholarships:
+            scholarship.delete()
+
     def set_latlong(self, latlong):
         self.latlong = latlong
         self.save()
