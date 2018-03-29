@@ -93,6 +93,42 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="card plain" role="tab">
+                <div class="card-title" role="tab">
+                    <h3>
+                        <a id="tuition_fee_editor_heading" data-toggle="collapse" href="#tuition_fee_editor_collapse" aria-expanded="true" aria-controls="tuition_fee_editor_collapse">
+                        {{_("Tuition Fees")}}
+                        </a>
+                    </h3>
+                </div>
+                <div id="tuition_fee_editor_collapse" class="collapse show" role="tabpanel" aria-labelledby="tuition_fee_editor_heading">
+                    <div class="form-group card-block">
+                        <div id="tuition_fees_container">
+                            {{ dashboard_university_macro.render_tuition_fees_editor(university, languages) }}
+                        </div>
+                        <button type="button" id="add_new_tuition_fee" class="btn btn-default btn-block">{{_("Add new Tuition Fee")}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card plain" role="tab">
+                <div class="card-title" role="tab">
+                    <h3>
+                        <a id="admission_editor_heading" data-toggle="collapse" href="#admission_editor_collapse" aria-expanded="true" aria-controls="admission_editor_collapse">
+                        {{_("Admissions")}}
+                        </a>
+                    </h3>
+                </div>
+                <div id="admission_editor_collapse" class="collapse" role="tabpanel" aria-labelledby="admission_editor_heading">
+                    <div class="form-group card-block">
+                        <div id="admissions_container">
+                        {{ dashboard_university_macro.render_admissions_editor(university, languages) }}
+                        </div>
+                        <button type="button" id="add_new_admission" class="btn btn-default btn-block">{{_("Add new Admission")}}</button>
+                    </div>
+                </div>
+            </div>
 
             <div class="card plain" role="tab">
                 <div class="card-title" role="tab">
@@ -130,23 +166,6 @@
                 </div>
             </div>
 
-            <div class="card plain" role="tab">
-                <div class="card-title" role="tab">
-                    <h3>
-                        <a id="tuition_fee_editor_heading" data-toggle="collapse" href="#tuition_fee_editor_collapse" aria-expanded="true" aria-controls="tuition_fee_editor_collapse">
-                        {{_("Tuition Fees")}}
-                        </a>
-                    </h3>
-                </div>
-                <div id="tuition_fee_editor_collapse" class="collapse show" role="tabpanel" aria-labelledby="tuition_fee_editor_heading">
-                    <div class="form-group card-block">
-                        <div id="tuition_fees_container">
-                            {{ dashboard_university_macro.render_tuition_fees_editor(university, languages) }}
-                        </div>
-                        <button type="button" id="add_new_tuition_fee" class="btn btn-default btn-block">{{_("Add new Tuition Fee")}}</button>
-                    </div>
-                </div>
-            </div>
             <input type="hidden" name="languages" value="{{languages[0].id}},{{languages[1].id}}">
             <button id="edit_university" class="btn btn-default btn-block" type="button">{{_("Submit")}}</button>
         </div>

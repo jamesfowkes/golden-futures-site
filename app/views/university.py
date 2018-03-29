@@ -10,6 +10,7 @@ from app.models.tuition_fee import TuitionFeePending
 from app.models.contact_detail import ContactDetailPending
 from app.models.scholarship import ScholarshipPending
 from app.models.facility import FacilityPending
+from app.models.admission import AdmissionPending
 
 from app import app
 
@@ -81,20 +82,7 @@ def edit_university(university_id):
 
         pending_university.set_latlong(request_data["latlong"])
         pending_university.set_web_address(request_data["web_address"])
-
-        tuition_fee_data = get_tuition_fee_request_data(request)
-
-        pending_university.remove_tuition_fees()
-        for fee in tuition_fee_data:
-            TuitionFeePending.addition(
-                pending_university.pending_id,
-                fee["translations"],
-                tuition_fee_min=fee["university_tuition_fee_min[]"],
-                tuition_fee_max=fee["university_tuition_fee_max[]"],
-                include_in_filter=fee["include_in_filter[]"],
-                currency="$"
-            )
-
+    
         pending_university.remove_contact_details()
         for contact_detail in request_data["contact_details"]:
             ContactDetailPending.addition(
@@ -116,9 +104,26 @@ def edit_university(university_id):
                 facility
                 )
 
+        pending_university.remove_admissions()
+        for admission in request_data["admissions"]:
+            AdmissionPending.addition(
+                pending_university.pending_id,
+                admission
+                )
+
         pending_university.set_courses([Course.get_single(course_id=int(c)) for c in request_data["courses"]])
         
-
+        tuition_fee_data = get_tuition_fee_request_data(request)
+        pending_university.remove_tuition_fees()
+        for fee in tuition_fee_data:
+            TuitionFeePending.addition(
+                pending_university.pending_id,
+                fee["translations"],
+                tuition_fee_min=fee["university_tuition_fee_min[]"],
+                tuition_fee_max=fee["university_tuition_fee_max[]"],
+                include_in_filter=fee["include_in_filter[]"],
+                currency="$"
+            )
 
         return json.dumps(pending_university.json())
         

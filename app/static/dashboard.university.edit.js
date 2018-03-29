@@ -2,7 +2,8 @@ var id_counters = {
   "contact_details": 0,
   "facilities": 0,
   "tuition_fees": 0,
-  "scholarships": 0
+  "scholarships": 0,
+  "admissions": 0
 }
 
 function i18n_deleter_fn(event) {
@@ -243,8 +244,14 @@ $( document ).ready(function() {
     id_counters["scholarships"]++;
   });
 
+  $("#add_new_admission").click(function(event) {
+    add_i18n_edits($("div#admissions_container"), "university_admission", id_counters["admissions"]+1, $data["languages"]);
+    id_counters["admissions"]++;
+  });
+
   id_counters["contact_details"] = $("div.university_contact_detail").length-1
   id_counters["facilities"] = $("div.university_facility").length-1
   id_counters["tuition_fees"] = $("div.university_tuition_fee").length-1
   id_counters["scholarships"] = $("div.university_scholarship").length-1
+  id_counters["admissions"] = $("div.university_admission").length-1
 });

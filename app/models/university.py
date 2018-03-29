@@ -191,6 +191,7 @@ class UniversityBase():
     def remove_contact_details(self):
         for contact_detail in self.contact_details:
             contact_detail.delete()
+        self.save()
 
     def remove_scholarships(self):
         for scholarship in self.scholarships:
@@ -199,6 +200,10 @@ class UniversityBase():
     def remove_facilities(self):
         for facility in self.facilities:
             facility.delete()
+
+    def remove_admissions(self):
+        for admission in self.admissions:
+            admission.delete()
 
     def set_latlong(self, latlong):
         self.latlong = latlong

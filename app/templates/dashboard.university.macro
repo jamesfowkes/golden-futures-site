@@ -177,3 +177,27 @@
         </div>
     {% endfor %}
 {%- endmacro %}
+
+{% macro render_admissions_editor(university, languages) -%}
+    {% for admission in university.admissions %}
+        <div class="university_detail university_admission" id="university_admission{{loop.index0}}">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        {{ forms_macro.i18n_text_array_input("university_admission", loop.index0,
+                        "admission", languages[0],
+                        default=admission.translations[languages[0].id].admission_string) }}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        {{ forms_macro.i18n_text_array_input("university_admission", loop.index0,
+                        "admission", languages[1],
+                        default=admission.translations[languages[1].id].admission_string) }}
+                        {{ forms_macro.i18n_array_element_deleter("university_admission", loop.index0) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{%- endmacro %}
