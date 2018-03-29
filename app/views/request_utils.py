@@ -3,10 +3,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 def get_request_languages(request):
-    if request.method == 'POST':
-        return request.form["languages"].split(",")
-    else:
-        return request.args["languages"].split(",")
+    try:
+        if request.method == 'POST':
+            return request.form["languages"].split(",")
+        else:
+            return request.args["languages"].split(",")
+    except:
+        logger.error("Expected languages string in request")
+        raise
 
 def get_request_field(request, fieldname):
     try:
@@ -45,13 +49,21 @@ def get_req_list_by_language(request, fields, new_field_keys=None):
 
     return data
 
-def get_i18n_list(request, arrayname):
-    languages = get_request_languages(request)
-    data = {}
+def get_i18n_list(request, arrayname, translation_name):
 
-    for language in languages:
-        list_name = arrayname + "[" + language + "][]"
-        data[language] = request.form.getlist(list_name)
+    def full_array_name(arrayname, language):
+        return arrayname + "[" + language + "][]"
+
+    languages = get_request_languages(request)
+    data = []
+
+    data_lists = [request.form.getlist(full_array_name(arrayname, language)) for language in languages]
+
+    for datapoints in zip(*data_lists):
+        language_datapoint = {}
+        for index, language in enumerate(languages):
+            language_datapoint[language] = {translation_name: datapoints[index]}
+        data.append(language_datapoint)
 
     return data
 

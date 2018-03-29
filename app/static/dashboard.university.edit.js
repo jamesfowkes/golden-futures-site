@@ -71,6 +71,8 @@ function add_i18n_edits(parent, class_name, index, languages) {
 
   top_level_div = get_indexed_div(class_name, index)
 
+  row = $("<div>").addClass("row")
+
   divs = get_i18n_divs()
 
   left_input = get_indexed_i18n_input(class_name, languages[0][0], index)
@@ -82,9 +84,11 @@ function add_i18n_edits(parent, class_name, index, languages) {
   divs.rinput.append(right_input)
   divs.rinput.append(deleter)
 
-  top_level_div.append(divs.lcol)
-  top_level_div.append(divs.rcol)
+  row.append(divs.lcol)
+  row.append(divs.rcol)
 
+  top_level_div.append(row)
+  
   parent.append(top_level_div)
 
   return top_level_div

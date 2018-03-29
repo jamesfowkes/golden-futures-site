@@ -18,6 +18,8 @@ from app.models.university import University, UniversityPending
 
 from ..steps import fieldname_with_language
 
+from pprint import pprint
+
 def university_step_data_to_post_data(step_data):
 
     post_data = MultiDict()
@@ -29,6 +31,13 @@ def university_step_data_to_post_data(step_data):
             if University.is_translatable(k):
                 k = k + "[" + language + "]"
             post_data.add(k, v)
+
+    if len(languages) == 0:
+        languages = ["en", "fr"]
+
+    for l in languages:
+        post_data.setdefault(fieldname_with_language("university_name", l), "")
+        post_data.setdefault(fieldname_with_language("university_intro", l), "")
 
     post_data.setdefault("university_latlong", "")
     post_data.setdefault("university_web_address", "")
@@ -49,6 +58,20 @@ def the_user_pends_addition_of_university(step, university_name):
             }
         )
 
+@aloe.step(u'the user pends those courses to that university')
+def the_user_pends_addition_of_courses_to_university(step):
+    with app.app_context():
+        university = University.get_single(university_id = aloe.world.university_ids[0])
+        university_data = university.request_dict()
+        university_data.setlist("courses[]", [str(c) for c in aloe.world.course_ids])
+
+        pprint(university_data)
+        with app.test_request_context():
+            aloe.world.response = aloe.world.app.post(
+                "/university/" + str(aloe.world.university_ids[0]) + "/edit", 
+                data=university_data
+            )
+
 @aloe.step(u'the user approves pending changes to university \"([\w\d ]*)\"')
 def the_user_approves_pending_changes_to_university(step, university_name):
     with app.test_request_context():
@@ -60,7 +83,7 @@ def the_user_approves_pending_changes_to_university(step, university_name):
             }
         )
 
-@aloe.step(u'the following university details are correct in response:')
+@aloe.step(u'the following university details are correct in response')
 def the_following_university_details_are_returned(step):
     returned_json = json.loads(aloe.world.response.data.decode("utf-8"))["data"]
 
@@ -69,6 +92,22 @@ def the_following_university_details_are_returned(step):
 
     for k, v in expected_json.items():
         assert_equals(v, returned_json[k])
+
+@aloe.step(u'the following data is pending for that university')
+def the_following_university_details_are_pending(step):
+    with app.app_context():
+        if aloe.world.last_pending_university_id is None:
+            aloe.world.last_pending_university_id = UniversityPending.get_single(
+                university_id=aloe.world.university_ids[0]
+            )
+        
+        actual_json = aloe.world.last_pending_university_id.json()
+
+        expected_json = University.json_skeleton()
+        expected_json = json.loads(step.multiline)
+
+        for k, v in expected_json.items():
+            assert_equals(v, actual_json[k])
 
 @aloe.step(u'the university \"([\w\d ]*)\" should exist in \"([\w\d ]*)\"')
 def the_university_should_exist(step, university_name, language):
@@ -80,7 +119,8 @@ def the_university_should_exist(step, university_name, language):
 def the_university_exists(step, university_name):
     with app.app_context():
         try:
-            University.create({aloe.world.language: {"university_name": university_name}})
+            uni = University.create({aloe.world.language: {"university_name": university_name}})
+            aloe.world.university_ids.append(uni.university_id)
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # University already in the system
 
@@ -88,7 +128,7 @@ def the_university_exists(step, university_name):
 def the_university_is_pending_for_addition(step, university_name):
     with app.app_context():
         try:
-            UniversityPending.addition(
+            aloe.world.last_pending_university_id = UniversityPending.addition(
                 {aloe.world.language: {"university_name": university_name}}
             )
         except sqlalchemy.exc.IntegrityError:
@@ -99,7 +139,7 @@ def the_university_is_pending_for_edit(step, university_name):
     with app.app_context():
         try:
             university = University.get_single(university_name=university_name, language=aloe.world.language)
-            UniversityPending.edit(university)
+            aloe.world.last_pending_university_id = UniversityPending.edit(university)
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # University already in the system
 
@@ -108,11 +148,11 @@ def the_translation_of_university_is_pending(step, translation, language, univer
     with app.app_context():
         try:
             university = University.get_single(university_name=university_name, language=aloe.world.language)
-            pending = UniversityPending.edit(university)
-            pending.set_translations(
+            aloe.world.last_pending_university_id = UniversityPending.edit(university)
+            aloe.world.last_pending_university_id.set_translations(
                 {language: {"university_name": translation}}
             )
-            pending.save()
+            aloe.world.last_pending_university_id.save()
 
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # University already in the system
@@ -124,11 +164,17 @@ def the_university_has_data(step, university_name):
         expected_data = json.loads(step.multiline)
         assert_equals(university.json(), expected_data)
 
-@aloe.step(u'the user pends the following data to university \"([\w\d ]*)\"')
-def the_user_pends_university_data_for_edit(step, university_name):
+@aloe.step(u'the user pends the following data to it')
+def the_user_pends_university_data_for_edit(step):
     with app.test_request_context():
-        university = University.get_by_name(university_name=university_name, language="en")
         aloe.world.response = aloe.world.app.post(
-            "/university/" + str(university.university_id) + "/edit", 
+            "/university/" + str(aloe.world.university_ids[0]) + "/edit", 
             data=university_step_data_to_post_data(step.hashes)
         )
+
+@aloe.step(u'those courses should be pending for addition')
+def courses_should_be_pending_for_addition(step):
+    with app.app_context():
+        university = UniversityPending.get_single(university_id = aloe.world.university_ids[0])
+        for course_id in aloe.world.course_ids:
+            assert(university.has_course(course_id))

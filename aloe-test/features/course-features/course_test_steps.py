@@ -82,7 +82,9 @@ def the_following_course_details_are_returned(step):
 def the_course_exists(step, course_name):
     with app.app_context():
         try:
-            Course.create({aloe.world.language: {"course_name": course_name}})
+            course = Course.create({aloe.world.language: {"course_name": course_name}})
+            aloe.world.course_ids.append(course.course_id)
+
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # Course already pending
 

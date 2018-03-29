@@ -1,6 +1,7 @@
 import logging
 
 import json
+from werkzeug.datastructures import MultiDict
 
 from flask import g
 
@@ -75,6 +76,44 @@ class UniversityBase():
             "translations": self.all_translations()
         }
     
+    def request_dict(self):
+        data = MultiDict()
+        data["university_latlong"] = self.latlong or ""
+        data["university_web_address"] = self.web_address or ""
+        data.setlist("courses[]", [str(c.course_id) for c in self.courses])
+
+        for index, tf in enumerate(self.tuition_fees):
+            for lang in app.app.config["SUPPORTED_LOCALES"]:
+                data["tuition_fee_award[{}]".format(lang)].add(tf.tuition_fee_award)
+                data["tuition_fee_period[{}]".format(lang)].add(tf.tuition_fee_period)
+            data["tuition_fee_min"].add(str(tf.tuition_fee_min))
+            data["tuition_fee_max"].add(str(tf.tuition_fee_max))
+            data["tuition_fee_currency"].add(tf.tuition_fee_currency)
+
+            if tf.include_in_filter:
+                data["tuition_fee_include_in_filter"].add(str(index))
+
+        for lang in app.app.config["SUPPORTED_LOCALES"]:
+
+            data["university_name[{}]".format(lang)] = self.translations[lang].university_name or ''
+            data["university_intro[{}]".format(lang)] = self.translations[lang].university_intro or ''
+
+            for f in self.facilities:
+                data["university_facility[{}]".format(lang)].add(f.translations[lang].facility_string)
+
+            for cd in self.contact_details:
+                data["university_contact_detail[{}]".format(lang)].add(cd.translations[lang].contact_detail_string)
+
+            for a in self.admissions:
+                data["admission[{}]".format(lang)].add(a.translations[lang].admission_string)
+
+            for s in self.scholarships:
+                data["university_scholarship[{}]".format(lang)].add(a.translations[lang].scholarship_string)
+
+        data["languages"] = ",".join(app.app.config["SUPPORTED_LOCALES"])
+
+        return data
+
     def set_translations(self, translation_dict_or_uni_obj):
         try:
             translations = translation_dict_or_uni_obj.all_translations()
@@ -116,8 +155,11 @@ class UniversityBase():
         return category_course_map
 
     def has_course(self, course):
-        return course.course_id in [course.course_id for course in self.courses]
-        
+        if type(course) == Course:
+            return course.course_id in [course.course_id for course in self.courses]
+        else:
+            return course in [course.course_id for course in self.courses]
+            
     def remove_courses(self):
         for course in self.courses:
             course.delete()
@@ -126,6 +168,10 @@ class UniversityBase():
         for c in courses:
             self.add_course(c)
         
+    def set_courses(self, courses):
+        self.remove_courses()
+        self.add_courses(courses)
+
     def add_course(self, course):
         self.courses.append(course)
         self.save()
@@ -141,6 +187,10 @@ class UniversityBase():
     def add_tuition_fee(self, tuition_fee):
         self.tuition_fees.append(tuition_fee)
         self.save()
+
+    def remove_contact_details(self):
+        for contact_detail in self.contact_details:
+            contact_detail.delete()
 
     def set_latlong(self, latlong):
         self.latlong = latlong

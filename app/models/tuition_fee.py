@@ -14,16 +14,6 @@ from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase, TranslationMixin, get_locales
 from app.models.pending_changes import pending_university_detail
 
-#class ZippedTuitionFeeData(namedtuple("ZippedTuitionFeeData", ["min", "max", "currency", "translations", "include_in_filter"]):
-#
-#    __slots__ = ()
-#
-#    @classmethod
-#    def from_request_data(request, languages)
-#        minimums = request.form.getlist("university_tuition_fee_min[]")
-#        maximums = request.form.getlist("university_tuition_fee_max[]")
-#        awards = get_i18n_list(request, "university_tuition_fee_award")
-
 class TuitionFeeBase():
 
     def __init__(self, university_id, translations, **kwargs):

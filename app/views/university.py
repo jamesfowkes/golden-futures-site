@@ -7,12 +7,10 @@ import flask_login
 from app.models.university import University, UniversityPending
 from app.models.course import Course
 from app.models.tuition_fee import TuitionFeePending
-
+from app.models.contact_detail import ContactDetailPending
 from app import app
 
 from app.views.request_utils import get_request_languages, get_req_list_by_language, get_req_data_by_language, get_i18n_list, zip_and_tag_request_data_lists
-
-from pprint import pprint
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +22,6 @@ def get_tuition_fee_request_data(request):
 
     include_in_filter_indexes = [int(i) for i in request.form.getlist("university_tuition_fee_include_in_filter[]")]
 
-    print(include_in_filter_indexes)
     for index, d in enumerate(data):
         d["translations"] = get_req_list_by_language(
             request, ["university_tuition_fee_award", "university_tuition_fee_period"], ["award", "period"]
@@ -67,10 +64,10 @@ def edit_university(university_id):
                 "latlong": request.form["university_latlong"],
                 "web_address": request.form["university_web_address"],
                 "courses": request.form.getlist("courses[]"),
-                "facilities": get_i18n_list(request, "university_facility"),
-                "contact_details": get_i18n_list(request, "university_contact_detail"),
-                "admissions": get_i18n_list(request, "university_admission"),
-                "scholarships": get_i18n_list(request, "university_scholarship"),
+                "facilities": get_i18n_list(request, "university_facility", "facility_string"),
+                "contact_details": get_i18n_list(request, "university_contact_detail", "contact_detail_string"),
+                "admissions": get_i18n_list(request, "university_admission", "admission_string"),
+                "scholarships": get_i18n_list(request, "university_scholarship", "scholarship_string"),
                 "translations": get_req_data_by_language(request, ["university_name", "university_intro"])
             }
         except KeyError as e:
@@ -83,7 +80,6 @@ def edit_university(university_id):
         pending_university.set_web_address(request_data["web_address"])
 
         tuition_fee_data = get_tuition_fee_request_data(request)
-        print(tuition_fee_data)
 
         pending_university.remove_tuition_fees()
         for fee in tuition_fee_data:
@@ -96,8 +92,16 @@ def edit_university(university_id):
                 currency="$"
             )
 
-        pending_university.remove_courses()
-        pending_university.add_courses([Course.get_single(course_id=int(c)) for c in request_data["courses"]])
+        pending_university.remove_contact_details()
+        for contact_detail in request_data["contact_details"]:
+            ContactDetailPending.addition(
+                pending_university.pending_id,
+                contact_detail
+                )
+
+        pending_university.set_courses([Course.get_single(course_id=int(c)) for c in request_data["courses"]])
+        
+
 
         return json.dumps(pending_university.json())
         

@@ -22,3 +22,9 @@ def i_should_be_redirected_to(step, expected_path):
 @aloe.step(u'the language is \"(\w*)\"')
 def the_language_is(step, language):
     aloe.world.language = language
+
+@aloe.before.each_example
+def before_example(scenario, outline, steps):
+    aloe.world.last_pending_university_id = None
+    aloe.world.university_ids = []
+    aloe.world.course_ids = []
