@@ -159,10 +159,6 @@ class UniversityBase():
             return course.course_id in [course.course_id for course in self.courses]
         else:
             return course in [course.course_id for course in self.courses]
-            
-    def remove_courses(self):
-        for course in self.courses:
-            course.delete()
 
     def add_courses(self, courses):
         for c in courses:
@@ -171,10 +167,6 @@ class UniversityBase():
     def set_courses(self, courses):
         self.remove_courses()
         self.add_courses(courses)
-
-    def add_course(self, course):
-        self.courses.append(course)
-        self.save()
 
     def remove_tuition_fees(self):
         for tuition_fee in self.tuition_fees:
@@ -266,6 +258,14 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
 
     def is_pending(self):
         return False
+
+    def add_course(self, course):
+        self.courses.append(course)
+        self.save()
+
+    def remove_courses(self):
+        for course in self.courses:
+            course.delete()
 
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
@@ -377,6 +377,10 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         pending_course = UniversityPendingCourse.get(university_id=self.university_id, course_id=course.course_id)
         pending_course.delete()
         self.save()
+       
+    def remove_courses(self):
+        for course in self.pending_courses:
+            course.delete()
 
     @property
     def course_names(self):
