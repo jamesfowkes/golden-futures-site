@@ -9,6 +9,7 @@ from app.models.course import Course
 from app.models.tuition_fee import TuitionFeePending
 from app.models.contact_detail import ContactDetailPending
 from app.models.scholarship import ScholarshipPending
+from app.models.facility import FacilityPending
 
 from app import app
 
@@ -106,6 +107,13 @@ def edit_university(university_id):
             ScholarshipPending.addition(
                 pending_university.pending_id,
                 scholarship
+                )
+
+        pending_university.remove_facilities()
+        for facility in request_data["facilities"]:
+            FacilityPending.addition(
+                pending_university.pending_id,
+                facility
                 )
 
         pending_university.set_courses([Course.get_single(course_id=int(c)) for c in request_data["courses"]])

@@ -196,6 +196,10 @@ class UniversityBase():
         for scholarship in self.scholarships:
             scholarship.delete()
 
+    def remove_facilities(self):
+        for facility in self.facilities:
+            facility.delete()
+
     def set_latlong(self, latlong):
         self.latlong = latlong
         self.save()
