@@ -150,6 +150,7 @@ def render_universities_dashboard():
     
     live_universities = University.all()
     pending_universities = UniversityPending.all()
+    pending_universities = list(filter(lambda c: c.is_addition(), pending_universities))
     all_universities = live_universities + pending_universities
     all_universities = sorted(all_universities, key=lambda c: c.university_name[0])
     return render_template('dashboard.universities.tpl',
