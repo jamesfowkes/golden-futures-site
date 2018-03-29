@@ -8,7 +8,7 @@
 {% block content %}
 <div class="container">
     {{ dashboard_macro.dashboard_heading(_("Manage university: ") + university.university_name) }}
-    <form id="form_add_university">
+    <form id="form_edit_university" method="post">
         <div id="accordion" role="tablist" aria-multiselectable="true">
             <div class="card plain" role="tab">
                 <div class="card-title" role="tab">
@@ -51,6 +51,7 @@
                     <div class="form-group card-block">
                         {{ dashboard_mapping_macro.render_location_selector() }}
                     </div>
+                    <input type="hidden" name="university_latlong" default="0,0"/>
                 </div>
             </div>
 
@@ -65,8 +66,8 @@
                 <div id="contact_details_selector_collapse" class="collapse" role="tabpanel" aria-labelledby="contact_details_selector_heading">
                     <div class="form-group card-block">
                         <h4>{{_("Web Address")}}</h4>
-                        <div id="website_address_container">
-                            {{ dashboard_university_macro.render_website_address_editors(university, languages) }}
+                        <div id="web_address_container">
+                            {{ dashboard_university_macro.render_web_address_editor(university) }}
                         </div>
 
                         <h4>{{_("Other Contact Details")}}</h4>
@@ -146,8 +147,8 @@
                     </div>
                 </div>
             </div>
-
-            <button id="university_edit_submit" class="btn btn-default btn-block" type="button">{{_("Submit")}}</button>
+            <input type="hidden" name="languages" value="{{languages[0].id}},{{languages[1].id}}">
+            <button id="edit_university" class="btn btn-default btn-block" type="button">{{_("Submit")}}</button>
         </div>
     </form>
 
@@ -158,4 +159,5 @@
     {{ super() }}
     <script src="{{url_for('static', filename='dashboard.js')}}"></script>
     <script src="{{url_for('static', filename='dashboard.university.edit.js')}}"></script>
+    <script src="{{url_for('static', filename='jquery_plugins/jquery.form.min.js')}}"></script>
 {% endblock %}

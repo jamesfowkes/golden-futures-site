@@ -67,6 +67,10 @@ h1.inline-heading, h2.inline-heading, h3.inline-heading, h4.inline-heading {
     outline: none;
 }
 
+.form-control {
+	margin-bottom: 1em;	
+}
+
 form button {
 	margin-bottom: 1em;
 }
@@ -116,8 +120,12 @@ a#open_map_link{
 div.university_detail {
 	border: 1px solid rgba(0,0,0,0.125);
 	border-radius: 5px;
-	padding: 10px;
+	padding: 10px 20px;
 	margin: 10px;
+}
+
+div.university_detail .form-control {
+	margin-bottom: 0;	
 }
 
 @media print {

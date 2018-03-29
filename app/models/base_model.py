@@ -79,8 +79,13 @@ class BaseModelTranslateable(__Deleteable__):
     def current_language(self):
         return get_current_locale(self)
 
-    def translateable_fields(self):
-        return [c.name for c in all_translated_columns(self)]
+    @classmethod
+    def is_translatable(cls, fieldname):
+        return fieldname in cls.translateable_fields()
+    
+    @classmethod
+    def translateable_fields(cls):
+        return [c.name for c in all_translated_columns(cls)]
 
     def all_translations(self, language = None):
         fields = self.translateable_fields()

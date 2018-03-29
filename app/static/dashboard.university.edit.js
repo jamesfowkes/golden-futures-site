@@ -37,26 +37,30 @@ function get_i18n_divs(size="col-sm-6") {
   }
 }
 
+function form_array(name="") {
+  return "[" + name + "]";
+}
+
 function get_indexed_input(class_name, index, type="text") {
   input = $("<input>")
   input.addClass("form-control")
   input.attr("type",type)
-  input.attr("id",class_name + "." + index)
-  input.attr("name", class_name + "[]")
+  input.attr("id",class_name + form_array(index))
+  input.attr("name", class_name + form_array())
 
   return input
 }
 
 function get_indexed_i18n_input(class_name, language_id, index, type="text") {
   input = get_indexed_input(class_name, index, type)
-  input.attr("id",class_name + "." + language_id + "." + index)
-  input.attr("name",class_name + "." + language_id + "[]")
+  input.attr("id",class_name + form_array(language_id) + form_array(index))
+  input.attr("name",class_name + form_array(language_id) + form_array())
   return input
 }
 
 function get_indexed_div(class_name, index) {
   div = $("<div>")
-  div.addClass("row university_detail")
+  div.addClass("university_detail")
   div.addClass(class_name)
   div.attr("id", class_name + index)
 
@@ -86,7 +90,7 @@ function add_i18n_edits(parent, class_name, index, languages) {
   return top_level_div
 }
 
-function get_label(text, name, index) {
+function get_label(text, name, index="") {
   label = $("<label>" + text + "</label>")
   label.attr("for", name + index)
   return label  
@@ -117,9 +121,19 @@ function get_currency_input(label_text, name, index) {
   return currency_div
 }
 
+function get_hidden_input(attributes) {
+  input = $("<input>")
+  input.attr("type", "hidden")
+  for (var attr_name in attributes) {
+    input.attr(attr_name, attributes[attr_name])
+  }
+  return input
+}
+
 function add_tuition_fee_inputs(parent, index, languages) {
   top_level_div = get_indexed_div("university_tuition_fee", index);
-
+  top_row = $("<div>").addClass("row")
+  bottom_row = $("<div>").addClass("row")
   minimum_fee_div = get_currency_input("Minimum", "university_tuition_fee_min", index)
   maximum_fee_div = get_currency_input("Maximum", "university_tuition_fee_max", index)
 
@@ -137,10 +151,47 @@ function add_tuition_fee_inputs(parent, index, languages) {
   award_divs.rinput.append(right_input)
   award_divs.rinput.append(deleter)
 
-  top_level_div.append(minimum_fee_div)
-  top_level_div.append(maximum_fee_div)
-  top_level_div.append(award_divs.lcol)
-  top_level_div.append(award_divs.rcol)
+  top_row.append(minimum_fee_div)
+  top_row.append(maximum_fee_div)
+  top_row.append(award_divs.lcol)
+  top_row.append(award_divs.rcol)
+
+  include_chk_id = "university_tuition_fee_include_in_filter"+ form_array(index)
+  include_chk_label = get_label($L["include_in_filter"], include_chk_id)
+  include_checkbox = $("<input>").attr("type", "checkbox")
+  include_checkbox.attr("name", "university_tuition_fee_include_in_filter[]")
+  include_checkbox.attr("id", include_chk_id)
+  include_checkbox.attr("value", index)
+  include_checkbox.attr("checked")
+
+  include_column = $("<div>").addClass("col-sm-12")
+
+  include_column.append(include_chk_label)
+  include_column.append(include_checkbox)
+  bottom_row.append(include_column)
+
+  hidden_period_inputs = [
+    get_hidden_input({
+      "name": "university_tuition_fee_period" + form_array(languages[0][0]),
+      "value": "year"
+    }),
+    get_hidden_input({
+      "name": "university_tuition_fee_period" + form_array(languages[1][0]),
+      "value": "!year!"
+    })
+  ]
+
+  hidden_index_input = get_hidden_input({
+    "name": "university_tuition_fee_index[]",
+    "value": index
+  })
+
+  top_level_div.append(hidden_period_inputs[0])
+  top_level_div.append(hidden_period_inputs[1])
+  top_level_div.append(hidden_index_input)
+
+  top_level_div.append(top_row)
+  top_level_div.append(bottom_row)
 
   parent.append(top_level_div);
 }
@@ -149,7 +200,7 @@ $( document ).ready(function() {
   $("#edit_university").click(function(event) {
       $("p.success").remove();
       $("p.fail").remove();
-      $("#form_add_university").ajaxSubmit({
+      $("#form_edit_university").ajaxSubmit({
           url:$SCRIPT_ROOT + $data["api_endpoints"]["edit_university"],
           success: function(data) {
             $("#university_name").val("");

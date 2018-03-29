@@ -52,9 +52,8 @@ class CourseBase():
 
     def json(self):
         return {
-            "course_name": self.course_name,
-            "category_names": [c.category_name for c in self.categories],
-            "language": self.current_language
+            "course_id": self.course_id,
+            "translations": self.all_translations()
         }
 
     def university_names(self):

@@ -81,6 +81,8 @@ def init_app(app):
     sqlalchemy_utils.i18n.get_locale = get_locale
     sqlalchemy_i18n.make_translatable(options={'locales': app.config["SUPPORTED_LOCALES"]})
 
+    logger.setLevel(logging.WARNING)
+    
 def supported_languages():
     return [Language(k, v) for k,v in app.config["SUPPORTED_LOCALES"].items()]
 
@@ -94,5 +96,6 @@ def get_js_strings():
         "category_filter_display_text": gettext("Category"),
         "fee_filter_display_text": gettext("Maximum Tuition Fee"),
         "applied_filters": gettext("Applied Filters"),
-        "currency": gettext("$")
+        "currency": gettext("$"),
+        "include_in_filter":  gettext("Include in Filter?")
     }

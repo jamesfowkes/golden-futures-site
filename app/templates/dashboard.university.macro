@@ -8,20 +8,18 @@
 {% macro render_add_new_university_form() -%}
 <form id="form_addedit_university" method="post">
     <div class="form-group">
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-6">
-                    {{ render_university_fields("", "", languages[0]) }}
-                </div>
-                <div class="col-sm-6">
-                    {{ render_university_fields("", "", languages[1]) }}
-                </div>
+        <div class="row">
+            <div class="col-sm-6">
+                {{ render_university_fields("", "", languages[0]) }}
             </div>
-            <div class="row">
-                <button id="add_university" class="btn btn-default btn-block" type="button">{{_("Submit New University")}}</button>
+            <div class="col-sm-6">
+                {{ render_university_fields("", "", languages[1]) }}
             </div>
-            <input type="hidden" name="languages" value="{{languages[0].id}},{{languages[1].id}}">
         </div>
+        <div class="row">
+            <button id="add_university" class="btn btn-default btn-block" type="button">{{_("Submit New University")}}</button>
+        </div>
+        <input type="hidden" name="languages" value="{{languages[0].id}},{{languages[1].id}}">
     </div>
 </form>
 {%- endmacro %}
@@ -46,37 +44,26 @@
     </div>
 {%- endmacro %}
 
-{% macro render_website_address_editor(university, language) -%}
-    {{ forms_macro.i18n_text_input("university_web_address", "Web Address", language,
-        default=university.translations[language.id].web_address) }}
+{% macro render_web_address_editor(university) -%}
+    <input class="form-control" type="text" id="university_web_address" name="university_web_address" placeholder="{{_("Web Address")}}" value="{{university.web_address}}">
 {%- endmacro %}
-
-{% macro render_website_address_editors(university, languages) -%}
-    <div class="row university_detail university_website_address">
-        <div class="col-sm-6">
-            {{ render_website_address_editor(university, languages[0]) }}
-        </div>
-        <div class="col-sm-6">
-            {{ render_website_address_editor(university, languages[1]) }}
-        </div>
-    </div>
-{%- endmacro %}
-
 
 {% macro render_contact_details_editor(university, languages) -%}
     {% for contact_detail in university.contact_details %}
-        <div class="row university_detail university_contact_detail" id="university_contact_detail{{loop.index0}}">
-            <div class="col-sm-6">
-                    {{ forms_macro.i18n_text_array_input("university_contact_detail", loop.index0,
-                    "Contact Detail", languages[0],
-                    default=contact_detail.translations[languages[0].id].contact_detail_string) }}
-            </div>
-            <div class="col-sm-6">
-                <div class="input-group">
-                    {{ forms_macro.i18n_text_array_input("university_contact_detail", loop.index0,
-                    "Contact Detail", languages[1],
-                    default=contact_detail.translations[languages[1].id].contact_detail_string) }}
-                    {{ forms_macro.i18n_array_element_deleter("university_contact_detail", loop.index0) }}
+        <div class="university_detail university_contact_detail" id="university_contact_detail{{loop.index0}}">
+            <div class="row">
+                <div class="col-sm-6">
+                        {{ forms_macro.i18n_text_array_input("university_contact_detail", loop.index0,
+                        "Contact Detail", languages[0],
+                        default=contact_detail.translations[languages[0].id].contact_detail_string) }}
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        {{ forms_macro.i18n_text_array_input("university_contact_detail", loop.index0,
+                        "Contact Detail", languages[1],
+                        default=contact_detail.translations[languages[1].id].contact_detail_string) }}
+                        {{ forms_macro.i18n_array_element_deleter("university_contact_detail", loop.index0) }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,20 +72,22 @@
 
 {% macro render_facilities_editor(university, languages) -%}
     {% for facility in university.facilities %}
-        <div class="row university_detail university_facility" id="university_facility{{loop.index0}}">
-            <div class="col-sm-6">
-                <div class="input-group">
-                    {{ forms_macro.i18n_text_array_input("university_facility", loop.index0,
-                    "Facility", languages[0],
-                    default=facility.translations[languages[0].id].facility_string) }}
+        <div class="university_detail university_facility" id="university_facility{{loop.index0}}">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        {{ forms_macro.i18n_text_array_input("university_facility", loop.index0,
+                        "Facility", languages[0],
+                        default=facility.translations[languages[0].id].facility_string) }}
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="input-group">
-                    {{ forms_macro.i18n_text_array_input("university_facility", loop.index0,
-                    "Facility", languages[1],
-                    default=facility.translations[languages[1].id].facility_string) }}
-                    {{ forms_macro.i18n_array_element_deleter("university_facility", loop.index0) }}
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        {{ forms_macro.i18n_text_array_input("university_facility", loop.index0,
+                        "Facility", languages[1],
+                        default=facility.translations[languages[1].id].facility_string) }}
+                        {{ forms_macro.i18n_array_element_deleter("university_facility", loop.index0) }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -106,46 +95,60 @@
 {%- endmacro %}
 
 {% macro render_tuition_fees_inputs(tuition_fee, languages, index) -%}
-    <div class="col-sm-2">
-        <label for="{{ forms_macro.text_array_input_id("university_tuition_fee_min", index) }}">{{_("Minimum")}}</label>
-        <div class="input-group">
-            <div class="input-group-addon">
-                <div class="input-group-text">$</div>
-            </div>
-            {{ forms_macro.text_array_input("university_tuition_fee_min", index,
-            "tuition_fee_min", type="number", default=tuition_fee.tuition_fee_min) }}
-        </div>
-    </div>
-    <div class="col-sm-2">
-        <label for="{{ forms_macro.text_array_input_id("university_tuition_fee_max", index) }}">{{_("Maximum")}}</label>
+    <div class="row">
+        <div class="col-sm-2">
+            <label for="{{ forms_macro.text_array_input_id("university_tuition_fee_min", index) }}">{{_("Minimum")}}</label>
             <div class="input-group">
-            <div class="input-group-addon">
-                <div class="input-group-text">$</div>
+                <div class="input-group-addon">
+                    <div class="input-group-text">$</div>
+                </div>
+                {{ forms_macro.text_array_input("university_tuition_fee_min", index,
+                "tuition_fee_min", type="number", default=tuition_fee.tuition_fee_min) }}
             </div>
-            {{ forms_macro.text_array_input("university_tuition_fee_max", index,
-            "tuition_fee_max", type="number", default=tuition_fee.tuition_fee_max) }}
         </div>
-    </div>
-    <div class="col-sm-4">
-        <label for="{{ forms_macro.i18n_text_array_input_id("university_tuition_fee_award", languages[0], index) }}">{{_("Award")}} ({{languages[0].name}})</label>
-        {{ forms_macro.i18n_text_array_input("university_tuition_fee_award", index,
-        "tuition_fee_award", languages[0],
-        default=tuition_fee.translations[languages[0].id].award) }}
-    </div>
-    <div class="col-sm-4">
-        <label for="{{ forms_macro.i18n_text_array_input_id("university_tuition_fee_award", languages[1], index) }}">{{_("Award")}} ({{languages[1].name}})</label>
-        <div class="input-group">
+        <div class="col-sm-2">
+            <label for="{{ forms_macro.text_array_input_id("university_tuition_fee_max", index) }}">{{_("Maximum")}}</label>
+                <div class="input-group">
+                <div class="input-group-addon">
+                    <div class="input-group-text">$</div>
+                </div>
+                {{ forms_macro.text_array_input("university_tuition_fee_max", index,
+                "tuition_fee_max", type="number", default=tuition_fee.tuition_fee_max) }}
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <label for="{{ forms_macro.i18n_text_array_input_id("university_tuition_fee_award", languages[0], index) }}">{{_("Award")}} ({{languages[0].name}})</label>
             {{ forms_macro.i18n_text_array_input("university_tuition_fee_award", index,
-            "tuition_fee_award", languages[1],
-            default=tuition_fee.translations[languages[1].id].award) }}
-            {{ forms_macro.i18n_array_element_deleter("university_tuition_fee", index) }}
+            "tuition_fee_award", languages[0],
+            default=tuition_fee.translations[languages[0].id].award) }}
+        </div>
+        <div class="col-sm-4">
+            <label for="{{ forms_macro.i18n_text_array_input_id("university_tuition_fee_award", languages[1], index) }}">{{_("Award")}} ({{languages[1].name}})</label>
+            <div class="input-group">
+                {{ forms_macro.i18n_text_array_input("university_tuition_fee_award", index,
+                "tuition_fee_award", languages[1],
+                default=tuition_fee.translations[languages[1].id].award) }}
+                {{ forms_macro.i18n_array_element_deleter("university_tuition_fee", index) }}
+            </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-12">
+        <label for="university_tuition_fee_include_in_filter[{{index}}]">{{_("Include in Filter?")}}</label>
+        <input type="checkbox" id="university_tuition_fee_include_in_filter[{{index}}]" name="university_tuition_fee_include_in_filter[]"
+        value="{{index}}"
+        {% if tuition_fee.include_in_filter %}
+        checked{% endif %}/>
+        </div>
+    </div>
+    <input type="hidden" name="university_tuition_fee_period[{{languages[0].id}}][]" value="year">
+    <input type="hidden" name="university_tuition_fee_period[{{languages[1].id}}][]" value="!year!">
+    <input type="hidden" name="university_tuition_fee_index[]" value="{{index}}">
 {%- endmacro %}
 
 {% macro render_tuition_fees_editor(university, languages) -%}
     {% for tuition_fee in university.tuition_fees %}
-        <div class="row university_detail university_tuition_fee" id="university_tuition_fee{{loop.index0}}">
+        <div class="university_detail university_tuition_fee" id="university_tuition_fee{{loop.index0}}">
             {{ render_tuition_fees_inputs(tuition_fee, languages, loop.index0) }}
         </div>
     {% endfor %}
@@ -153,20 +156,22 @@
 
 {% macro render_scholarships_editor(university, languages) -%}
     {% for scholarship in university.scholarships %}
-        <div class="row university_detail university_scholarship" id="university_scholarship{{loop.index0}}">
-            <div class="col-sm-6">
-                <div class="input-group">
-                    {{ forms_macro.i18n_text_array_input("university_scholarship", loop.index0,
-                    "scholarship", languages[0],
-                    default=scholarship.translations[languages[0].id].scholarship_string) }}
+        <div class="university_detail university_scholarship" id="university_scholarship{{loop.index0}}">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        {{ forms_macro.i18n_text_array_input("university_scholarship", loop.index0,
+                        "scholarship", languages[0],
+                        default=scholarship.translations[languages[0].id].scholarship_string) }}
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="input-group">
-                    {{ forms_macro.i18n_text_array_input("university_scholarship", loop.index0,
-                    "scholarship", languages[1],
-                    default=scholarship.translations[languages[1].id].scholarship_string) }}
-                    {{ forms_macro.i18n_array_element_deleter("university_scholarship", loop.index0) }}
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        {{ forms_macro.i18n_text_array_input("university_scholarship", loop.index0,
+                        "scholarship", languages[1],
+                        default=scholarship.translations[languages[1].id].scholarship_string) }}
+                        {{ forms_macro.i18n_array_element_deleter("university_scholarship", loop.index0) }}
+                    </div>
                 </div>
             </div>
         </div>

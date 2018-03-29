@@ -1,15 +1,15 @@
 {% macro i18n_text_input(name, label, lang, default="", other="") -%}
-    <label for="{{name}}.{{lang.id}}"" class="sr-only">{{ _(label) }} ({{lang.name}})</label>
-    <input class="form-control" type="text" id="{{name}}.{{lang.id}}" name="{{name}}.{{lang.id}}" placeholder="{{_(label)}} ({{lang.name}})" value="{{default}}" {{other}}>
+    <label for="{{name}}[{{lang.id}}]" class="sr-only">{{ _(label) }} ({{lang.name}})</label>
+    <input class="form-control" type="text" id="{{name}}[{{lang.id}}]" name="{{name}}[{{lang.id}}]" placeholder="{{_(label)}} ({{lang.name}})" value="{{default}}" {{other}}>
 {%- endmacro %}
 
 {% macro i18n_textarea_input(name, label, rows, lang, default="", other="") -%}
-    <label for="{{name}}"" class="sr-only">{{ _(label) }} ({{lang.name}})</label>
-    <textarea rows="{{rows}}" class="form-control" type="text" id="{{name}}.{{lang.id}}" name="{{name}}.{{lang.id}}" placeholder="{{_(label)}} ({{lang.name}})" {{other}}">{{default}}</textarea>
+    <label for="{{name}}[{{lang.id}}]" class="sr-only">{{ _(label) }} ({{lang.name}})</label>
+    <textarea rows="{{rows}}" class="form-control" type="text" id="{{name}}[{{lang.id}}]" name="{{name}}[{{lang.id}}]" placeholder="{{_(label)}} ({{lang.name}})" {{other}}">{{default}}</textarea>
 {%- endmacro %}
 
 {% macro text_array_input_id(name, num) -%}
-	{{name}}.{{num}}
+	{{name}}[{{num}}]
 {%- endmacro %}
 
 {% macro text_array_input(name, num, label, default="", other="", type="text") -%}
@@ -17,11 +17,11 @@
 {%- endmacro %}
 
 {% macro i18n_text_array_input_id(name, lang, num) -%}
-	{{name}}.{{lang.id}}.{{num}}
+	{{name}}[{{lang.id}}][{{num}}]
 {%- endmacro %}
 
 {% macro i18n_text_array_input(name, num, label, lang, default="", other="", type="text") -%}
-    <input class="form-control" type={{type}} id="{{ i18n_text_array_input_id(name, lang, num) }}" name="{{name}}.{{lang.id}}[]" placeholder="{{_(label)}} ({{lang.name}})" value="{{default}}" {{other}}>
+    <input class="form-control" type={{type}} id="{{ i18n_text_array_input_id(name, lang, num) }}" name="{{name}}[{{lang.id}}][]" placeholder="{{_(label)}} ({{lang.name}})" value="{{default}}" {{other}}>
 {%- endmacro %}
 
 {% macro i18n_array_element_deleter(name, num) -%}

@@ -1,5 +1,7 @@
 import json
 
+from collections import namedtuple
+
 from flask import g
 
 import flask_login
@@ -11,6 +13,16 @@ import app
 from app.database import db
 from app.models.base_model import BaseModelTranslateable, DeclarativeBase, TranslationMixin, get_locales
 from app.models.pending_changes import pending_university_detail
+
+#class ZippedTuitionFeeData(namedtuple("ZippedTuitionFeeData", ["min", "max", "currency", "translations", "include_in_filter"]):
+#
+#    __slots__ = ()
+#
+#    @classmethod
+#    def from_request_data(request, languages)
+#        minimums = request.form.getlist("university_tuition_fee_min[]")
+#        maximums = request.form.getlist("university_tuition_fee_max[]")
+#        awards = get_i18n_list(request, "university_tuition_fee_award")
 
 class TuitionFeeBase():
 
@@ -123,6 +135,28 @@ class TuitionFeePending(TuitionFeePendingDetail, TuitionFeeBase, Translatable, B
     tuition_fee_max = sa.Column(sa.Integer)
     currency = sa.Column(sa.Unicode(6))
     pending_type = db.Column(db.String(6), nullable=False)
+
+    #@classmethod
+    #def make_from_zip(cls, zipped_data):
+#
+    #    cls.addition(
+    #        pending_university.university_id
+    #        {
+    #            languages[0]:
+    #            {
+    #                "period": tuition_fee_data[0]
+    #                "award": tuition_fee_data[2]
+    #            },
+    #            languages[1]:
+    #            {
+    #                "period": tuition_fee_data[1]
+    #                "award": tuition_fee_data[3]
+    #            }
+    #        },
+    #        tuition_fee_min=tuition_fee_data[4],
+    #        tuition_fee_max=tuition_fee_data[5],
+    #        currency="$",
+    #        include_in_filter=request.form.get("include_in_filter", True)
 
 class TuitionFeePendingTranslation(translation_base(TuitionFeePending), TranslationMixin):
     __tablename__ = 'TuitionFeePendingTranslation'

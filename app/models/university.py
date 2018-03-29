@@ -34,6 +34,21 @@ class UniversityBase():
         logger.info("Creating university %s", translations["en"]["university_name"])
         self.set_translations(translations)
 
+    @staticmethod
+    def json_skeleton():
+        return {
+            "university_id": -1,
+            "latlong": "",
+            "web_address": "",
+            "courses" : [],
+            "facilities" : [],
+            "contact_details": [],
+            "admissions": [],
+            "tuition_fees": [],
+            "scholarships" : [],
+            "translations": {}
+        }
+
     def __repr__(self):
         return "<ID: '%d', Name: '%s'>" % (self.university_id, self.university_name)
 
@@ -49,8 +64,15 @@ class UniversityBase():
     def json(self):
         return {
             "university_id": self.university_id,
-            "university_name": self.current_translation.university_name,
-            "language": get_current_locale(self)
+            "latlong": self.latlong or "",
+            "web_address": self.web_address or "",           
+            "courses" : [c.json() for c in self.courses],
+            "facilities" : [f.json() for f in self.facilities],
+            "contact_details": [c.json() for c in self.contact_details],
+            "admissions": [a.json() for a in self.admissions],
+            "tuition_fees": [t.json() for t in self.tuition_fees],
+            "scholarships" : [s.json() for s in self.scholarships],
+            "translations": self.all_translations()
         }
     
     def set_translations(self, translation_dict_or_uni_obj):
@@ -95,6 +117,38 @@ class UniversityBase():
 
     def has_course(self, course):
         return course.course_id in [course.course_id for course in self.courses]
+        
+    def remove_courses(self):
+        for course in self.courses:
+            course.delete()
+
+    def add_courses(self, courses):
+        for c in courses:
+            self.add_course(c)
+        
+    def add_course(self, course):
+        self.courses.append(course)
+        self.save()
+
+    def remove_tuition_fees(self):
+        for tuition_fee in self.tuition_fees:
+            tuition_fee.delete()
+
+    def add_tuition_fees(self, tuition_fees):
+        for c in tuition_fees:
+            self.add_tuition_fee(c)
+        
+    def add_tuition_fee(self, tuition_fee):
+        self.tuition_fees.append(tuition_fee)
+        self.save()
+
+    def set_latlong(self, latlong):
+        self.latlong = latlong
+        self.save()
+
+    def set_web_address(self, web_address):
+        self.web_address = web_address
+        self.save()
 
     @property
     def lat(self):
@@ -147,18 +201,6 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
                 return admission
         return None
 
-    def add_course(self, course):
-        self.courses.append(course)
-        self.save()
-
-    def set_latlong(self, latlong):
-        self.latlong = latlong
-        self.save()
-
-    def set_web_address(self, web_address):
-        self.web_address = web_address
-        self.save()
-
     def is_pending(self):
         return False
 
@@ -176,6 +218,9 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     pending_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     university_id = db.Column(db.Integer, db.ForeignKey("University.university_id"), unique=True, nullable=True)
     pending_type = db.Column(db.String(6), nullable=False)
+
+    latlong = db.Column(db.String)
+    web_address = db.Column(db.String)
 
     pending_courses = db.relationship('UniversityPendingCourse', back_populates="university")
     facilities = db.relationship("FacilityPending", back_populates="university")
