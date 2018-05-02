@@ -308,15 +308,6 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         return [Course.get_single(course_id = c.course_id) for c in self.pending_courses]
     
     def _delete(self):
-        for lang, translation in self.translations:
-            db.session.delete(translation)
-
-        for facility in self.facilities:
-            facility.delete()
-
-        for course in self.pending_courses:
-            course.delete()
-
         super(BaseModelTranslateable,self).delete()
 
     def approve(self):
@@ -356,8 +347,10 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         for scholarship in self.scholarships:
             scholarship.approve(university.university_id)
 
-        for course_to_add in self.pending_courses:
-            university.courses.append(Course.get_single(course_id=course_to_add.course_id))
+        for course in self.pending_courses:
+            university.courses.append(Course.get_single(course_id=course.course_id))
+            course.delete()
+
 
     def reject(self):
         for course in self.courses:
