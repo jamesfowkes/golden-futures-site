@@ -335,6 +335,8 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
 
         logger.info("Approving detail changes... ")
 
+        university.latlong = self.latlong
+        
         for facility in self.facilities:
             facility.approve(university.university_id)
             
