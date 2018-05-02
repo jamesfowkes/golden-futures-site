@@ -335,6 +335,8 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
 
         logger.info("Approving detail changes... ")
 
+        logger.info("New latlong: %s", self.latlong)
+        
         university.latlong = self.latlong
         
         for facility in self.facilities:

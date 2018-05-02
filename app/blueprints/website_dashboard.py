@@ -162,11 +162,14 @@ def render_universities_dashboard():
 @flask_login.login_required
 def render_edit_university_dashboard(university_id):
 
+    university = University.get_single(university_id=university_id)
+
     g.ep_data["university_id"] = university_id
     g.ep_data["languages"] = locale.supported_languages()
+    g.ep_data["latlong"] = university.latlong
+    g.ep_data["university_icon_path"] = url_for("static", filename="leaflet/university.svg")
     g.ep_data["api_endpoints"] = {"edit_university": url_for("edit_university",university_id=university_id)}
 
-    university = University.get_single(university_id=university_id)
     courses = sorted(Course.all(), key=lambda c: c.course_name)
     alphabetised_courses = defaultdict(list)
     for course in courses:

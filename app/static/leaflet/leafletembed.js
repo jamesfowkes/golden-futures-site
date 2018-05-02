@@ -1,11 +1,19 @@
-var map=null;
+function getIcon(path=null, size=null) {
+	if (path === null) {
+		path = $data["university_icon_path"]
+	}
 
-var universityIcon = L.icon({
-    iconUrl: $data["university_icon_path"],
-    iconSize:     [20, 20], // size of the icon
-});
+	if (size === null) {
+		size = [20, 20]
+	}
 
-function initmap(lat, long) {
+	return new L.icon({
+    	iconUrl: path,
+    	iconSize: size
+	});
+}
+
+function initmap(lat, long, icon, marker_url=null) {
 	// set up the map
 	map = new L.Map('map');
 
@@ -14,33 +22,19 @@ function initmap(lat, long) {
 	var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
 	var osm = new L.TileLayer(osmUrl, {minZoom: 1, maxZoom: 18, attribution: osmAttrib});		
 
-	// start the map in South-East England
 	map.setView(new L.LatLng(lat, long), 14);
 	map.addLayer(osm);
 
-	marker = L.marker([lat, long], {icon: universityIcon})
+	marker = L.marker([lat, long], {icon: icon})
 	
-	marker.on('click', function(e) {
-		url = $data["osm_url"];
-		window.open(url);
-	});
+	if (marker_url !== null) {
+		marker.on('click', function(e) {
+			url = marker_url;
+			window.open(url);
+		});
+	}
 
 	marker.addTo(map)
 
+	return {"map": map, "marker": marker};
 }
-
-$( document ).ready(function() {
-
-	$("#open_map_link").on("click", function() {
-		window.open($data["osm_url"], "_blank");
-	});
-
-	$("#map_collapse").on("shown.bs.collapse", function(){
-		if (map == null) {
-			latlong = $data["latlong"].split(",")
-			lat = parseFloat(latlong[0])
-			long = parseFloat(latlong[1])
-			map = initmap(lat, long);
-		}
-	});
-});

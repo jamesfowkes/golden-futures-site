@@ -49,9 +49,9 @@
                 </div>
                 <div id="location_selector_collapse" class="collapse" role="tabpanel" aria-labelledby="location_selector_heading">
                     <div class="form-group card-block">
-                        {{ dashboard_mapping_macro.render_location_selector() }}
+                        <div id="map"></div>
                     </div>
-                    <input type="hidden" name="university_latlong" default="0,0"/>
+                    <input type="hidden" id="university_latlong" name="university_latlong" value="{{university.latlong}}"/>
                 </div>
             </div>
 
@@ -102,7 +102,7 @@
                         </a>
                     </h3>
                 </div>
-                <div id="tuition_fee_editor_collapse" class="collapse show" role="tabpanel" aria-labelledby="tuition_fee_editor_heading">
+                <div id="tuition_fee_editor_collapse" class="collapse" role="tabpanel" aria-labelledby="tuition_fee_editor_heading">
                     <div class="form-group card-block">
                         <div id="tuition_fees_container">
                             {{ dashboard_university_macro.render_tuition_fees_editor(university, languages) }}
@@ -171,6 +171,8 @@
         </div>
     </form>
 
+    <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
+
 </div>
 {% endblock %}
 
@@ -179,4 +181,7 @@
     <script src="{{url_for('static', filename='dashboard.js')}}"></script>
     <script src="{{url_for('static', filename='dashboard.university.edit.js')}}"></script>
     <script src="{{url_for('static', filename='jquery_plugins/jquery.form.min.js')}}"></script>
+    <script src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
+    <script src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='uni_location_edit.js')}}"></script>
 {% endblock %}

@@ -79,7 +79,8 @@
     <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
     <script type="text/javascript" src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
+    <script src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='uni_map_embed.js')}}"></script>
 
 </div>
 
