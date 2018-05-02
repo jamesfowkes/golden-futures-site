@@ -391,10 +391,13 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         return True
 
     def is_addition(self):
-        return self.pending_type == "add_edit" and self.university_id is None
+        return self.is_add_edit() and self.university_id is None
 
     def is_edit(self):
-        return self.pending_type == "add_edit" and self.university_id is not None
+        return self.is_add_edit() and self.university_id is not None
+
+    def is_add_edit(self):
+        return self.pending_type == "add_edit"
 
     def is_deletion(self):
         return self.pending_type == "del"
