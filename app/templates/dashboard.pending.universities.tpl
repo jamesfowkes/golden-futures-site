@@ -19,7 +19,9 @@
                         <p><i>{{_("Fees")}}:</i></p>
                         <ul>
                             {% for fee in addition.tuition_fees %}
-                                <li>{{ fee }}</li>
+                                {% if fee.is_add_edit() %}
+                                    <li>{{ fee }}</li>
+                                {% endif %}
                             {% endfor %}
                         </ul>
 
