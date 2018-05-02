@@ -380,6 +380,10 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         names = [c.course_name for c in self.pending_courses]
         return sorted(names)
 
+    def facility_names(self):
+        names = [f.facility_string for f in self.facilities if f.is_add_edit()]
+        return sorted(names)
+
     def categories(self):
         categories = []
         for pending_course in self.courses:
