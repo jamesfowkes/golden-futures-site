@@ -332,6 +332,9 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         self._delete()
 
     def approve_detail_changes(self, university):
+
+        logger.info("Approving detail changes... ")
+
         for facility in self.facilities:
             facility.approve(university.university_id)
             
@@ -351,6 +354,7 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
             university.courses.append(Course.get_single(course_id=course.course_id))
             course.delete()
 
+        logger.info("Detail changes done.")
 
     def reject(self):
         for course in self.courses:
