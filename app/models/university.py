@@ -320,24 +320,20 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         super(BaseModelTranslateable,self).delete()
 
     def approve(self):
-        if self.pending_type == "add_edit":
-            if self.university_id is None:
-                logger.info("Adding university %s", self.translations["en"].university_name)
+        if self.is_addition():
+            logger.info("Adding university %s", self.translations["en"].university_name)
+            new_university = University.create(self.all_translations())
+            self.approve_detail_changes(new_university)
+            new_university.save()
 
-                new_university = University.create(self.all_translations())
+        elif self.is_edit():
+            university = University.get(university_id=self.university_id).one();
+            logger.info("Editing university %s", university.translations["en"].university_name)
+            self.approve_detail_changes(university)
+            university.set_translations(self)
+            university.save()
 
-                self.approve_detail_changes(new_university)
-
-            else:
-                university = University.get(university_id=self.university_id).one();
-                logger.info("Editing university %s", university.translations["en"].university_name)
-
-                self.approve_detail_changes(university)
-
-                university.set_translations(self)
-                university.save()
-
-        elif self.pending_type == "del":
+        elif self.is_deletion():
             university = University.get(university_id=self.university_id).one();
             logger.info("Deleting university %s", university.translations["en"].university_name)
             university.delete()
@@ -398,7 +394,13 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         return True
 
     def is_addition(self):
-        return self.university_id is None
+        return self.pending_type == "add_edit" and self.university_id is None
+
+    def is_edit(self):
+        return self.pending_type == "add_edit" and self.university_id is not None
+
+    def is_deletion(self):
+        return self.pending_type == "del"
 
     @classmethod
     def create_from(cls, existing_university, pending_type):
