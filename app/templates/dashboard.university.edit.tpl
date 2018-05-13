@@ -58,6 +58,24 @@
             <div class="card plain" role="tab">
                 <div class="card-title" role="tab">
                     <h3>
+                        <a id="quote_editor_heading" data-toggle="collapse" href="#quote_editor_collapse" aria-expanded="true" aria-controls="quote_editor_collapse">
+                        {{_("Quotes")}}
+                        </a>
+                    </h3>
+                </div>
+                <div id="quote_editor_collapse" class="collapse" role="tabpanel" aria-labelledby="quote_editor_heading">
+                    <div class="form-group card-block">
+                        <div id="quotes_container">
+                        {{ dashboard_university_macro.render_quotes_editor(university, languages) }}
+                        </div>
+                        <button type="button" id="add_new_quote" class="btn btn-default btn-block">{{_("Add new Quote")}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card plain" role="tab">
+                <div class="card-title" role="tab">
+                    <h3>
                         <a id="contact_details_selector_heading" data-toggle="collapse" href="#contact_details_selector_collapse" aria-expanded="true" aria-controls="contact_details_selector_collapse">
                         {{_("Contact Details")}}
                         </a>

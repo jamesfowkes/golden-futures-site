@@ -32,6 +32,7 @@ from app.models.scholarship import Scholarship, ScholarshipPending, ScholarshipP
 from app.models.tuition_fee import TuitionFee, TuitionFeePending, TuitionFeePendingTranslation
 from app.models.contact_detail import ContactDetail, ContactDetailPending, ContactDetailPendingTranslation
 from app.models.facility import Facility, FacilityPending, FacilityPendingTranslation
+from app.models.quote import Quote, QuotePending, QuotePendingTranslation
 from app.models.user import User
 
 from app.models.base_model import DeclarativeBase
@@ -68,6 +69,9 @@ test_university_data = {
     "National Technical Training Institute": {
         "latlong": "11.567313,104.876774",
         "web_address": "www.ntti.edu.kh",
+        "quotes": [
+            "The National Technical Training Institute is great!"
+        ],
         "courses": [
             "Architecture", "Information Technology", "Civil Engineering", "Electrical Engineering", "Electronic Engineering"
         ],
@@ -102,6 +106,9 @@ test_university_data = {
     "Asia Euro University": {
         "latlong": "11.566176,104.895406",
         "web_address": "www.aeu.edu.kh",
+        "quotes": [
+            "The Asia Euro University is great!"
+        ],
         "courses": [
             "Accounting", "Computer Science", "Electronics and Electricity", "Finance and Banking",
             "Electrical Engineering", "Electronic Engineering", "Chinese for Business", "English",
@@ -141,6 +148,9 @@ test_university_data = {
     "Royal University of Fine Arts": {
         "latlong": "11.564941,104.928117",
         "web_address": "www.rufa.edu.kh",
+        "quotes": [
+            "The Royal University of Fine Arts is great!"
+        ],
         "courses": [
             "Architecture"
         ],
@@ -173,6 +183,9 @@ test_university_data = {
     "Western University": {
         "latlong": "11.580927,104.900814)",
         "web_address": "www.western.edu.kh",
+        "quotes": [
+            "The Western University is great!"
+        ],
         "courses": [
             "Accounting", "Biology", "Chemistry", "Computer Science", "Information Technology",
             "Banking and Finance", "Development Economics", "Teaching English as a Foreign Language",
@@ -224,6 +237,9 @@ test_university_data = {
     "IIC University of Technology": {
         "latlong": "11.509091,104.938308",
         "web_address": "www.iic.edu.kh",
+        "quotes": [
+            "The IIC University of Technology is great!"
+        ],
         "courses": [
             "Business Statistics and Forecasting", "International Business", "Computer Science", "Information Technology",
             "Software Engineering", "Teaching English as a Foreign Language", "Geography", "History",
@@ -263,6 +279,9 @@ test_university_data = {
     "O3D Asia Graphic School": {
         "latlong": "11.456456,104.931994",
         "web_address": "www.o3dasia.com",
+        "quotes": [
+            "The O3D Asia Graphic School is great!"
+        ],
         "courses": [
             "Graphic Design"
         ],
@@ -302,6 +321,9 @@ test_university_data = {
     "Pannasastra University of Cambodia": {
         "latlong": "11.573047,104.890433",
         "web_address": "www.puc.edu.kh",
+        "quotes": [
+            "The Pannasastra University of Cambodia is great!"
+        ],
         "courses": [
             "Accounting", "Architecture and Interior Design", "Interior Design", "Product Design",
             "Banking and Finance", "Business Administration", "Business Information System", "Computer Engineering",
@@ -351,6 +373,9 @@ test_university_data = {
     "Prek Leap National College of Agriculture": {
         "latlong": "11.641852,104.918627",
         "web_address": "www.pnsa.edu.kh",
+        "quotes": [
+            "The Prek Leap National College of Agriculture is great!"
+        ],
         "courses": [
             "Agribusiness/Economics",
             "Agricultural Economics",
@@ -643,6 +668,9 @@ pending_additions = {
             "name": "Limkokwing University of Creative Technology",
             "latlong": "11.573511, 104.874374",
             "web_address": "https://www.limkokwing.net/cambodia",
+            "quotes": [
+                "This place is actually pretty good."
+            ],
             "admissions": [
                 "Senior High School Certificate/ Diploma or equivalent",
                 ("Foundation Year Certificate from University or another recognized institution. "
@@ -708,6 +736,13 @@ pending_edits = {
             "new_web_address": "www.google.com",
 
             "new_courses": ["Architecture", "Information Technology", "Software Engineering"],
+
+            "new_quotes": [
+                {
+                    "en": {"quote_string": "Go here! It's awesome!"},
+                    "km": {"quote_string": khmer("Go here! It's awesome!")}
+                }
+            ],
 
             "new_facilities": [
                 {"en": {"facility_string": "Library"}, "km": {"facility_string": khmer("Library")}}
@@ -904,6 +939,13 @@ if __name__ == "__main__":
                         }
                     )
 
+                for quote in uni_data["quotes"]:
+                    quot = Quote.create(universities[university].university_id, {
+                            "en": {"quote_string": quote},
+                            "km": {"quote_string": khmer(quote)}
+                        }
+                    )
+
             print("Creating users")
 
             for user in users:
@@ -1017,6 +1059,12 @@ if __name__ == "__main__":
                         }
                     )
 
+                for quote in addition["quotes"]:
+                    QuotePending.addition(university.pending_id, {
+                        "en": {"quote_string": quote},
+                        "km": {"quote_string": khmer(quote)}
+                    })
+
             print("Adding pending edits")
 
             for edit in pending_edits["category"]:
@@ -1054,6 +1102,8 @@ if __name__ == "__main__":
                 for scholarship in edits["new_scholarships"]:
                     ScholarshipPending.addition(pending_uni.pending_id, scholarship)
 
+                for quote in edits["new_quotes"]:
+                    QuotePending.addition(pending_uni.pending_id, quote)
 
                 for facility in edits["new_facilities"]:
                     FacilityPending.addition(pending_uni.pending_id, facility)

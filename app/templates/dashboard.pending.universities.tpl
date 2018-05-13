@@ -16,31 +16,55 @@
                         <p><strong>{{_("New University")}}: {{addition.university_name}}</strong></p>
                         <p><i>{{_("Introduction")}}:</i> {{addition.university_intro}}</p>
                         <p><i>{{_("Courses")}}:</i> {{ addition.course_names | join(", ") }}</p>
+                        
+                        {% if addition.tuition_fees | length %}
                         <p><i>{{_("Fees")}}:</i></p>
                         <ul>
                             {% for fee in addition.tuition_fees %}
                                 <li>{{ fee }}</li>
                             {% endfor %}
                         </ul>
+                        {% endif %}
 
-                        <p><i>{{_("Admission")}}:</i></p>
+                        {% if addition.quotes | length %}
+                        <p><i>{{_("Quotes")}}:</i></p>
+                        <ul>
+                        {% for quote in addition.quotes %}
+                            <li>{{ quote.quote_string }}</li>
+                        {% endfor %}
+                        </ul>
+                        {% endif %}
+
+                        {% if addition.admissions | length %}
+                        <p><i>{{_("Admissions")}}:</i></p>
                         <ul>
                         {% for admission in addition.admissions %}
                             <li>{{ admission.admission_string }}</li>
                         {% endfor %}
                         </ul>
+                        {% endif %}
+
+                        {% if addition.contact_details | length %}
                         <p><i>{{_("Contact Details")}}:</i><br/>
                             {% for contact_detail in addition.contact_details %}
                                 {{ contact_detail.contact_detail_string }}<br/>
                             {% endfor %}
                         </p>
+                        {% endif %}
+
+                        {% if addition.scholarships | length %}
                         <p><i>{{_("Scholarships")}}:</i><br/>
                             {% for scholarship in addition.scholarships %}
                                 {{ scholarship.scholarship_string }}<br/>
                             {% endfor %}
                         </p>
+                        {% endif %}
+
+                        {% if addition.facilities | length %}                        
                         <p><i>{{_("Facilities")}}:</i> {{ addition.facility_names() | join(", ") }}</p>
                         </p>
+                        {% endif %}
+
                         {{dashboard_macro.approve("university", addition.pending_id)}} {{dashboard_macro.reject("university", addition.pending_id)}} 
                     </div>
                     {% endfor %}
@@ -72,6 +96,15 @@
                             <ul>
                             {% for fee in edit.tuition_fees %}
                                 <li>{{ fee }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {% if edit.quotes | length %}
+                            <p><i>{{_("Quotes")}}:</i></p>
+                            <ul>
+                            {% for quote in edit.quotes %}
+                                <li>{{ quote.quote_string }}</li>
                             {% endfor %}
                             </ul>
                         {% endif %}

@@ -17,6 +17,15 @@
         </div>
     </div>
 
+    <div class="card plain">
+        <h2>{{_("Quotes")}}</h2>
+        <p>
+        {% for quote in university.quotes %}
+            <span class="quote"><q>{{ quote.quote_string }}</q></span>
+        {% endfor %}
+        <p>
+    </div>
+
     <h2 class="print-only">{{university.web_address}}</h2>
     
     <div class="card plain">

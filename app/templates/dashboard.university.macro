@@ -201,3 +201,27 @@
         </div>
     {% endfor %}
 {%- endmacro %}
+
+{% macro render_quotes_editor(university, languages) -%}
+    {% for quote in university.quotes %}
+        <div class="university_detail university_quote" id="university_quote{{loop.index0}}">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        {{ forms_macro.i18n_text_array_input("university_quote", loop.index0,
+                        "quote", languages[0],
+                        default=quote.translations[languages[0].id].quote_string) }}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        {{ forms_macro.i18n_text_array_input("university_quote", loop.index0,
+                        "quote", languages[1],
+                        default=quote.translations[languages[1].id].quote_string) }}
+                        {{ forms_macro.i18n_array_element_deleter("university_quote", loop.index0) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{%- endmacro %}
