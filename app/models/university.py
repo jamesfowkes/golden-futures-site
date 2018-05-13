@@ -188,14 +188,17 @@ class UniversityBase():
     def remove_scholarships(self):
         for scholarship in self.scholarships:
             scholarship.delete()
+        self.save()
 
     def remove_facilities(self):
         for facility in self.facilities:
             facility.delete()
+        self.save()
 
     def remove_admissions(self):
         for admission in self.admissions:
             admission.delete()
+        self.save()
 
     def set_latlong(self, latlong):
         self.latlong = latlong
@@ -265,7 +268,9 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
 
     def remove_courses(self):
         for course in self.courses:
-            course.delete()
+            self.courses.remove(course)
+    
+        self.save()
 
 class UniversityTranslation(translation_base(University)):
     __tablename__ = 'UniversityTranslation'
@@ -339,21 +344,27 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         
         university.latlong = self.latlong
         
+        university.remove_facilities()
         for facility in self.facilities:
             facility.approve(university.university_id)
-            
+        
+        university.remove_contact_details()
         for contact_detail in self.contact_details:
             contact_detail.approve(university.university_id)
 
+        university.remove_admissions()
         for admission in self.admissions:
             admission.approve(university.university_id)
 
+        university.remove_tuition_fees()
         for tuition_fee in self.tuition_fees:
             tuition_fee.approve(university.university_id)
 
+        university.remove_scholarships()
         for scholarship in self.scholarships:
             scholarship.approve(university.university_id)
 
+        university.remove_courses()
         for course in self.pending_courses:
             university.courses.append(Course.get_single(course_id=course.course_id))
             course.delete()
@@ -385,7 +396,7 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         return sorted(names)
 
     def facility_names(self):
-        names = [f.facility_string for f in self.facilities if f.is_add_edit()]
+        names = [f.facility_string for f in self.facilities]
         return sorted(names)
 
     def categories(self):
