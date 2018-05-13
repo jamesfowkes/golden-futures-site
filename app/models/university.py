@@ -47,6 +47,7 @@ class UniversityBase():
             "admissions": [],
             "tuition_fees": [],
             "scholarships" : [],
+            "quotes" : [],
             "translations": {}
         }
 
@@ -73,6 +74,7 @@ class UniversityBase():
             "admissions": [a.json() for a in self.admissions],
             "tuition_fees": [t.json() for t in self.tuition_fees],
             "scholarships" : [s.json() for s in self.scholarships],
+            "quotes" : [s.json() for s in self.quotes],
             "translations": self.all_translations()
         }
     
@@ -109,6 +111,9 @@ class UniversityBase():
 
             for s in self.scholarships:
                 data["university_scholarship[{}]".format(lang)].add(a.translations[lang].scholarship_string)
+
+            for q in self.quotes:
+                data["university_quotes[{}]".format(lang)].add(q.translations[lang].quote_string)
 
         data["languages"] = ",".join(app.app.config["SUPPORTED_LOCALES"])
 
@@ -200,6 +205,11 @@ class UniversityBase():
             admission.delete()
         self.save()
 
+    def remove_quotes(self):
+        for quote in self.quotes:
+            quote.delete()
+        self.save()
+
     def set_latlong(self, latlong):
         self.latlong = latlong
         self.save()
@@ -245,6 +255,7 @@ class University(UniversityBase, Translatable, BaseModelTranslateable, Declarati
     admissions = db.relationship("Admission", back_populates="university")
     tuition_fees = db.relationship("TuitionFee", back_populates="university")
     scholarships = db.relationship("Scholarship", back_populates="university")
+    quotes = db.relationship("Quote", back_populates="university")
     pendingedit = db.relationship("UniversityPending", back_populates="university")
     
     def get_contact_detail(self, contact_detail_string):
@@ -296,6 +307,7 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     admissions = db.relationship("AdmissionPending", back_populates="university")
     tuition_fees = db.relationship("TuitionFeePending", back_populates="university")
     scholarships = db.relationship("ScholarshipPending", back_populates="university")
+    quotes = db.relationship("QuotePending", back_populates="university")
     university = db.relationship("University", back_populates="pendingedit")
 
     def __init__(self, translations, pending_type, university_id=None):
@@ -363,6 +375,10 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         university.remove_scholarships()
         for scholarship in self.scholarships:
             scholarship.approve(university.university_id)
+
+        university.remove_quotes()
+        for quote in self.quotes:
+            quote.approve(university.university_id)
 
         university.remove_courses()
         for course in self.pending_courses:
