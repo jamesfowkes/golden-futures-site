@@ -7,7 +7,7 @@ from app.database import db
 
 logger = logging.getLogger(__name__)
 
-def pending_university_detail(ParentClass, target_id_name):
+def pending_university_detail(ParentClass):
     
     class PendingUniversityDetail:
         def __init__(self, pending_uni_id, translations):
@@ -21,39 +21,14 @@ def pending_university_detail(ParentClass, target_id_name):
         @classmethod
         def addition(cls, pending_id, translations, **kwargs):
             pending_object = cls(pending_id, translations, **kwargs)
-            pending_object.pending_type = "add_edit"
             pending_object.save()
             logger.info("Creating pending addition of %s", pending_object)
             return pending_object
 
-        @classmethod
-        def deletion(cls, to_delete):
-            pending_object = cls(to_delete.university.university_id, {}, **to_delete.kwargs())
-            pending_object.pending_type = "del"
-            setattr(pending_object, target_id_name, getattr(to_delete, target_id_name))
-            pending_object.save()
-            return pending_object
-
         def approve(self, university_id):
-            if self.is_edit():
-                logger.info("Approving pending edit of %s", self)
-                ParentClass.get_single(target_id_name=getattr(self, target_id_name)).set_translations(self.translations)
-            elif self.is_add():
-                logger.info("Approving pending add of %s", self)
-                ParentClass.create(university_id, self.translations, **self.kwargs())
+            logger.info("Approving add of %s", self)
+            ParentClass.create(university_id, self.translations, **self.kwargs())
 
             self.delete()
-
-        def is_add(self):
-            return self.is_add_edit() and getattr(self, target_id_name) is None
-
-        def is_edit(self):
-            return self.is_add_edit() and getattr(self, target_id_name) is not None
-
-        def is_add_edit(self):
-            return self.pending_type == "add_edit"
-
-        def is_deletion(self):
-            return self.pending_type == "del"
 
     return PendingUniversityDetail

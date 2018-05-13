@@ -32,7 +32,7 @@ class ScholarshipBase():
 
     def json(self):
         return {
-            "scholarship_id": self.scholarship_id, 
+            "scholarship_id": getattr(self, "scholarship_id", -1),
             "university_name": self.university.university_name,
             "scholarship": self.current_translation.scholarship_string
         }
@@ -52,18 +52,15 @@ class ScholarshipTranslation(translation_base(Scholarship)):
     scholarship_string = sa.Column(sa.Unicode(80))
     unique_scholarship_constraint = sa.PrimaryKeyConstraint('id', 'scholarship_string', 'locale', name='ufc_1')
 
-
-class ScholarshipPending(pending_university_detail(Scholarship, "scholarship_id"), ScholarshipBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class ScholarshipPending(pending_university_detail(Scholarship), ScholarshipBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "ScholarshipPending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
     locale = 'en'
 
     pending_scholarship_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    scholarship_id = db.Column(db.Integer, db.ForeignKey('Scholarship.scholarship_id'), nullable=True)
     pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="scholarships")
-    pending_type = db.Column(db.String(6), nullable=False)
 
 class ScholarshipPendingTranslation(translation_base(ScholarshipPending), TranslationMixin):
     __tablename__ = 'ScholarshipPendingTranslation'

@@ -35,7 +35,7 @@ class AdmissionBase():
 
     def json(self):
         return {
-            "admission_id": self.admission_id, 
+            "admission_id": getattr(self, "admission_id", -1),
             "university_name": self.university.university_name,
             "admission": self.current_translation.admission_string
         }
@@ -58,17 +58,15 @@ class AdmissionTranslation(translation_base(Admission)):
     admission_string = sa.Column(sa.Unicode(80))
     unique_admission_constraint = sa.PrimaryKeyConstraint('id', 'admission_string', 'locale', name='ufc_1')
 
-class AdmissionPending(pending_university_detail(Admission, "admission_id"), AdmissionBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class AdmissionPending(pending_university_detail(Admission), AdmissionBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "AdmissionPending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
     locale = 'en'
 
     pending_admission_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    admission_id = db.Column(db.Integer, db.ForeignKey('Admission.admission_id'), nullable=True)
     pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="admissions")
-    pending_type = db.Column(db.String(6), nullable=False)
 
 class AdmissionPendingTranslation(translation_base(AdmissionPending), TranslationMixin):
     __tablename__ = 'AdmissionPendingTranslation'

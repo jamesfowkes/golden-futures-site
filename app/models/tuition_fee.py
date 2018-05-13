@@ -38,7 +38,7 @@ class TuitionFeeBase():
 
     def json(self):
         return {
-            "tuition_fee_id": self.tuition_fee_id, 
+            "tuition_fee_id": getattr(self, "tuition_fee_id", -1),
             "university_name": self.university.university_name,
             "tuition_fee_min": self.tuition_fee_min,
             "tuition_fee_max": self.tuition_fee_max,
@@ -97,7 +97,7 @@ class TuitionFeeTranslation(translation_base(TuitionFee)):
     award = sa.Column(sa.Unicode(80))
     period = sa.Column(sa.Unicode(20))
 
-TuitionFeePendingDetail = pending_university_detail(TuitionFee, "tuition_fee_id")
+TuitionFeePendingDetail = pending_university_detail(TuitionFee)
 class TuitionFeePending(TuitionFeePendingDetail, TuitionFeeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "TuitionFeePending"
@@ -117,14 +117,12 @@ class TuitionFeePending(TuitionFeePendingDetail, TuitionFeeBase, Translatable, B
         }
 
     pending_tuition_fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    tuition_fee_id = db.Column(db.Integer, db.ForeignKey('TuitionFee.tuition_fee_id'), nullable=True)
     pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship("UniversityPending", back_populates="tuition_fees")
     include_in_filter = sa.Column(sa.Boolean, default=True)
     tuition_fee_min = sa.Column(sa.Integer)
     tuition_fee_max = sa.Column(sa.Integer)
     currency = sa.Column(sa.Unicode(6))
-    pending_type = db.Column(db.String(6), nullable=False)
 
 class TuitionFeePendingTranslation(translation_base(TuitionFeePending), TranslationMixin):
     __tablename__ = 'TuitionFeePendingTranslation'

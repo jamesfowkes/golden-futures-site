@@ -32,7 +32,7 @@ class FacilityBase():
 
     def json(self):
         return {
-            "facility_id": self.facility_id, 
+            "facility_id": getattr(self, "facility_id", -1),
             "university_name": self.university.university_name,
             "facility": self.current_translation.facility_string
         }
@@ -52,17 +52,15 @@ class FacilityTranslation(translation_base(Facility)):
     facility_string = sa.Column(sa.Unicode(80))
     unique_facility_constraint = sa.PrimaryKeyConstraint('id', 'facility_string', 'locale', name='ufc_1')
 
-class FacilityPending(pending_university_detail(Facility, "facility_id"), FacilityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class FacilityPending(pending_university_detail(Facility), FacilityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "FacilityPending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
     locale = 'en'
 
     pending_facility_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    facility_id = db.Column(db.Integer, db.ForeignKey('Facility.facility_id'), nullable=True)
     pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="facilities")
-    pending_type = db.Column(db.String(6), nullable=False)
 
 class FacilityPendingTranslation(translation_base(FacilityPending), TranslationMixin):
     __tablename__ = 'FacilityPendingTranslation'

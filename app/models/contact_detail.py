@@ -31,7 +31,7 @@ class ContactDetailBase():
 
     def json(self):
         return {
-            "contact_detail_id": self.contact_detail_id, 
+            "contact_detail_id": getattr(self, "contact_detail_id", -1),
             "university_name": self.university.university_name,
             "contact_detail": self.current_translation.contact_detail_string
         }
@@ -52,17 +52,15 @@ class ContactDetailTranslation(translation_base(ContactDetail)):
     contact_detail_string = sa.Column(sa.Unicode(80))
     unique_contact_detail_constraint = sa.PrimaryKeyConstraint('id', 'contact_detail_string', 'locale', name='ufc_1')
 
-class ContactDetailPending(pending_university_detail(ContactDetail, "contact_detail_id"), ContactDetailBase, Translatable, BaseModelTranslateable, DeclarativeBase):
+class ContactDetailPending(pending_university_detail(ContactDetail), ContactDetailBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "ContactDetailPending"
     __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
     locale = 'en'
 
     pending_contact_detail_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    contact_detail_id = db.Column(db.Integer, db.ForeignKey('ContactDetail.contact_detail_id'), nullable=True)
     pending_uni_id = db.Column(db.Integer, db.ForeignKey('UniversityPending.pending_id'))
     university = db.relationship('UniversityPending', back_populates="contact_details")
-    pending_type = db.Column(db.String(6), nullable=False)
 
 class ContactDetailPendingTranslation(translation_base(ContactDetailPending), TranslationMixin):
     __tablename__ = 'ContactDetailPendingTranslation'

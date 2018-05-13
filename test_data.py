@@ -701,17 +701,12 @@ pending_edits = {
                 }
             },
 
-            "new_courses": ["Software Engineering"],
-            "deleted_courses": ["Architecture", "Information Technology"],
 
-            "deleted_facilities": [
-                "Librarrry"
-            ],
+            "new_courses": ["Architecture", "Information Technology", "Software Engineering"],
 
             "new_facilities": [
                 {"en": {"facility_string": "Library"}, "km": {"facility_string": khmer("Library")}}
             ],
-            "deleted_facilities": [0],
 
             "new_contact_details": [
                 {
@@ -720,16 +715,12 @@ pending_edits = {
                 }
             ],
 
-            "deleted_contact_details": [0],
-
             "new_admissions": [
                 {
                     "en": {"admission_string": "Bachelor Degree:BAC II Certificate, or High Diploma of Technical or Specialty, or Associate Degree."},
                     "km": {"admission_string": khmer("Bachelor Degree:BAC II Certificate, or High Diploma of Technical or Specialty, or Associate Degree.")}
                 }
             ],
-
-            "deleted_admissions": [0],
 
             "new_tuition_fees": [
                 {            
@@ -751,16 +742,12 @@ pending_edits = {
                 }
             ],
 
-            "deleted_tuition_fees": [0],
-
             "new_scholarships": [
                 {
                     "en": {"scholarship_string": "100% Scholarship to anyone with more than seven legs."},
                     "km": {"scholarship_string": khmer("100% Scholarship to anyone with more than seven legs.")},
                 }
             ],
-
-            "deleted_scholarships": [0]
         }
     }
 }
@@ -1038,44 +1025,22 @@ if __name__ == "__main__":
                 for new_course in edits["new_courses"]:
                     pending_uni.add_course(courses[new_course])
 
-                for deleted_course in edits["deleted_courses"]:
-                    pending_uni.remove_course(courses[new_course])
-
                 for new_contact_detail in edits["new_contact_details"]:
                     ContactDetailPending.addition(pending_uni.pending_id, new_contact_detail)
 
-                for deleted_contact_detail_idx in edits["deleted_contact_details"]:
-                    contact_detail = universities[name].contact_details[deleted_contact_detail_idx]
-                    ContactDetailPending.deletion(contact_detail)
-
                 for admission in edits["new_admissions"]:
                     AdmissionPending.addition(pending_uni.pending_id, admission)
-
-                for admission_idx in edits["deleted_admissions"]:
-                    admission = universities[name].admissions[admission_idx]
-                    AdmissionPending.deletion(admission)
 
                 for tuition_fee in edits["new_tuition_fees"]:
                     TuitionFeePending.addition(
                         pending_uni.pending_id, tuition_fee["translations"], include_in_filter=True, **tuition_fee["fee_data"])
 
-                for tuition_fee_idx in edits["deleted_tuition_fees"]:
-                    tuition_fee = universities[name].tuition_fees[tuition_fee_idx]
-                    TuitionFeePending.deletion(tuition_fee)
-
                 for scholarship in edits["new_scholarships"]:
                     ScholarshipPending.addition(pending_uni.pending_id, scholarship)
 
-                for scholarship_idx in edits["deleted_scholarships"]:
-                    scholarship = universities[name].scholarships[scholarship_idx]
-                    ScholarshipPending.deletion(scholarship)
 
                 for facility in edits["new_facilities"]:
                     FacilityPending.addition(pending_uni.pending_id, facility)
-
-                for facility_idx in edits["deleted_facilities"]:
-                    facility = universities[name].facilities[facility_idx]
-                    FacilityPending.deletion(facility)
 
             print("Adding pending deletions")
 
