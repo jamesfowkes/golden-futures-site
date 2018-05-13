@@ -11,7 +11,7 @@ from sqlalchemy_i18n import Translatable, translation_base
 
 import app
 from app.database import db
-from app.models.base_model import PendingChangeBase, BaseModelTranslateable, DeclarativeBase, DbIntegrityException
+from app.models.base_model import PendingChangeBase, BaseModelTranslateable, DeclarativeBase, DbIntegrityException, TranslationMixin
 from app.models.base_model import get_locales, get_translation
 
 from app.models.university_course_map import university_course_map_table
@@ -137,9 +137,6 @@ class CoursePending(CourseBase, PendingChangeBase, Translatable, BaseModelTransl
         )
 
     def _delete(self):
-        for lang, translation in self.translations:
-            db.session.delete(translation)
-
         super(BaseModelTranslateable,self).delete()
         
     def json(self):
@@ -210,7 +207,7 @@ class CoursePending(CourseBase, PendingChangeBase, Translatable, BaseModelTransl
         pending = cls.create_from(existing_course, "del")
         return pending
 
-class CoursePendingTranslation(translation_base(CoursePending)):
+class CoursePendingTranslation(translation_base(CoursePending), TranslationMixin):
     __tablename__ = 'CoursePendingTranslation'
     course_name = sa.Column(sa.Unicode(80), unique=True)
 
