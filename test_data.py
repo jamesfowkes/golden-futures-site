@@ -3,6 +3,7 @@
 Usage:
     test_data.py create_baseline
     test_data.py create_pending
+    test_data.py create_both
     test_data.py restore
     test_data.py make_original
 
@@ -772,7 +773,11 @@ if __name__ == "__main__":
     categories = {}
     universities = {}
 
-    if args["create_baseline"]:
+    create_baseline = args["create_baseline"]
+    create_pending = args["create_pending"]
+    create_both = args["create_both"]
+
+    if create_baseline or create_both:
 
 
         print("Creating application context...", end=""); sys.stdout.flush()
@@ -903,7 +908,7 @@ if __name__ == "__main__":
             shutil.copy("app/debug.db", "app/debug.original.db")
             print("Finished creating test data")
 
-    if args["create_pending"]:
+    if create_pending or create_both:
 
         print("Creating application context...", end=""); sys.stdout.flush()
         with app.app_context():
