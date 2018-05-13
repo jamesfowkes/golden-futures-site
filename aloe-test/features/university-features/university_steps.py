@@ -54,6 +54,8 @@ def the_user_pends_addition_of_university(step, university_name):
             data={
                 fieldname_with_language("university_name", aloe.world.language):university_name,
                 fieldname_with_language("university_intro", aloe.world.language):"A new university",
+                "university_latlong":"0.0,0.0",
+                "university_web_address": "www.some_university.com",
                 'languages': [aloe.world.language] 
             }
         )
@@ -129,7 +131,9 @@ def the_university_is_pending_for_addition(step, university_name):
     with app.app_context():
         try:
             aloe.world.last_pending_university_id = UniversityPending.addition(
-                {aloe.world.language: {"university_name": university_name}}
+                {aloe.world.language: {"university_name": university_name}},
+                "0.0,0.0",
+                "www.some_university.com"
             )
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # University already in the system

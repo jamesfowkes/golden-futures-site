@@ -428,8 +428,10 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         return new_university
 
     @classmethod
-    def addition(cls, university_name):
+    def addition(cls, university_name, latlong, web_address):
         pending = cls(university_name, "add_edit")
+        pending.latlong = latlong
+        pending.web_address = web_address
         pending.save()
         return pending
 

@@ -641,6 +641,8 @@ pending_additions = {
     "university": [
         {
             "name": "Limkokwing University of Creative Technology",
+            "latlong": "11.573511, 104.874374",
+            "web_address": "https://www.limkokwing.net/cambodia",
             "admissions": [
                 "Senior High School Certificate/ Diploma or equivalent",
                 ("Foundation Year Certificate from University or another recognized institution. "
@@ -648,7 +650,7 @@ pending_additions = {
                 "Certificate of English Proficiency from a recognized institution or pass entrance examination."
             ],
             "contact_details": [
-                "www.limkokwing.edu.kh"
+                "www.limkokwing.edu.kh",
                 "023 995 733",
                 "No. 120-126, Street 1986"
             ],
@@ -702,6 +704,8 @@ pending_edits = {
                 }
             },
 
+            "new_latlong": "-11.567003, -104.876173",
+            "new_web_address": "www.google.com",
 
             "new_courses": ["Architecture", "Information Technology", "Software Engineering"],
 
@@ -950,16 +954,20 @@ if __name__ == "__main__":
 
             for addition in pending_additions["university"]:
                 print("Addition of '{}' university".format(addition["name"]))
-                university = UniversityPending.addition({
-                    "en": {
-                        "university_name": addition["name"],
-                        "university_intro": "This is the " + addition["name"]
+                university = UniversityPending.addition(
+                    {
+                        "en": {
+                            "university_name": addition["name"],
+                            "university_intro": "This is the " + addition["name"]
+                        },
+                        "km": {
+                            "university_name": khmer(addition["name"]),
+                            "university_intro": "This is the " + khmer(addition["name"])
+                        },
                     },
-                    "km": {
-                        "university_name": khmer(addition["name"]),
-                        "university_intro": "This is the " + khmer(addition["name"])
-                    },
-                })
+                    addition["latlong"],
+                    addition["web_address"]
+                )
 
                 for course in addition["courses"]:
                     university.add_course(courses[course])
@@ -1026,6 +1034,9 @@ if __name__ == "__main__":
                 print("Edit of '{}'".format(name))
                 pending_uni = UniversityPending.edit(universities[name])
                 pending_uni.set_translations(edits["translations"])
+
+                pending_uni.latlong = edits["new_latlong"]
+                pending_uni.web_address = edits["new_web_address"]
 
                 for new_course in edits["new_courses"]:
                     pending_uni.add_course(courses[new_course])
