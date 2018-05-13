@@ -36,7 +36,7 @@ def render_universities():
         {
             "name": uni.university_name,
             "latlong":uni.latlong,
-            "view_url": url_for("website.render_university", university_id=uni.university_id)
+            "view_url": url_for("website.render_university", university_id=uni.university_id),
         }
         for uni in all_universities
     ]

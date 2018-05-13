@@ -26,8 +26,8 @@ function initmap() {
 	return map
 }
 
-function add_icon(map, lat, long, icon, marker_url) {
-	marker = new L.marker([lat, long], {icon: icon})
+function add_icon(map, lat, long, icon, marker_url, tooltip="") {
+	marker = new L.marker([lat, long], {icon: icon, title: tooltip})
 	
 	if (marker_url !== null) {
 		marker.on('click', function(e) {

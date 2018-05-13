@@ -10,9 +10,10 @@ $( document ).ready(function() {
       for (var i = 0; i < arrayLength; i++) {
         latlong = $data["uni_latlong_data"][i]["latlong"].split(",")
         url = $data["uni_latlong_data"][i]["view_url"]
+        tooltip = $data["uni_latlong_data"][i]["name"]
         lat = parseFloat(latlong[0])
         long = parseFloat(latlong[1])
-        icons.push(add_icon(map, lat, long, getIcon(), url));
+        icons.push(add_icon(map, lat, long, getIcon(), url, tooltip));
       }
       icons_group = new L.featureGroup(icons)
       map.fitBounds(icons_group.getBounds());
