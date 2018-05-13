@@ -32,6 +32,16 @@ def render_universities():
     g.active="universities"
     all_universities = University.all()
     all_categories = Category.all()
+    g.ep_data["uni_latlong_data"] = [
+        {
+            "name": uni.university_name,
+            "latlong":uni.latlong,
+            "view_url": url_for("website.render_university", university_id=uni.university_id)
+        }
+        for uni in all_universities
+    ]
+    g.ep_data["university_icon_path"] = url_for("static", filename="leaflet/university.svg")
+
     data = {
         "universities": all_universities,
         "categories": all_categories

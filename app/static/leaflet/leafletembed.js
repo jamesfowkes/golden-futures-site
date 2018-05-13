@@ -13,7 +13,7 @@ function getIcon(path=null, size=null) {
 	});
 }
 
-function initmap(lat, long, icon, marker_url=null) {
+function initmap() {
 	// set up the map
 	map = new L.Map('map');
 
@@ -22,10 +22,12 @@ function initmap(lat, long, icon, marker_url=null) {
 	var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
 	var osm = new L.TileLayer(osmUrl, {minZoom: 1, maxZoom: 18, attribution: osmAttrib});		
 
-	map.setView(new L.LatLng(lat, long), 14);
 	map.addLayer(osm);
+	return map
+}
 
-	marker = L.marker([lat, long], {icon: icon})
+function add_icon(map, lat, long, icon, marker_url) {
+	marker = new L.marker([lat, long], {icon: icon})
 	
 	if (marker_url !== null) {
 		marker.on('click', function(e) {
@@ -36,5 +38,5 @@ function initmap(lat, long, icon, marker_url=null) {
 
 	marker.addTo(map)
 
-	return {"map": map, "marker": marker};
+	return marker
 }

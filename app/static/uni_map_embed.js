@@ -11,7 +11,9 @@ $( document ).ready(function() {
       latlong = $data["latlong"].split(",")
       lat = parseFloat(latlong[0])
       long = parseFloat(latlong[1])
-      map = initmap(lat, long, getIcon(), $data["osm_url"]);
+      map = initmap();
+      marker = add_icon(map, lat, long, getIcon(), $data["osm_url"]);
+      map.setView(new L.LatLng(lat, long), 14);
     }
   });
 });

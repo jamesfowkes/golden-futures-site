@@ -37,6 +37,16 @@
         </div>
     </div>
 
+    <div class="card plain">
+        <div class="card-title" role="tab" id="map_collapse_heading">
+            <h3><a data-toggle="collapse" data-parent="#accordion" href="#map_collapse" aria-expanded="true" aria-controls="map_collapse">{{_("Show on Map")}}</a></h3>
+        </div>
+        <div id="map_collapse" class="collapse">
+            <div id="map"></div>
+            <a href="#" id="open_map_link">{{_("Open map in new window")}}</a>
+        </div>
+    </div>
+
     {% for university in data["universities"] | sort %}
     <div class="card plain university_card"
     category_id="{% for category in university.categories() %}category_{{category.category_id}}|{% endfor %}"
@@ -70,5 +80,9 @@
 
 {% block js %}
     {{ super() }}
+    <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
+    <script type="text/javascript" src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
     <script src="{{url_for('static', filename='uni_filter.js')}}"></script>
+    <script src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='unis_map_embed.js')}}"></script>
 {% endblock %}

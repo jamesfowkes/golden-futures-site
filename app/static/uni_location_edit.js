@@ -6,13 +6,13 @@ $( document ).ready(function() {
       latlong = $data["latlong"].split(",")
       lat = parseFloat(latlong[0])
       long = parseFloat(latlong[1])
-      map = initmap(lat, long, getIcon());
-
-      map.map.on("click", function(e) {
-        map.marker.setLatLng(e.latlng);
-
+      map = initmap();
+      marker = add_icon(map, lat, long, getIcon())
+      map.on("click", function(e) {
+        marker.setLatLng(e.latlng);
         $("#university_latlong").val(e.latlng.lat + "," + e.latlng.lng);
       });
+      map.setView(new L.LatLng(lat, long), 14);
     }
   });
 });
