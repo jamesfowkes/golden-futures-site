@@ -2,9 +2,20 @@
 
 {% block content %}
 <div class="container">
-    <h1>
-        <a class="link_no_underline" href="http://{{university.web_address}}">{{university.university_name}}</a>
-    </h1>
+    <div class="row align-items-end">
+        <div class="col-sm">
+            <h1>
+                <a class="link_no_underline" href="http://{{university.web_address}}">{{university.university_name}}</a>
+            </h1>
+        </div>
+        <div class="col-sm">
+            {% if current_user.is_authenticated %}
+                <div class="float-right">
+                    <a href="{{url_for('dashboard.render_edit_university_dashboard', university_id=university.university_id)}}">{{_("Edit this university")}}</a>
+                </div>    
+            {% endif %}
+        </div>
+    </div>
 
     <h2 class="print-only">{{university.web_address}}</h2>
     
