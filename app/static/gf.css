@@ -128,6 +128,14 @@ div.university_detail .form-control {
 	margin-bottom: 0;	
 }
 
+.padded-top {
+	margin-top:1em;
+}
+
+.padded-bottom {
+	margin-bottom:1em;
+}
+
 span.quote {
 	font-style: oblique;
 }

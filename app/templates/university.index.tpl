@@ -1,5 +1,7 @@
 {% extends "layout.tpl" %}
 
+{% import 'dashboard.macro' as dashboard_macro with context%}
+
 {% block content %}
 <div class="container">
     <div class="row align-items-end">
@@ -8,13 +10,14 @@
                 <a class="link_no_underline" href="http://{{university.web_address}}">{{university.university_name}}</a>
             </h1>
         </div>
+        {% if current_user.is_authenticated and not university.is_pending() %}
         <div class="col-sm">
-            {% if current_user.is_authenticated %}
+            
                 <div class="float-right">
                     <a href="{{url_for('dashboard.render_edit_university_dashboard', university_id=university.university_id)}}">{{_("Edit this university")}}</a>
-                </div>    
-            {% endif %}
+                </div>
         </div>
+        {% endif %}
     </div>
 
     <div class="card plain">
@@ -96,6 +99,17 @@
     </div>
     {% endif %}
     
+    {% if university.is_pending() %}
+    <div class="row padded-top padded-bottom">
+        <div class="col-sm">
+            {{dashboard_macro.approve("university", university.pending_id, "btn-block")}}
+        </div>
+        <div class="col-sm">
+             {{dashboard_macro.reject("university", university.pending_id, "btn-block")}}
+        </div>
+    </div>
+    {% endif %}
+
     <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
     <script type="text/javascript" src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>

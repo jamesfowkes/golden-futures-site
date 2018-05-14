@@ -5,10 +5,10 @@
     </div>
 {%- endmacro %}
 
-{% macro approve(type, id) -%}
-    <button type="button" approveid="{{id}}" class="approve-{{type}} btn btn-outline-success btn-sm">{{_("Approve")}}</button>
+{% macro approve(type, id, extra_classes) -%}
+    <button type="button" approveid="{{id}}" class="approve-{{type}} btn btn-outline-success btn-sm {{extra_classes}}">{{_("Approve")}}</button>
 {%- endmacro %}
 
-{% macro reject(type, id) -%}
-    <button type="button" rejectid="{{id}}" class="reject-{{type}} btn btn-outline-danger btn-sm">{{_("Reject")}}</button>
+{% macro reject(type, id, extra_classes) -%}
+    <button type="button" rejectid="{{id}}" class="reject-{{type}} btn btn-outline-danger btn-sm {{extra_classes}}">{{_("Reject")}}</button>
 {%- endmacro %}
