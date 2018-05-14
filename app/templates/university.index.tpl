@@ -11,7 +11,7 @@
         <div class="col-sm">
             {% if current_user.is_authenticated %}
                 <div class="float-right">
-                    <a href="{{url_for('render_pending_uni_summary.render_edit_university_dashboard', university_id=university.university_id)}}">{{_("Edit this university")}}</a>
+                    <a href="{{url_for('dashboard.render_edit_university_dashboard', university_id=university.university_id)}}">{{_("Edit this university")}}</a>
                 </div>    
             {% endif %}
         </div>

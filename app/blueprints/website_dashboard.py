@@ -2,7 +2,7 @@ import logging
 
 from collections import defaultdict, OrderedDict
 
-from flask import Blueprint, g, render_template, request, redirect, url_for
+from flask import Blueprint, g, render_template, request, redirect, url_for, abort
 import flask_login
 
 from app.models.university import University
@@ -199,6 +199,31 @@ def render_edit_pending_university_dashboard(pending_id):
     sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
     return render_template('dashboard.university.edit.tpl', university=university, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
 
+@dashboard.route("/dashboard/pending/view/addition/<pending_id>")
+@flask_login.login_required
+def render_pending_uni_addition(pending_id):
+    university = UniversityPending.get_single_by_id(pending_id=pending_id)
+
+    g.ep_data["pending_id"] = pending_id
+    g.ep_data["latlong"] = university.latlong
+    g.ep_data["university_icon_path"] = url_for("static", filename="leaflet/university.svg")
+    g.ep_data["osm_url"] = "http://www.openstreetmap.org/?mlat=" + university.lat + "&mlon=" + university.long + "&zoom=14"
+    return render_template('university.index.tpl', university=university)
+
+@dashboard.route("/dashboard/pending/view/edit/<pending_id>")
+@flask_login.login_required
+def render_pending_uni_edit(pending_id):
+    try:
+        university = UniversityPending.get_single_by_id(pending_id=pending_id)
+    except:
+        logger.info("Expected result for pending id %s", pending_id)
+        raise
+
+    g.ep_data["pending_id"] = pending_id
+    g.ep_data["latlong"] = university.latlong
+    g.ep_data["university_icon_path"] = url_for("static", filename="leaflet/university.svg")
+    g.ep_data["osm_url"] = "http://www.openstreetmap.org/?mlat=" + university.lat + "&mlon=" + university.long + "&zoom=14"
+    return render_template('university.index.tpl', university=university)
 
 def init_app(app):
     dashboard.before_request(common.init_request)

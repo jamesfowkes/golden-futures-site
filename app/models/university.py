@@ -237,8 +237,8 @@ class UniversityBase():
         return cls.get_single_with_language(language, university_name=university_name)
 
     @classmethod
-    def get_single_by_id(cls, university_id):
-        return cls.get_single(university_id=university_id)
+    def get_single_by_id(cls, university_id, except_on_no_result=False):
+        return cls.get_single(university_id=university_id, except_on_no_result=except_on_no_result)
 
 class University(UniversityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
@@ -460,6 +460,10 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
     def deletion(cls, existing_university):
         pending = cls.create_from(existing_university, "del")
         return pending
+
+    @classmethod
+    def get_single_by_id(cls, pending_id, except_on_no_result=False):
+        return cls.get_single(pending_id=pending_id, except_on_no_result=except_on_no_result)
 
 class UniversityPendingTranslation(translation_base(UniversityPending), TranslationMixin):
     __tablename__ = 'UniversityPendingTranslation'
