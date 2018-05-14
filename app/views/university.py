@@ -126,7 +126,12 @@ def edit_university(university_id):
             )
 
         return json.dumps(pending_university.json())
-        
+
+@app.route("/university/pending/summary", methods=['POST'])
+@flask_login.login_required
+def render_pending_uni_summary(pending_id):
+    return ""
+
 @app.route("/university/pending/approve", methods=['POST'])
 @flask_login.login_required
 def approve_pending_university_change():

@@ -7,71 +7,21 @@
     {{ dashboard_macro.dashboard_heading(_("Pending Changes - Universities")) }}
     {% if current_user.is_admin() %}
     <div class="container">
-        <div class="row">
-            {% if pending.additions | length %}
-            <h4 class="pending_heading" i18n_key="pending_add_heading">{{_("Additions")}}</h4>
+        <div class="card plain">
+            <div class="card-title" role="tab">
+                <h4 class="pending_heading" i18n_key="pending_edit_heading">{{_("Additions")}}</h4>
+            </div>
+            <div class="card-block">
+                {% if pending.additions | length %}
                 {% for addition in pending.additions %}
-                <div class="pending">
-                    <p><strong>{{_("New University")}}: {{addition.university_name}}</strong></p>
-                    <p><i>{{_("Introduction")}}:</i> {{addition.university_intro}}</p>
-                    <p><i>{{_("Courses")}}:</i> {{ addition.course_names | join(", ") }}</p>
-                    
-                    {% if addition.tuition_fees | length %}
-                    <p><i>{{_("Fees")}}:</i></p>
-                    <ul>
-                        {% for fee in addition.tuition_fees %}
-                            <li>{{ fee }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-
-                    {% if addition.quotes | length %}
-                    <p><i>{{_("Quotes")}}:</i></p>
-                    <ul>
-                    {% for quote in addition.quotes %}
-                        <li>{{ quote.quote_string }}</li>
-                    {% endfor %}
-                    </ul>
-                    {% endif %}
-
-                    {% if addition.admissions | length %}
-                    <p><i>{{_("Admissions")}}:</i></p>
-                    <ul>
-                    {% for admission in addition.admissions %}
-                        <li>{{ admission.admission_string }}</li>
-                    {% endfor %}
-                    </ul>
-                    {% endif %}
-
-                    {% if addition.contact_details | length %}
-                    <p><i>{{_("Contact Details")}}:</i><br/>
-                        {% for contact_detail in addition.contact_details %}
-                            {{ contact_detail.contact_detail_string }}<br/>
-                        {% endfor %}
-                    </p>
-                    {% endif %}
-
-                    {% if addition.scholarships | length %}
-                    <p><i>{{_("Scholarships")}}:</i><br/>
-                        {% for scholarship in addition.scholarships %}
-                            {{ scholarship.scholarship_string }}<br/>
-                        {% endfor %}
-                    </p>
-                    {% endif %}
-
-                    {% if addition.facilities | length %}                        
-                    <p><i>{{_("Facilities")}}:</i> {{ addition.facility_names() | join(", ") }}</p>
-                    </p>
-                    {% endif %}
-
-                    {{dashboard_macro.approve("university", addition.pending_id)}} {{dashboard_macro.reject("university", addition.pending_id)}} 
-                </div>
+                <a href="{{url_for('render_pending_uni_summary', pending_id=addition.pending_id)}}">{{addition.university_name}}</a>
                 {% endfor %}
-            {% else %}
-            <h4>{{_("No pending additions")}}</h4>
-            {% endif %}
+                {% else %}
+                <h4>{{_("No pending additions")}}</h4>
+                {% endif %}
+            </div>
         </div>
-        <div class="row">
+        <div class="card-block">
             {% if pending.edits | length %}
             <h4 class="pending_heading" i18n_key="pending_edit_heading">{{_("Edits")}}</h4>
             {% for edit in pending.edits %}
@@ -145,7 +95,7 @@
                 <h4>{{_("No pending edits")}}</h4>
             {% endif %}
         </div>
-        <div class="row">
+        <div class="card-block">
             {% if pending.deletions | length %}
                 <h4 class="pending_heading" i18n_key="pending_del_heading">{{_("Deletions")}}</h4>
                 {% for deletion in pending.deletions %}
