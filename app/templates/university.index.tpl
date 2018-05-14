@@ -116,6 +116,10 @@
     <script src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
     <script type="text/javascript" src="{{url_for('static', filename='uni_map_embed.js')}}"></script>
 
+    {% if university.is_pending() %}
+    <script type="text/javascript" src="{{url_for('static', filename='dashboard.js')}}"> </script>
+    {% endif %}
+
 </div>
 
 {% endblock %}
