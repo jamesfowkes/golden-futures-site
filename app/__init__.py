@@ -33,6 +33,9 @@ session.init_app(app)
 from app.models import user
 user.init_app(app)
 
+from app.images import image_server
+image_server.init_app(app)
+
 from app.views import user
 from app.views import category
 from app.views import university

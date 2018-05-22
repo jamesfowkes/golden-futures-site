@@ -1,3 +1,4 @@
+import os
 import logging
 
 from flask import Blueprint, g, render_template, request, redirect, url_for
@@ -53,6 +54,7 @@ def render_university(university_id):
     university = University.get_single_by_id(university_id)
 
     g.active="universities"
+    g.ep_data["galleria_theme"] = url_for("static", filename="galleria/themes/classic/galleria.classic.min.js")
     g.ep_data["university_id"] = university_id
     g.ep_data["latlong"] = university.latlong
     g.ep_data["university_icon_path"] = url_for("static", filename="leaflet/university.svg")
@@ -85,5 +87,6 @@ def init_app(app):
 
     app.jinja_env.globals['ALLOW_UNIVERSITY_DELETION'] = app.config["ALLOW_UNIVERSITY_DELETION"]
 
+    app.add_url_rule('/images/<path:filename>', endpoint='images', view_func=app.send_static_file)
+
     app.register_blueprint(website)
-    

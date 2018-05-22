@@ -140,6 +140,12 @@ span.quote {
 	font-style: oblique;
 }
 
+.galleria {
+	max-width: 700px;
+	height: 400px;
+	background: #000;
+}
+
 @media print {
 	.print-only {
 		display:unset;

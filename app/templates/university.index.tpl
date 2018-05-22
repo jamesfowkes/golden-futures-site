@@ -20,6 +20,12 @@
         {% endif %}
     </div>
 
+    <div class="galleria">
+        <img src="{{url_for('serve_image', filename='black.jpg')}}">
+        <img src="{{url_for('serve_image', filename='blue.jpg')}}">
+        <img src="{{url_for('serve_image', filename='red.jpg')}}">
+    </div>
+
     <div class="card plain">
         <h2>{{_("Quotes")}}</h2>
         <p>
@@ -111,13 +117,15 @@
     {% endif %}
 
     <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
-    <script type="text/javascript" src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
+    <script src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="{{url_for('static', filename='galleria/galleria-1.5.7.min.js')}}"></script>
     <script src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='uni_map_embed.js')}}"></script>
+    <script src="{{url_for('static', filename='uni_map_embed.js')}}"></script>
+    <script src="{{url_for('static', filename='uni_gallery.js')}}"></script>
 
     {% if university.is_pending() %}
-    <script type="text/javascript" src="{{url_for('static', filename='dashboard.university.approve.js')}}"> </script>
+    <script src="{{url_for('static', filename='dashboard.university.approve.js')}}"> </script>
     {% endif %}
 
 </div>
