@@ -255,5 +255,5 @@ $( document ).ready(function() {
   id_counters["scholarships"] = $("div.university_scholarship").length-1
   id_counters["admissions"] = $("div.university_admission").length-1
 
-  $("div#dropzone").dropzone({ url: "/file/post" });
+  $("div#dropzone").dropzone({ url: $data["image_upload_url"] });
 });

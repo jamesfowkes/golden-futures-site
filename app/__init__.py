@@ -36,6 +36,9 @@ user.init_app(app)
 from app.images import image_server
 image_server.init_app(app)
 
+from app import dropzone
+dropzone.init_app(app)
+
 from app.views import user
 from app.views import category
 from app.views import university

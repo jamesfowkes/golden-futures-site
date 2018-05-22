@@ -168,7 +168,8 @@ def render_edit_university_dashboard(university_id):
     g.ep_data["languages"] = locale.supported_languages()
     g.ep_data["latlong"] = university.latlong
     g.ep_data["university_icon_path"] = url_for("static", filename="leaflet/university.svg")
-    g.ep_data["api_endpoints"] = {"edit_university": url_for("edit_university",university_id=university_id)}
+    g.ep_data["api_endpoints"] = {"edit_university": url_for("edit_university", university_id=university_id)}
+    g.ep_data["image_upload_url"] = url_for("image_upload", university_id=university_id)
 
     courses = sorted(Course.all(), key=lambda c: c.course_name)
     alphabetised_courses = defaultdict(list)
