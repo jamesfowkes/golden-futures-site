@@ -21,9 +21,9 @@
     </div>
 
     <div class="galleria">
-        <img src="{{url_for('serve_image', filename='black.jpg')}}">
-        <img src="{{url_for('serve_image', filename='blue.jpg')}}">
-        <img src="{{url_for('serve_image', filename='red.jpg')}}">
+        {% for image in university.images() %}
+            <img src="{{url_for('serve_image', filename=image)}}">
+        {% endfor %}
     </div>
 
     <div class="card plain">

@@ -1,4 +1,7 @@
+import os
 import logging
+
+import glob
 
 import json
 from werkzeug.datastructures import MultiDict
@@ -217,6 +220,9 @@ class UniversityBase():
     def set_web_address(self, web_address):
         self.web_address = web_address
         self.save()
+
+    def images(self):
+        return [os.path.basename(f) for f in glob.glob("app/images/{}_*.jpg".format(self.university_id))]
 
     @property
     def lat(self):
