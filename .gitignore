@@ -116,3 +116,7 @@ lib64
 man/
 share/
 pyvenv.cfg
+
+# Images
+app/images/*.jpg
+
