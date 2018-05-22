@@ -134,15 +134,12 @@ def approve_pending_university_change():
         university_pending = UniversityPending.get_single(pending_id=request.form["data_id"])
         json = university_pending.json()
 
-        remaining_count = UniversityPending.get_similar_count(university_pending) - 1
-
         logger.info("Approve pending change '%s' to university %s", university_pending.pending_type, university_pending.university_name)
         university_pending.approve()
 
         return jsonify({
             "success" : True,
-            "data": json,
-            "remaining_count": remaining_count
+            "data": json
         })
 
 @app.route("/university/pending/reject", methods=['POST'])
@@ -152,13 +149,10 @@ def reject_pending_university_change():
         university_pending = UniversityPending.get_single(pending_id=request.form["data_id"])
         json = university_pending.json()
 
-        remaining_count = UniversityPending.get_similar_count(university_pending) - 1
-
         logger.info("Rejecting pending change '%s' to university %s", university_pending.pending_type, university_pending.university_name)
         university_pending.reject()
 
         return jsonify({
             "success" : True,
-            "data": json,
-            "remaining_count": remaining_count
+            "data": json
         })

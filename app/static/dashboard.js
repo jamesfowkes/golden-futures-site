@@ -1,10 +1,10 @@
 $( document ).ready(function() {
-  function pending_changes_ajax_handler(url, data_attr) {
+  function pending_changes_ajax_handler(post_url, data_attr) {
     return function(event) {
       parent_div = $(this).parent().parent()
       $.ajax({
         type: "POST",
-        url: $SCRIPT_ROOT + url,
+        url: $SCRIPT_ROOT + post_url,
         context: event.target,
         data: {data_id: $(this).attr(data_attr)},
         success: function(data) {
@@ -27,8 +27,5 @@ $( document ).ready(function() {
 
   $(".approve-course").click(pending_changes_ajax_handler('/course/pending/approve', 'approveid'));
   $(".reject-course").click(pending_changes_ajax_handler('/course/pending/reject', 'rejectid'));
-
-  $(".approve-university").click(pending_changes_ajax_handler('/university/pending/approve', 'approveid'));
-  $(".reject-university").click(pending_changes_ajax_handler('/university/pending/reject', 'rejectid'));
 
 });

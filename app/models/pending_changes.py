@@ -31,4 +31,8 @@ def pending_university_detail(ParentClass):
 
             self.delete()
 
+        def reject(self):
+            logger.info("Rejecting add of %s", self)
+            self.delete()
+
     return PendingUniversityDetail

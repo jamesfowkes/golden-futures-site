@@ -117,7 +117,7 @@
     <script type="text/javascript" src="{{url_for('static', filename='uni_map_embed.js')}}"></script>
 
     {% if university.is_pending() %}
-    <script type="text/javascript" src="{{url_for('static', filename='dashboard.js')}}"> </script>
+    <script type="text/javascript" src="{{url_for('static', filename='dashboard.university.approve.js')}}"> </script>
     {% endif %}
 
 </div>

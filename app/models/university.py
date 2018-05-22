@@ -391,8 +391,27 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         logger.info("Detail changes done.")
 
     def reject(self):
-        for course in self.courses:
+        for facility in self.facilities:
+            facility.reject()
+        
+        for contact_detail in self.contact_details:
+            contact_detail.reject()
+
+        for admission in self.admissions:
+            admission.reject()
+
+        for tuition_fee in self.tuition_fees:
+            tuition_fee.reject()
+
+        for scholarship in self.scholarships:
+            scholarship.reject()
+
+        for quote in self.quotes:
+            quote.reject()
+        
+        for course in self.pending_courses:
             course.delete()
+
         self._delete()
 
     def add_course(self, course):

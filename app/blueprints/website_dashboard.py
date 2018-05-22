@@ -204,6 +204,7 @@ def render_edit_pending_university_dashboard(pending_id):
 def render_pending_uni_addition(pending_id):
     university = UniversityPending.get_single_by_id(pending_id=pending_id)
 
+    g.ep_data["approve_reject_redirect"] = url_for('dashboard.render_pending_university_changes')
     g.ep_data["pending_id"] = pending_id
     g.ep_data["latlong"] = university.latlong
     g.ep_data["university_icon_path"] = url_for("static", filename="leaflet/university.svg")
@@ -219,6 +220,7 @@ def render_pending_uni_edit(pending_id):
         logger.info("Expected result for pending id %s", pending_id)
         raise
 
+    g.ep_data["approve_reject_redirect"] = url_for('dashboard.render_pending_university_changes')
     g.ep_data["pending_id"] = pending_id
     g.ep_data["latlong"] = university.latlong
     g.ep_data["university_icon_path"] = url_for("static", filename="leaflet/university.svg")
