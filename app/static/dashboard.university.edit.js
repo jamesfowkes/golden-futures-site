@@ -254,4 +254,6 @@ $( document ).ready(function() {
   id_counters["tuition_fees"] = $("div.university_tuition_fee").length-1
   id_counters["scholarships"] = $("div.university_scholarship").length-1
   id_counters["admissions"] = $("div.university_admission").length-1
+
+  $("div#dropzone").dropzone({ url: "/file/post" });
 });

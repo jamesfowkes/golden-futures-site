@@ -5,6 +5,11 @@
 {% import 'dashboard.university.macro' as dashboard_university_macro with context %}
 {% import 'dashboard.course_selector.macro' as dashboard_course_selector_macro with context %}
 
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{url_for('static', filename='dropzone.css')}}">
+{% endblock %}
+
 {% block content %}
 <div class="container">
     {{ dashboard_macro.dashboard_heading(_("Manage university: ") + university.university_name) }}
@@ -35,6 +40,21 @@
                                 languages[1]) }}
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card plain" role="tab">
+                <div class="card-title" role="tab">
+                    <h3>
+                        <a id="images_selector_heading" data-toggle="collapse" href="#images_selector_collapse" aria-expanded="true" aria-controls="images_selector_collapse">
+                        {{_("Images")}}
+                        </a>
+                    </h3>
+                </div>
+                <div id="images_selector_collapse" class="collapse" role="tabpanel" aria-labelledby="images_selector_heading"> 
+                    <div class="form-group card-block">
+                        <div id="dropzone" class="dropzone dz-message needsclick"></div>
                     </div>
                 </div>
             </div>
@@ -201,5 +221,7 @@
     <script src="{{url_for('static', filename='jquery_plugins/jquery.form.min.js')}}"></script>
     <script src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
     <script src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='uni_location_edit.js')}}"></script>
+    <script src="{{url_for('static', filename='uni_location_edit.js')}}"></script>
+    <script src="{{url_for('static', filename='dropzone.js')}}"></script>
+    <script>Dropzone.autoDiscover = false;</script>
 {% endblock %}

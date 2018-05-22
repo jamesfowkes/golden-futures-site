@@ -10,6 +10,7 @@ fixtures==3.0.0
 Flask==0.12.2
 Flask-Babel==0.11.2
 Flask-Bcrypt==0.7.1
+Flask-Dropzone==1.4.3
 Flask-Locale==1.0.2
 Flask-Login==0.4.0
 Flask-Session==0.3.1
