@@ -4,6 +4,7 @@ Usage:
     test_data.py create_baseline
     test_data.py create_pending
     test_data.py create_both
+    test_data.py create_images
     test_data.py restore
     test_data.py make_original
 
@@ -15,7 +16,8 @@ Unit and BDD tests use their own datasets.
 import os
 import sys
 import shutil
-
+import subprocess
+import glob
 import docopt
 
 from flask import current_app
@@ -1116,6 +1118,28 @@ if __name__ == "__main__":
 
             for deletion in pending_deletions["course"]:
                 course = CoursePending.deletion(courses[deletion])
+
+    elif args["create_images"]:
+
+        with app.app_context():
+            
+
+            for f in glob.glob("app/images/*.jpg"):
+                os.remove(f)
+
+            def make_command(university, uni_index, img_index):
+                image_string = "{} Image {}".format(university, img_index)
+                return ["convert", "-background", "lightblue", "-size", "800x600", "-gravity", "center",
+                    "pango:'<span size='19200' foreground='black' rise='-307200' background='lightblue'>" + image_string + "</span>",
+                    "app/images/{}_{:02d}.jpg".format(uni_index, img_index)
+                ]
+
+
+            for uni_name, uni in load_universities_from_db(test_university_data.keys()).items():
+
+                for img in range(3):
+                    cmd_args = make_command(uni_name, uni.university_id, img)
+                    subprocess.run(cmd_args)
 
     elif args["restore"]:
         shutil.copy("app/debug.original.db", "app/debug.db")
