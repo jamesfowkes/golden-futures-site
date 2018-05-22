@@ -104,7 +104,7 @@
         </p>
     </div>
     {% endif %}
-    
+
     {% if university.is_pending() %}
     <div class="row padded-top padded-bottom">
         <div class="col-sm">

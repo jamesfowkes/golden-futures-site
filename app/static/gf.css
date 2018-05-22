@@ -141,9 +141,21 @@ span.quote {
 }
 
 .galleria {
+	margin-left: auto;
+	margin-right: auto; 
 	max-width: 700px;
 	height: 400px;
-	background: #000;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.galleria-container {
+	background: #efa83d;
+
+}
+
+.galleria-container .galleria-counter {
+	color: #111111;
 }
 
 @media print {
