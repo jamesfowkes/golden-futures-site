@@ -2,7 +2,20 @@ import os
 import logging
 import logging.handlers
 
+from pathlib import Path
+
 from flask import Flask
+
+THIS_PATH = Path(__file__).parent
+
+static_file_list = []
+for directory, subdirectories, files in os.walk(str(Path(THIS_PATH, "static"))):
+    for file in files:
+        static_file_list.append(Path(directory, file))
+
+def static_url_exists(url):
+    local_path = THIS_PATH / url
+    return local_path in static_file_list
 
 app = Flask(__name__)
 
@@ -53,7 +66,10 @@ from app.views import quote
 # Initialise blueprints after the views have been imported to correctly register endpoints
 from app.blueprints import common
 from app.blueprints import website
-from app.blueprints import website_dashboard
+from app.blueprints import dashboard
+from app.blueprints import categories_dashboard
+from app.blueprints import courses_dashboard
+from app.blueprints import universities_dashboard
 
 website.init_app(app)
-website_dashboard.init_app(app)
+dashboard.init_app(app)

@@ -1008,9 +1008,7 @@ if __name__ == "__main__":
                             "university_name": khmer(addition["name"]),
                             "university_intro": "This is the " + khmer(addition["name"])
                         },
-                    },
-                    addition["latlong"],
-                    addition["web_address"]
+                    }
                 )
 
                 for course in addition["courses"]:

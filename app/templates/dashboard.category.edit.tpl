@@ -26,7 +26,4 @@
 
 {% block js %}
     {{ super() }}
-    <script src="{{url_for('static', filename='dashboard.js')}}"></script>
-    <script src="{{url_for('static', filename='dashboard.category.edit.js')}}"></script>
-    <script src="{{url_for('static', filename='jquery_plugins/jquery.form.min.js')}}"></script>
 {% endblock %}

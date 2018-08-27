@@ -226,11 +226,17 @@ class UniversityBase():
 
     @property
     def lat(self):
-        return self.latlong.split(",")[0]
+        try:
+            return self.latlong.split(",")[0]
+        except AttributeError:
+            return None
 
     @property
     def long(self):
-        return self.latlong.split(",")[1]
+        try:
+            return self.latlong.split(",")[1]
+        except AttributeError:
+            return None
 
     @classmethod
     def create(cls, translations):
@@ -472,10 +478,8 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
         return new_university
 
     @classmethod
-    def addition(cls, university_name, latlong, web_address):
+    def addition(cls, university_name):
         pending = cls(university_name, "add_edit")
-        pending.latlong = latlong
-        pending.web_address = web_address
         pending.save()
         return pending
 
