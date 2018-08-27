@@ -13,9 +13,11 @@
             </div>
             <div class="card-block">
                 {% if pending.additions | length %}
-                {% for addition in pending.additions %}
-                <a href="{{url_for('dashboard.render_pending_uni_addition', pending_id=addition.pending_id)}}">{{addition.university_name}}</a>
-                {% endfor %}
+                <ul>
+                    {% for addition in pending.additions %}
+                    <li><a href="{{url_for('dashboard.render_pending_uni_addition', pending_id=addition.pending_id)}}">{{addition.university_name}}</a></li>
+                    {% endfor %}
+                <uli>
                 {% else %}
                 <h4>{{_("No pending additions")}}</h4>
                 {% endif %}
@@ -28,9 +30,11 @@
             </div>
             <div class="card-block">
                 {% if pending.edits | length %}
-                {% for edit in pending.edits %}
-                <a href="{{url_for('dashboard.render_pending_uni_edit', pending_id=edit.pending_id)}}">{{edit.university_name}}</a>
-                {% endfor %}
+                <ul>
+                    {% for edit in pending.edits %}
+                    <li><a href="{{url_for('dashboard.render_pending_uni_edit', pending_id=edit.pending_id)}}">{{edit.university_name}}</a></li>
+                    {% endfor %}
+                </ul>
                 {% else %}
                 <h4>{{_("No pending edits")}}</h4>
                 {% endif %}
@@ -44,9 +48,11 @@
             </div>
             <div class="card-block">
                 {% if pending.deletions | length %}
+                <ul>
                 {% for delete in pending.deletions %}
-                {{_("Delete university ")}}{{ delete.university_name}}
+                <li>{{_("Delete university ")}}{{ delete.university_name}}</li>
                 {% endfor %}
+                </ul>
                 {% else %}
                 <h4>{{_("No pending deletions")}}</h4>
                 {% endif %}
