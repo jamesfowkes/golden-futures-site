@@ -80,9 +80,4 @@
 
 {% block js %}
     {{ super() }}
-    <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
-    <script type="text/javascript" src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
-    <script src="{{url_for('static', filename='uni_filter.js')}}"></script>
-    <script src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='unis_map_embed.js')}}"></script>
 {% endblock %}

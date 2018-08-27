@@ -30,7 +30,8 @@
     </div>
 
     <h2 class="print-only">{{university.web_address}}</h2>
-    
+
+    {% if g.ep_data["osm_url"] is not none %}    
     <div class="card plain">
         <div class="card-title" role="tab" id="map_collapse_heading">
             <h3><a data-toggle="collapse" data-parent="#accordion" href="#map_collapse" aria-expanded="true" aria-controls="map_collapse">{{_("Show on Map")}}</a></h3>
@@ -40,6 +41,7 @@
             <a href="#" id="open_map_link">{{_("Open map in new window")}}</a>
         </div>
     </div>
+    {% endif %}
 
     <div class="card plain">
         <h2>{{_("Contact Details")}}</h2>
@@ -108,16 +110,6 @@
              {{dashboard_macro.reject("university", university.pending_id, "btn-block")}}
         </div>
     </div>
-    {% endif %}
-
-    <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
-    <script type="text/javascript" src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='uni_map_embed.js')}}"></script>
-
-    {% if university.is_pending() %}
-    <script type="text/javascript" src="{{url_for('static', filename='dashboard.university.approve.js')}}"> </script>
     {% endif %}
 
 </div>

@@ -188,18 +188,9 @@
             <button id="edit_university" class="btn btn-default btn-block" type="button">{{_("Submit")}}</button>
         </div>
     </form>
-
-    <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
-
 </div>
 {% endblock %}
 
 {% block js %}
     {{ super() }}
-    <script src="{{url_for('static', filename='dashboard.js')}}"></script>
-    <script src="{{url_for('static', filename='dashboard.university.edit.js')}}"></script>
-    <script src="{{url_for('static', filename='jquery_plugins/jquery.form.min.js')}}"></script>
-    <script src="{{url_for('static', filename='leaflet/leaflet.js')}}"> </script>
-    <script src="{{url_for('static', filename='leaflet/leafletembed.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='uni_location_edit.js')}}"></script>
 {% endblock %}

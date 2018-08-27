@@ -66,5 +66,4 @@
 
 {% block js %}
     {{ super() }}
-    <script src="{{url_for('static', filename='dashboard.js')}}"></script>
 {% endblock %}

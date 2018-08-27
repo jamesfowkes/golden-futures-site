@@ -45,7 +45,7 @@ def create_university():
             ["university_name", "university_intro"]
         )
 
-        university = UniversityPending.addition(data, request.form["university_latlong"], request.form["university_web_address"])
+        university = UniversityPending.addition(data)
 
         return json.dumps(university.json())
 
