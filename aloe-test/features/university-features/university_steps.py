@@ -132,8 +132,6 @@ def the_university_is_pending_for_addition(step, university_name):
         try:
             aloe.world.last_pending_university_id = UniversityPending.addition(
                 {aloe.world.language: {"university_name": university_name}},
-                "0.0,0.0",
-                "www.some_university.com"
             )
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback() # University already in the system
