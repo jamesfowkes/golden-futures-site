@@ -14,7 +14,7 @@ from app.models.pending_changes import PendingChanges
 
 from app.blueprints import common
 from app.blueprints.common import static_url_for, require_js, require_css
-from app.blueprints.common import LEAFLET_JS_FILES, LEAFLET_CSS_FILES, JQUERY_FORM_FILES
+from app.blueprints.common import LEAFLET_JS_FILES, LEAFLET_CSS_FILES, JQUERY_FORM_FILES, DROPZONE_JS_FILES
 from app.blueprints.dashboard import dashboard
 
 from app import app
@@ -60,6 +60,7 @@ def render_edit_university_dashboard(university_id):
     g.ep_data["latlong"] = university.latlong
     g.ep_data["university_icon_path"] = static_url_for(filename="leaflet/university.svg")
     g.ep_data["api_endpoints"] = {"edit_university": url_for("edit_university",university_id=university_id)}
+    g.ep_data["image_upload_url"] = "/image_upload/pending/{}".format(university_id)
 
     require_js([
         'dashboard.js',
@@ -99,7 +100,12 @@ def render_edit_pending_university_dashboard(pending_id):
         alphabetised_courses[first_letter].append(course)
 
     sorted_alphabetised_courses = OrderedDict(sorted(alphabetised_courses.items()))
-    return render_template('dashboard.university.edit.tpl', university=university, all_courses=courses, alphabetised_courses=sorted_alphabetised_courses)
+    return render_template('dashboard.university.edit.tpl',
+        university=university,
+        all_courses=courses,
+        alphabetised_courses=sorted_alphabetised_courses,
+        languages=locale.supported_languages()
+    )
 
 @dashboard.route("/dashboard/pending/view/addition/<pending_id>")
 @flask_login.login_required

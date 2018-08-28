@@ -12,11 +12,11 @@ dropzone = Dropzone()
 def image_upload(university_id):
     if request.method == 'POST':
         f = request.files.get('file')
-        f.save(os.path.join(os.path.join(basedir, app.config['IMAGE_DIRECTORY']), f.filename))
+        f.save(os.path.join(os.path.join(basedir, app.config['IMAGE_DIRECTORY'], "pending"), f.filename))
 
        	return jsonify({})
 
 def init_app(app):
     dropzone.init_app(app)
     app.view_functions['image_upload'] = image_upload
-    app.add_url_rule('/image_upload/<university_id>', 'image_upload', image_upload, methods = ['POST'])
+    app.add_url_rule('/image_upload/pending/<university_id>', 'image_upload', image_upload, methods = ['POST'])

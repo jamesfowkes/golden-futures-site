@@ -222,7 +222,8 @@ class UniversityBase():
         self.save()
 
     def images(self):
-        return [os.path.basename(f) for f in glob.glob("app/images/{}_*.jpg".format(self.university_id))]
+        GLOB_PATH = os.path.join(app.config["IMAGE_DIRECTORY"], "{}_*.jpg".format(self.university_id))
+        return [os.path.basename(f) for f in glob.glob(GLOB_PATH)]
 
     @property
     def lat(self):

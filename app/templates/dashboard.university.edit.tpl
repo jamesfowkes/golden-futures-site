@@ -54,7 +54,7 @@
                 </div>
                 <div id="images_selector_collapse" class="collapse" role="tabpanel" aria-labelledby="images_selector_heading"> 
                     <div class="form-group card-block">
-                        <div id="dropzone" class="dropzone dz-message needsclick"></div>
+                        <div id="dropzone" class="dropzone dz-message dz-clickable needsclick"></div>
                     </div>
                 </div>
             </div>
