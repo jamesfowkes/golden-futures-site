@@ -273,4 +273,13 @@ $( document ).ready(function() {
       });
     }
   });
+
+  $("div#dropzone").sortable({
+    items:'.dz-preview',
+    cursor: 'move',
+    opacity: 0.5,
+    containment: 'div#dropzone',
+    distance: 20,
+    tolerance: 'pointer'
+  });
 });

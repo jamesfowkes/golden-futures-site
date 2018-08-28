@@ -46,16 +46,21 @@ JQUERY_FORM_FILES = [
     'jquery_plugins/jquery.form.min.js'
 ]
 
+JQUERY_SORTABLE_FILES = [
+    'jquery_plugins/jquery-sortable.js'
+]
+
 DROPZONE_JS_FILES = [
     'dropzone.js'
 ]
 
-def require_js(filenames):
-    if not isinstance(filenames, list):
-        filenames = [filenames]
-        
-    for f in filenames:
-        g.js_scripts.append(static_url_for(filename=f))
+def require_js(*filenames):
+    for filename_or_list in filenames:
+        if not isinstance(filename_or_list, list):
+            filename_or_list = [filename_or_list]
+            
+        for f in filename_or_list:
+            g.js_scripts.append(static_url_for(filename=f))
 
 def require_css(filenames):
     for f in filenames:

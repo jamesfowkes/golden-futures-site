@@ -14,7 +14,7 @@ from app.models.pending_changes import PendingChanges
 
 from app.blueprints import common
 from app.blueprints.common import static_url_for, require_js, require_css
-from app.blueprints.common import LEAFLET_JS_FILES, LEAFLET_CSS_FILES, JQUERY_FORM_FILES, DROPZONE_JS_FILES
+from app.blueprints.common import LEAFLET_JS_FILES, LEAFLET_CSS_FILES, JQUERY_FORM_FILES, JQUERY_SORTABLE_FILES, DROPZONE_JS_FILES
 from app.blueprints.dashboard import dashboard
 
 from app import app
@@ -69,9 +69,7 @@ def render_edit_university_dashboard(university_id):
         'uni_location_edit.js'
     ])
     
-    require_js(LEAFLET_JS_FILES)
-    require_js(JQUERY_FORM_FILES)
-    require_js(DROPZONE_JS_FILES)
+    require_js(LEAFLET_JS_FILES, JQUERY_FORM_FILES, JQUERY_SORTABLE_FILES, DROPZONE_JS_FILES)
     require_css(LEAFLET_CSS_FILES)
 
     courses = sorted(Course.all(), key=lambda c: c.course_name)
