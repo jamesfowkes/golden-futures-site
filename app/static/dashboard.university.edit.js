@@ -255,5 +255,22 @@ $( document ).ready(function() {
   id_counters["scholarships"] = $("div.university_scholarship").length-1
   id_counters["admissions"] = $("div.university_admission").length-1
 
-  $("div#dropzone").dropzone({ url: $data["image_upload_url"] });
+  $("div#dropzone").dropzone({
+    url: $data["image_upload_url"],
+    addRemoveLinks: true,
+    removedfile: function(file) {
+      var name = file.name;        
+      $.ajax({
+        type: 'GET',
+        url: $data["image_remove_url"],
+        data: "filename="+name,
+        success: function(data) {
+          if (data.success) {
+            var _ref;
+            return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
+          }
+        }
+      });
+    }
+  });
 });

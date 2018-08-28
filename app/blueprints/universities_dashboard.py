@@ -61,6 +61,7 @@ def render_edit_university_dashboard(university_id):
     g.ep_data["university_icon_path"] = static_url_for(filename="leaflet/university.svg")
     g.ep_data["api_endpoints"] = {"edit_university": url_for("edit_university",university_id=university_id)}
     g.ep_data["image_upload_url"] = "/image_upload/pending/{}".format(university_id)
+    g.ep_data["image_remove_url"] = "/image_remove/pending/{}".format(university_id)
 
     require_js([
         'dashboard.js',
