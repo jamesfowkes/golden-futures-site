@@ -15,6 +15,7 @@ from sqlalchemy_i18n import Translatable, translation_base
 from sqlalchemy_i18n.utils import get_current_locale
 
 import app
+from app import app
 from app.database import db
 
 from app.models.base_model import BaseModel, BaseModelTranslateable, DeclarativeBase, PendingChangeBase, DbIntegrityException, TranslationMixin, get_locales
@@ -88,7 +89,7 @@ class UniversityBase():
         data.setlist("courses[]", [str(c.course_id) for c in self.courses])
 
         for index, tf in enumerate(self.tuition_fees):
-            for lang in app.app.config["SUPPORTED_LOCALES"]:
+            for lang in app.config["SUPPORTED_LOCALES"]:
                 data["tuition_fee_award[{}]".format(lang)].add(tf.tuition_fee_award)
                 data["tuition_fee_period[{}]".format(lang)].add(tf.tuition_fee_period)
             data["tuition_fee_min"].add(str(tf.tuition_fee_min))
@@ -98,7 +99,7 @@ class UniversityBase():
             if tf.include_in_filter:
                 data["tuition_fee_include_in_filter"].add(str(index))
 
-        for lang in app.app.config["SUPPORTED_LOCALES"]:
+        for lang in app.config["SUPPORTED_LOCALES"]:
 
             data["university_name[{}]".format(lang)] = self.translations[lang].university_name or ''
             data["university_intro[{}]".format(lang)] = self.translations[lang].university_intro or ''
@@ -118,7 +119,7 @@ class UniversityBase():
             for q in self.quotes:
                 data["university_quotes[{}]".format(lang)].add(q.translations[lang].quote_string)
 
-        data["languages"] = ",".join(app.app.config["SUPPORTED_LOCALES"])
+        data["languages"] = ",".join(app.config["SUPPORTED_LOCALES"])
 
         return data
 
@@ -256,7 +257,7 @@ class UniversityBase():
 class University(UniversityBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "University"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    __translatable__ = {'locales': app.config["SUPPORTED_LOCALES"]}
     locale = 'en'
 
     university_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -307,7 +308,7 @@ class UniversityTranslation(translation_base(University)):
 class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseModelTranslateable, DeclarativeBase):
 
     __tablename__ = "UniversityPending"
-    __translatable__ = {'locales': app.app.config["SUPPORTED_LOCALES"]}
+    __translatable__ = {'locales': app.config["SUPPORTED_LOCALES"]}
     locale = 'en'
 
     pending_id = db.Column(db.Integer, primary_key=True, autoincrement=True)

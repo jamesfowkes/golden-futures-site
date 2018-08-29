@@ -14,13 +14,29 @@ from app.models.pending_changes import PendingChanges
 
 from app.blueprints import common
 from app.blueprints.common import static_url_for, require_js, require_css
-from app.blueprints.common import LEAFLET_JS_FILES, LEAFLET_CSS_FILES, JQUERY_FORM_FILES, JQUERY_SORTABLE_FILES, DROPZONE_JS_FILES
+from app.blueprints.common import LEAFLET_JS_FILES, JQUERY_FORM_FILES, JQUERY_SORTABLE_FILES, DROPZONE_JS_FILES
+from app.blueprints.common import LEAFLET_CSS_FILES, DROPZONE_CSS_FILES
 from app.blueprints.dashboard import dashboard
 
 from app import app
 from app import locale
 
 logger = logging.getLogger(__name__)
+
+def set_global_pending_uni_data(pending_id, university):
+    g.ep_data["approve_reject_redirect"] = url_for('dashboard.render_pending_university_changes')
+    g.ep_data["pending_id"] = pending_id
+    g.ep_data["latlong"] = university.latlong
+    g.ep_data["university_icon_path"] = static_url_for(filename="leaflet/university.svg")
+    try:
+        g.ep_data["osm_url"] = "http://www.openstreetmap.org/?mlat=" + university.lat + "&mlon=" + university.long + "&zoom=14"
+    except TypeError:
+        g.ep_data["osm_url"] = None
+
+    require_js(LEAFLET_JS_FILES)
+    require_js('uni_map_embed.js')
+    require_js('dashboard.university.approve.js')
+    require_css(LEAFLET_CSS_FILES)
 
 @dashboard.route("/dashboard/pending/universities", methods=['GET'])
 @flask_login.login_required
@@ -60,8 +76,6 @@ def render_edit_university_dashboard(university_id):
     g.ep_data["latlong"] = university.latlong
     g.ep_data["university_icon_path"] = static_url_for(filename="leaflet/university.svg")
     g.ep_data["api_endpoints"] = {"edit_university": url_for("edit_university",university_id=university_id)}
-    g.ep_data["image_upload_url"] = "/image_upload/pending/{}".format(university_id)
-    g.ep_data["image_remove_url"] = "/image_remove/pending/{}".format(university_id)
 
     require_js([
         'dashboard.js',
@@ -69,7 +83,7 @@ def render_edit_university_dashboard(university_id):
         'uni_location_edit.js'
     ])
     
-    require_js(LEAFLET_JS_FILES, JQUERY_FORM_FILES, JQUERY_SORTABLE_FILES, DROPZONE_JS_FILES)
+    require_js(LEAFLET_JS_FILES, JQUERY_FORM_FILES)
     require_css(LEAFLET_CSS_FILES)
 
     courses = sorted(Course.all(), key=lambda c: c.course_name)
@@ -111,14 +125,7 @@ def render_edit_pending_university_dashboard(pending_id):
 def render_pending_uni_addition(pending_id):
     university = UniversityPending.get_single_by_id(pending_id=pending_id)
 
-    g.ep_data["approve_reject_redirect"] = url_for('dashboard.render_pending_university_changes')
-    g.ep_data["pending_id"] = pending_id
-    g.ep_data["latlong"] = university.latlong
-    g.ep_data["university_icon_path"] = static_url_for(filename="leaflet/university.svg")
-    try:
-        g.ep_data["osm_url"] = "http://www.openstreetmap.org/?mlat=" + university.lat + "&mlon=" + university.long + "&zoom=14"
-    except TypeError:
-        g.ep_data["osm_url"] = None
+    set_global_pending_uni_data(pending_id, university)
 
     return render_template('university.index.tpl', university=university)
 
@@ -131,18 +138,34 @@ def render_pending_uni_edit(pending_id):
         logger.info("Expected result for pending id %s", pending_id)
         raise
 
-    g.ep_data["approve_reject_redirect"] = url_for('dashboard.render_pending_university_changes')
-    g.ep_data["pending_id"] = pending_id
-    g.ep_data["latlong"] = university.latlong
-    g.ep_data["university_icon_path"] = static_url_for(filename="leaflet/university.svg")
-    g.ep_data["osm_url"] = "http://www.openstreetmap.org/?mlat=" + university.lat + "&mlon=" + university.long + "&zoom=14"
-
-    require_js(LEAFLET_JS_FILES)
-    require_js('uni_map_embed.js')
-    require_js('dashboard.university.approve.js')
-    require_css(LEAFLET_CSS_FILES)
+    set_global_pending_uni_data(pending_id, university)
 
     return render_template('university.index.tpl', university=university)
+
+@dashboard.route("/dashboard/universities/editgallery/<university_id>")
+@flask_login.login_required
+def render_edit_uni_gallery(university_id):
+
+    university = University.get_single(university_id=university_id)
+
+    g.ep_data["university_id"] = university_id
+    g.ep_data["languages"] = locale.supported_languages()
+    g.ep_data["api_endpoints"] = {"edit_gallery": url_for("edit_gallery",university_id=university_id)}
+    g.ep_data["image_upload_url"] = "/image_upload/pending/{}".format(university_id)
+    g.ep_data["image_remove_url"] = "/image_remove/pending/{}".format(university_id)
+
+    require_js([
+        'dashboard.js',
+        'dashboard.gallery.edit.js',
+    ])
+    
+    require_js(JQUERY_FORM_FILES, JQUERY_SORTABLE_FILES, DROPZONE_JS_FILES)
+    require_css(DROPZONE_CSS_FILES)
+
+    return render_template('dashboard.gallery.edit.tpl',
+        university=university,
+        languages=locale.supported_languages()
+    )
 
 def init_app(app):
     dashboard.before_request(common.init_request)

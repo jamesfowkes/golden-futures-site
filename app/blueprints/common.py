@@ -37,6 +37,10 @@ LEAFLET_CSS_FILES = [
     'leaflet/leaflet.css'
 ]
 
+DROPZONE_CSS_FILES = [
+    'dropzone.css'
+]
+
 LEAFLET_JS_FILES = [
     'leaflet/leaflet.js',
     'leaflet/leafletembed.js'
@@ -54,17 +58,22 @@ DROPZONE_JS_FILES = [
     'dropzone.js'
 ]
 
-def require_js(*filenames):
+def require_files(url_list, *filenames):
+    all_files = []
     for filename_or_list in filenames:
-        if not isinstance(filename_or_list, list):
-            filename_or_list = [filename_or_list]
-            
-        for f in filename_or_list:
-            g.js_scripts.append(static_url_for(filename=f))
+        if isinstance(filename_or_list, list):
+            all_files.extend(filename_or_list)
+        else:
+            all_files.append(filename_or_list)
 
-def require_css(filenames):
-    for f in filenames:
-        g.css.append(static_url_for(filename=f))
+    for f in all_files:
+        url_list.append(static_url_for(filename=f))
+
+def require_js(*filenames):
+    require_files(g.js_scripts, *filenames)    
+
+def require_css(*filenames):
+    require_files(g.css, *filenames)
 
 def init_request():
     g.lang = get_locale()

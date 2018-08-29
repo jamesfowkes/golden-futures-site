@@ -7,12 +7,12 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" href="{{url_for('static', filename='dropzone.css')}}">
 {% endblock %}
 
 {% block content %}
 <div class="container">
     {{ dashboard_macro.dashboard_heading(_("Manage university: ") + university.university_name) }}
+    <a href='{{url_for("dashboard.render_edit_uni_gallery", university_id=university.university_id)}}'>{{_("Edit Gallery")}}</a>
     <form id="form_edit_university" method="post">
         <div id="accordion" role="tablist" aria-multiselectable="true">
             <div class="card plain" role="tab">
@@ -40,21 +40,6 @@
                                 languages[1]) }}
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card plain" role="tab">
-                <div class="card-title" role="tab">
-                    <h3>
-                        <a id="images_selector_heading" data-toggle="collapse" href="#images_selector_collapse" aria-expanded="true" aria-controls="images_selector_collapse">
-                        {{_("Images")}}
-                        </a>
-                    </h3>
-                </div>
-                <div id="images_selector_collapse" class="collapse" role="tabpanel" aria-labelledby="images_selector_heading"> 
-                    <div class="form-group card-block">
-                        <div id="dropzone" class="dropzone dz-message dz-clickable needsclick sortable"></div>
                     </div>
                 </div>
             </div>
@@ -213,6 +198,4 @@
 
 {% block js %}
     {{ super() }}
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script>Dropzone.autoDiscover = false;</script>
 {% endblock %}
