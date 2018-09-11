@@ -18,7 +18,7 @@ from app.models.pending_changes import PendingChanges
 
 from app.blueprints import common
 from app.blueprints.common import static_url_for, require_js
-from app.blueprints.common import LEAFLET_JS_FILES
+from app.blueprints.common import GALLERIA_JS_FILES, LEAFLET_JS_FILES
 
 logger = logging.getLogger(__name__)
 
@@ -70,8 +70,10 @@ def render_university(university_id):
         static_url_for(filename='leaflet/leaflet.css')
     ]
 
+    require_js(GALLERIA_JS_FILES)
     require_js(LEAFLET_JS_FILES)
     require_js('uni_map_embed.js')
+    require_js('uni_gallery.js')
 
     return render_template('university.index.tpl', university=university)
 
@@ -100,7 +102,5 @@ def init_app(app):
     app.jinja_env.lstrip_blocks = True
 
     app.jinja_env.globals['ALLOW_UNIVERSITY_DELETION'] = app.config["ALLOW_UNIVERSITY_DELETION"]
-
-    app.add_url_rule('/images/<path:filename>', endpoint='images', view_func=app.send_static_file)
 
     app.register_blueprint(website)

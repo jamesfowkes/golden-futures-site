@@ -1,7 +1,6 @@
 import os
 import logging
-
-import glob
+from pathlib import Path
 
 import json
 from werkzeug.datastructures import MultiDict
@@ -15,7 +14,7 @@ from sqlalchemy_i18n import Translatable, translation_base
 from sqlalchemy_i18n.utils import get_current_locale
 
 import app
-from app import app
+from app import app, APP_PATH
 from app.database import db
 
 from app.models.base_model import BaseModel, BaseModelTranslateable, DeclarativeBase, PendingChangeBase, DbIntegrityException, TranslationMixin, get_locales
@@ -223,8 +222,8 @@ class UniversityBase():
         self.save()
 
     def images(self):
-        GLOB_PATH = os.path.join(app.config["IMAGE_DIRECTORY"], "{}_*.jpg".format(self.university_id))
-        return [os.path.basename(f) for f in glob.glob(GLOB_PATH)]
+        img_path = APP_PATH.joinpath(app.config["IMAGE_DIRECTORY"])
+        return [os.path.basename(f) for f in img_path.glob("{}_*.jpg".format(self.university_id))]
 
     @property
     def lat(self):

@@ -58,6 +58,10 @@ DROPZONE_JS_FILES = [
     'dropzone.js'
 ]
 
+GALLERIA_JS_FILES = [
+    'galleria/galleria-1.5.7.min.js'
+]
+
 def require_files(url_list, *filenames):
     all_files = []
     for filename_or_list in filenames:

@@ -6,15 +6,15 @@ from pathlib import Path
 
 from flask import Flask
 
-THIS_PATH = Path(__file__).parent
+APP_PATH = Path(__file__).parent
 
 static_file_list = []
-for directory, subdirectories, files in os.walk(str(Path(THIS_PATH, "static"))):
+for directory, subdirectories, files in os.walk(str(Path(APP_PATH, "static"))):
     for file in files:
         static_file_list.append(Path(directory, file))
 
 def static_url_exists(url):
-    local_path = THIS_PATH / url
+    local_path = APP_PATH / url
     return local_path in static_file_list
 
 app = Flask(__name__)
