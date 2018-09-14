@@ -33,6 +33,12 @@ $( document ).ready(function() {
         e.preventDefault();
         this_dropzone.processQueue();
       });
+
+      $data["existing_images"].forEach(function(img) {
+        var mockFile = { name: img.name, size: img.size };
+        this_dropzone.options.addedfile.call(this_dropzone, mockFile);
+        this_dropzone.options.thumbnail.call(this_dropzone, mockFile, img.thumb_url);
+      });
     },
 
     removedfile: function(file) {

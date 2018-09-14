@@ -22,7 +22,7 @@
 
     <div class="galleria">
         {% for image in university.images() %}
-            <img src="{{url_for('serve_image', filename=image)}}">
+            <img src="{{image.full_url}}">
         {% endfor %}
     </div>
 

@@ -5,7 +5,7 @@ from pathlib import Path
 import json
 from werkzeug.datastructures import MultiDict
 
-from flask import g
+from flask import g, url_for
 
 import flask_login
 
@@ -32,6 +32,15 @@ from app.models.university_course_map import university_course_map_table
 from app.models.pending_changes import PendingChanges
 
 logger = logging.getLogger(__name__)
+
+THIS_PATH = Path(__file__).parent
+
+def get_images_path():
+    return Path("app", app.config["IMAGES_PATH"][0]).resolve()
+    #print(parts)
+    #images_path = Path(*parts[1:])
+    #print(images_path)
+    #return images_path
 
 class UniversityBase():
     def __init__(self, translations):
@@ -221,9 +230,21 @@ class UniversityBase():
         self.web_address = web_address
         self.save()
 
+    def get_img_data(self, img_path):
+        img_path = Path(img_path)
+        return {
+            "name":img_path.name,
+            "full_url": url_for("images", filename=str(img_path.name), width=app.config["IMAGE_WIDTH"], mode="fit"),
+            "thumb_url": url_for(
+                "images",
+                filename=str(img_path.name),
+                width=app.config["THUMB_SIZE"], height=app.config["THUMB_SIZE"], mode="crop"),
+            "size": img_path.stat().st_size
+        }
+
     def images(self):
-        img_path = APP_PATH.joinpath(app.config["IMAGE_DIRECTORY"])
-        return [os.path.basename(f) for f in img_path.glob("{}_*.jpg".format(self.university_id))]
+        paths = list(get_images_path().glob("{}_*.jpg".format(self.university_id)))
+        return [self.get_img_data(p) for p in paths]
 
     @property
     def lat(self):

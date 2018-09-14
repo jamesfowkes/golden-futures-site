@@ -5,6 +5,7 @@ import logging.handlers
 from pathlib import Path
 
 from flask import Flask
+from flask_images import Images
 
 APP_PATH = Path(__file__).parent
 
@@ -46,8 +47,7 @@ session.init_app(app)
 from app.models import user
 user.init_app(app)
 
-from app.images import image_server
-image_server.init_app(app)
+Images(app)
 
 from app import dropzone
 dropzone.init_app(app)
