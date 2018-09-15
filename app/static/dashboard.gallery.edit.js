@@ -29,15 +29,22 @@ $( document ).ready(function() {
         this_dropzone.options.autoProcessQueue = true;
       });
 
+      this_dropzone.on("queuecomplete", function() {
+        this_dropzone.getFilesWithStatus("existing").forEach (function (f) {
+          alert("Need to pull " + f.name + " into pending");
+        });
+      });
+
       $("#edit_gallery_submit").click(function (e) {
         e.preventDefault();
         this_dropzone.processQueue();
       });
 
       $data["existing_images"].forEach(function(img) {
-        var mockFile = { name: img.name, size: img.size };
+        var mockFile = { name: img.name, size: img.size, status:"existing"};
         this_dropzone.options.addedfile.call(this_dropzone, mockFile);
         this_dropzone.options.thumbnail.call(this_dropzone, mockFile, img.thumb_url);
+        this_dropzone.files.push(mockFile);
       });
     },
 
