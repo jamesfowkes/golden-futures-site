@@ -150,9 +150,11 @@ def render_edit_uni_gallery(university_id):
 
     g.ep_data["university_id"] = university_id
     g.ep_data["languages"] = locale.supported_languages()
-    g.ep_data["api_endpoints"] = {"edit_gallery": url_for("edit_gallery",university_id=university_id)}
-    g.ep_data["image_upload_url"] = "/image_upload/pending/{}".format(university_id)
-    g.ep_data["image_remove_url"] = "/image_remove/pending/{}".format(university_id)
+    g.ep_data["api_endpoints"] = {"edit_gallery": url_for("edit_gallery", university_id=university_id)}
+    g.ep_data["image_upload_url"] = url_for("dashboard.image_upload", university_id=university_id)
+    g.ep_data["image_pend_url"] = url_for("dashboard.image_pend", university_id=university_id)
+    g.ep_data["image_clear_pending_url"] = url_for("dashboard.clear_pending", university_id=university_id)
+    g.ep_data["image_submit_complete"] = url_for("dashboard.image_submit_complete", university_id=university_id)
     g.ep_data["existing_images"] = university.images()
 
     require_js([

@@ -25,19 +25,57 @@ $( document ).ready(function() {
     init: function () {
       var this_dropzone = this;
 
+      function removeExistingPendingFiles() {
+        $.ajax({
+          type: "GET",
+          url: $SCRIPT_ROOT + $data["image_clear_pending_url"],
+          data: {}
+        });
+      }
+
+      function pendExistingFiles() {
+        this_dropzone.getFilesWithStatus("existing").forEach (function (f) {
+          $.ajax({
+            type: "GET",
+            url: $SCRIPT_ROOT + $data["image_pend_url"],
+            data: {filename: f.name}
+          });
+        });
+      }
+
+      function submitComplete() {
+        $.ajax({
+          type: "GET",
+          url: $SCRIPT_ROOT + $data["image_submit_complete"],
+          data: {files: $("div.dz-filename > span").map(function() { return $(this).html(); } ).get() },
+          success: function(data) {
+            if (data.success) {
+              window.location.href = data.redirect;
+            } else {
+              flash = $("<p class='fail'></p>").text(data.err)
+              flash.insertBefore($("button#edit_gallery"))
+            }
+          }
+          });
+      }
+
       this_dropzone.on("processing", function() {
         this_dropzone.options.autoProcessQueue = true;
       });
 
       this_dropzone.on("queuecomplete", function() {
-        this_dropzone.getFilesWithStatus("existing").forEach (function (f) {
-          alert("Need to pull " + f.name + " into pending");
-        });
+        pendExistingFiles();
       });
 
       $("#edit_gallery_submit").click(function (e) {
         e.preventDefault();
-        this_dropzone.processQueue();
+        removeExistingPendingFiles();
+        if (this_dropzone.getQueuedFiles().length > 0) {
+          this_dropzone.processQueue();
+        } else {
+          pendExistingFiles();
+        }
+        submitComplete();
       });
 
       $data["existing_images"].forEach(function(img) {

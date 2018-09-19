@@ -1,4 +1,5 @@
 import os
+import shutil
 import logging
 from pathlib import Path
 
@@ -37,10 +38,6 @@ THIS_PATH = Path(__file__).parent
 
 def get_images_path():
     return Path("app", app.config["IMAGES_PATH"][0]).resolve()
-    #print(parts)
-    #images_path = Path(*parts[1:])
-    #print(images_path)
-    #return images_path
 
 class UniversityBase():
     def __init__(self, translations):
@@ -243,8 +240,42 @@ class UniversityBase():
         }
 
     def images(self):
-        paths = list(get_images_path().glob("{}_*.jpg".format(self.university_id)))
+        paths = sorted([f for f in get_images_path().glob("{}_*".format(self.university_id)) if f.is_file()])
         return [self.get_img_data(p) for p in paths]
+
+    @property
+    def images_path(self):
+        return get_images_path()
+
+    @property
+    def pending_images_path(self):
+        return get_images_path().joinpath("pending", str(self.university_id))
+
+    def pend_new_image(self, image_file):
+        logger.info("Saving {} for {}".format(image_file.filename, self.university_name))
+        self.pending_images_path.mkdir(exist_ok=True)
+        image_file.save(self.pending_images_path.joinpath(image_file.filename).as_posix())
+
+    def pend_existing_image(self, existing_filename):
+        existing_file = self.images_path.joinpath(existing_filename)
+        if existing_file.is_file():
+            logger.info("Copying {} to pending".format(existing_filename))
+            result = {"success" : True}
+            new_file = self.pending_images_path.joinpath(existing_filename)
+            shutil.copy(str(existing_file), str(new_file))
+        else:
+            logger.info("Could not find {} for pending".format(existing_file.as_posix()))
+            result = {"success" : False}
+
+    def clear_pending_images(self):
+        logger.info("Clearing images from {}".format(self.pending_images_path))
+        for f in self.pending_images_path.glob("*"):
+            f.unlink();
+
+    def order_pending_images(self, files):
+        for i, f in enumerate(files):
+            new_name = "{}_{:02d}".format(self.university_id, i)
+            logger.info("Renaming {} to {}".format(f, new_name))
 
     @property
     def lat(self):
