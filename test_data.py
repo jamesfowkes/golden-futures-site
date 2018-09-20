@@ -1129,7 +1129,7 @@ if __name__ == "__main__":
                 image_string = "{} Image {}".format(university, img_index)
                 return ["convert", "-background", "lightblue", "-size", "800x600", "-gravity", "center",
                     "pango:'<span size='19200' foreground='black' rise='-307200' background='lightblue'>" + image_string + "</span>",
-                    "app/images/{}_{:02d}.jpg".format(uni_index, img_index)
+                    "app/static/images/{}_{:02d}.jpg".format(uni_index, img_index)
                 ]
 
 

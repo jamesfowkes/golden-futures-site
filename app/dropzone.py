@@ -8,7 +8,7 @@ import flask_login
 from app import app
 from app.blueprints.dashboard import dashboard
 
-from app.models.university import University
+from app.models.university import University, UniversityPending
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +47,8 @@ def clear_pending(university_id):
 def image_submit_complete(university_id):
     university = University.get_single_by_id(university_id=university_id)
     university.order_pending_images(request.args.getlist("files[]"))
+    UniversityPending.edit(university)
+
     return jsonify({"success" : True, "redirect": url_for("dashboard.render_edit_uni_gallery",university_id=university_id)})
 
 def init_app(app):

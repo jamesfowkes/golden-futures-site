@@ -14,7 +14,7 @@ from app.models.pending_changes import PendingChanges
 
 from app.blueprints import common
 from app.blueprints.common import static_url_for, require_js, require_css
-from app.blueprints.common import LEAFLET_JS_FILES, JQUERY_FORM_FILES, JQUERY_SORTABLE_FILES, DROPZONE_JS_FILES
+from app.blueprints.common import GALLERIA_JS_FILES, LEAFLET_JS_FILES, JQUERY_FORM_FILES, JQUERY_SORTABLE_FILES, DROPZONE_JS_FILES
 from app.blueprints.common import LEAFLET_CSS_FILES, DROPZONE_CSS_FILES
 from app.blueprints.dashboard import dashboard
 
@@ -24,6 +24,7 @@ from app import locale
 logger = logging.getLogger(__name__)
 
 def set_global_pending_uni_data(pending_id, university):
+    g.ep_data["galleria_theme"] = url_for("static", filename="galleria/themes/classic/galleria.classic.min.js")
     g.ep_data["approve_reject_redirect"] = url_for('dashboard.render_pending_university_changes')
     g.ep_data["pending_id"] = pending_id
     g.ep_data["latlong"] = university.latlong
@@ -33,9 +34,11 @@ def set_global_pending_uni_data(pending_id, university):
     except TypeError:
         g.ep_data["osm_url"] = None
 
+    require_js(GALLERIA_JS_FILES)
     require_js(LEAFLET_JS_FILES)
     require_js('uni_map_embed.js')
     require_js('dashboard.university.approve.js')
+    require_js('uni_gallery.js')
     require_css(LEAFLET_CSS_FILES)
 
 @dashboard.route("/dashboard/pending/universities", methods=['GET'])

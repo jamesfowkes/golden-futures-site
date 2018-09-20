@@ -1,6 +1,9 @@
 import os
 import shutil
 import logging
+import random
+import string
+
 from pathlib import Path
 
 import json
@@ -38,6 +41,9 @@ THIS_PATH = Path(__file__).parent
 
 def get_images_path():
     return Path("app", app.config["IMAGES_PATH"][0]).resolve()
+
+def get_random_filename(ext = ".tmp"):
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=16)) + ext
 
 class UniversityBase():
     def __init__(self, translations):
@@ -239,6 +245,9 @@ class UniversityBase():
             "size": img_path.stat().st_size
         }
 
+    def ensure_pending_folder(self):
+        self.pending_images_path.mkdir(exist_ok=True)
+
     def images(self):
         paths = sorted([f for f in get_images_path().glob("{}_*".format(self.university_id)) if f.is_file()])
         return [self.get_img_data(p) for p in paths]
@@ -251,12 +260,21 @@ class UniversityBase():
     def pending_images_path(self):
         return get_images_path().joinpath("pending", str(self.university_id))
 
+    def get_image_path(self, folder_path, existing_path, index):
+        new_name = "{}_{:02d}{}".format(self.university_id, index, existing_path.suffix)
+        return folder_path.joinpath(new_name)
+
+    def get_pending_image_path(self, existing_path, index):
+        new_name = "{}_{:02d}{}".format(self.university_id, index, existing_path.suffix)
+        return self.pending_images_path.joinpath(new_name)
+
     def pend_new_image(self, image_file):
+        self.ensure_pending_folder()
         logger.info("Saving {} for {}".format(image_file.filename, self.university_name))
-        self.pending_images_path.mkdir(exist_ok=True)
         image_file.save(self.pending_images_path.joinpath(image_file.filename).as_posix())
 
     def pend_existing_image(self, existing_filename):
+        self.ensure_pending_folder()
         existing_file = self.images_path.joinpath(existing_filename)
         if existing_file.is_file():
             logger.info("Copying {} to pending".format(existing_filename))
@@ -268,14 +286,34 @@ class UniversityBase():
             result = {"success" : False}
 
     def clear_pending_images(self):
+        self.ensure_pending_folder()
         logger.info("Clearing images from {}".format(self.pending_images_path))
         for f in self.pending_images_path.glob("*"):
             f.unlink();
 
-    def order_pending_images(self, files):
-        for i, f in enumerate(files):
-            new_name = "{}_{:02d}".format(self.university_id, i)
-            logger.info("Renaming {} to {}".format(f, new_name))
+    def rename_pending_image(self, old_filename, new_filename):
+        self.ensure_pending_folder()
+        new_path = self.pending_images_path.joinpath(new_filename)
+        existing_path = self.pending_images_path.joinpath(old_filename)
+        existing_path.replace(new_path)
+
+    def index_pending_image(self, filename, index):
+        self.ensure_pending_folder()
+        new_path = self.get_image_path(self.pending_images_path, Path(filename), index)
+        existing_path = self.pending_images_path.joinpath(filename)
+        logger.info("Renaming {} to {}".format(filename, new_path.name))
+        existing_path.replace(new_path)
+
+    def order_pending_images(self, original_filenames):
+        self.ensure_pending_folder()
+        temporary_filenames = []
+        for i, f in enumerate(original_filenames):
+            temp = "{}_{}".format(i, get_random_filename(Path(f).suffix))
+            temporary_filenames.append(temp)
+            self.rename_pending_image(f, temp)
+
+        for i, f in enumerate(temporary_filenames):
+            self.index_pending_image(f, i)
 
     @property
     def lat(self):
@@ -508,6 +546,23 @@ class UniversityPending(UniversityBase, PendingChangeBase, Translatable, BaseMod
             categories.extend(Course.get_single(course_id=pending_course.course_id).categories)
 
         return set(categories)
+
+    def images(self):
+        paths = sorted([f for f in self.pending_images_path.glob("*") if f.is_file()])
+        logger.info(paths)
+        return [self.get_img_data(p) for p in paths]
+
+    def get_img_data(self, img_path):
+        img_path = Path(img_path)
+        return {
+            "name":img_path.name,
+            "full_url": url_for("images", filename=str(Path("pending", str(self.university_id), img_path.name)), width=app.config["IMAGE_WIDTH"], mode="fit"),
+            "thumb_url": url_for(
+                "images",
+                filename=str(img_path.name),
+                width=app.config["THUMB_SIZE"], height=app.config["THUMB_SIZE"], mode="crop"),
+            "size": img_path.stat().st_size
+        }
 
     def is_pending(self):
         return True
